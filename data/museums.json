@@ -1,0 +1,82 @@
+[
+  {
+    "id": "museum-sonje",
+    "name": "Museum Sonje",
+    "type": "museum",
+    "region": "NL-Gelderland",
+    "city": "Arnhem",
+    "positionGrid": { "x": 0, "y": 0 },
+    "positionMap": { "x": 0.63, "y": 0.47 },
+    "relations": [
+      {
+        "targetId": "stedelijk-amsterdam",
+        "label": "공동 기획 경험"
+      }
+    ],
+    "detail": {
+      "description": "현대 미술 중심의 실험적 전시를 선보이는 공간으로, 협업형 기획이 활발하다.",
+      "images": ["https://images.unsplash.com/photo-1465310477141-6fb93167a273"],
+      "url": "https://example.com/museum-sonje"
+    }
+  },
+  {
+    "id": "stedelijk-amsterdam",
+    "name": "Stedelijk Museum",
+    "type": "museum",
+    "region": "NL-NorthHolland",
+    "city": "Amsterdam",
+    "positionGrid": { "x": 1, "y": 0 },
+    "positionMap": { "x": 0.53, "y": 0.34 },
+    "relations": [
+      {
+        "targetId": "kroller-muller",
+        "label": "소장품 교류"
+      }
+    ],
+    "detail": {
+      "description": "현대·컨템포러리 작품을 폭넓게 소장하고 있으며 혁신적인 디자인 컬렉션이 특징.",
+      "images": ["https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"],
+      "url": "https://example.com/stedelijk"
+    }
+  },
+  {
+    "id": "kroller-muller",
+    "name": "Kröller-Müller Museum",
+    "type": "museum",
+    "region": "NL-Gelderland",
+    "city": "Otterlo",
+    "positionGrid": { "x": 0, "y": 1 },
+    "positionMap": { "x": 0.58, "y": 0.52 },
+    "relations": [
+      {
+        "targetId": "boijmans-rotterdam",
+        "label": "전시 투어"
+      }
+    ],
+    "detail": {
+      "description": "광범위한 모더니즘 컬렉션과 대규모 조각 공원을 보유한 국립 미술관.",
+      "images": ["https://images.unsplash.com/photo-1489515217757-5fd1be406fef"],
+      "url": "https://example.com/kroller"
+    }
+  },
+  {
+    "id": "boijmans-rotterdam",
+    "name": "Boijmans Van Beuningen",
+    "type": "museum",
+    "region": "NL-SouthHolland",
+    "city": "Rotterdam",
+    "positionGrid": { "x": 1, "y": 1 },
+    "positionMap": { "x": 0.48, "y": 0.58 },
+    "relations": [
+      {
+        "targetId": "museum-sonje",
+        "label": "연구 협력"
+      }
+    ],
+    "detail": {
+      "description": "중세부터 현대까지 아우르는 다층적 소장품을 보유하며, 새로운 수장고 건축으로 유명하다.",
+      "images": ["https://images.unsplash.com/photo-1529429617124-aee09c05aa85"],
+      "url": "https://example.com/boijmans"
+    }
+  }
+]

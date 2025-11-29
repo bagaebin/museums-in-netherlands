@@ -1,0 +1,65 @@
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --accent: #22d3ee;
+  --accent-2: #f97316;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --locker-radius: 12px;
+  --locker-stroke: 2px;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.04), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(249, 115, 22, 0.05), transparent 45%),
+    var(--bg);
+  color: var(--text);
+}
+
+svg {
+  user-select: none;
+}
+
+button {
+  font: inherit;
+}
+
+.layout-shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.badge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
