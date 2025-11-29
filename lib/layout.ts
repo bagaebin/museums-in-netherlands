@@ -105,6 +105,13 @@ function centerPositions(positions: Record<string, Position>, stage: { width: nu
 }
 
 export function computePathPoints(a: Position, b: Position): string {
+  const distance = Math.hypot(b.x - a.x, b.y - a.y);
+  const straightThreshold = Math.min(TILE_WIDTH, TILE_HEIGHT);
+
+  if (distance <= straightThreshold) {
+    return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+  }
+
   const midX = (a.x + b.x) / 2;
   const curve = 80;
   const c1x = midX;

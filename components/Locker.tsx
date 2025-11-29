@@ -110,6 +110,12 @@ export function Locker({
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
   const dragOrigin = useRef<Position | null>(null);
 
+  const triggerExpand = () => {
+    if (isActive && onExpand) {
+      onExpand();
+    }
+  };
+
   const startHold = () => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
     holdTimer.current = setTimeout(() => setIsHeld(true), 650);
@@ -167,6 +173,7 @@ export function Locker({
         initial="closed"
         custom={radius}
         aria-hidden
+        onClick={triggerExpand}
       />
       <motion.button
         className="locker-surface"
@@ -189,6 +196,7 @@ export function Locker({
         variants={detailContentVariants}
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
+        onClick={triggerExpand}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
