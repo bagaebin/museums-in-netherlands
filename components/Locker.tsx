@@ -111,6 +111,7 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState(position);
   const hoverStart = useRef<number | null>(null);
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const hoverIntentId = useRef(0);
@@ -171,16 +172,23 @@ export function Locker({
     }
   }, [isActive]);
 
-  const isOpen = isActive || isHeld;
-  const radius = isHeld ? expansionRadius : 700;
+  useEffect(() => {
+    if (!isDragging) {
+      setCurrentPosition(position);
+    }
+  }, [position.x, position.y, isDragging]);
+
+  const isDoorOpen = isActive;
+  const isExpanded = isHeld;
+  const radius = isExpanded ? expansionRadius : 700;
 
   return (
     <motion.div
       id={`locker-${museum.id}`}
-      className={`locker-tile${isHeld ? ' expanded' : ''}`}
-      style={{ zIndex: isHeld ? 5 : undefined }}
-      initial={{ x: position.x, y: position.y }}
-      animate={{ x: position.x, y: position.y }}
+      className={`locker-tile${isExpanded ? ' expanded' : ''}`}
+      style={{ zIndex: isExpanded ? 5 : undefined }}
+      initial={{ x: currentPosition.x, y: currentPosition.y }}
+      animate={{ x: currentPosition.x, y: currentPosition.y }}
       drag
       dragMomentum={false}
       onPointerEnter={() => {
@@ -198,15 +206,17 @@ export function Locker({
         setIsDragging(true);
         setIsHovered(false);
         setIsHeld(false);
-        dragOrigin.current = position;
+        dragOrigin.current = currentPosition;
         suppressClick.current = true;
       }}
       onDrag={(_, info) => {
         if (!dragOrigin.current) return;
-        onDrag?.({
+        const next = {
           x: dragOrigin.current.x + info.offset.x,
           y: dragOrigin.current.y + info.offset.y,
-        });
+        };
+        setCurrentPosition(next);
+        onDrag?.(next);
       }}
       onDragEnd={(_, info) => {
         if (!dragOrigin.current) return;
@@ -221,14 +231,16 @@ export function Locker({
         setIsHovered(false);
         hoverStart.current = null;
         hoverIntentId.current++;
-        onDrag?.({ x: nextX, y: nextY });
+        const next = { x: nextX, y: nextY };
+        setCurrentPosition(next);
+        onDrag?.(next);
       }}
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
       <motion.div
-        className={`detail-bg${isHeld ? ' expanded' : ''}`}
+        className={`detail-bg${isExpanded ? ' expanded' : ''}`}
         variants={variants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
@@ -236,7 +248,7 @@ export function Locker({
       <motion.button
         className="locker-surface"
         variants={doorVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDoorOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onPointerEnter={() => {
@@ -265,9 +277,9 @@ export function Locker({
       <motion.div
         className="detail-content"
         variants={detailContentVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
-        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+        style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
