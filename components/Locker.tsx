@@ -106,6 +106,7 @@ export function Locker({
 
   const [isHeld, setIsHeld] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
+  const dragOrigin = useRef<Position | null>(null);
 
   const startHold = () => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
@@ -136,11 +137,22 @@ export function Locker({
       onPointerEnter={startHold}
       onPointerLeave={cancelHold}
       onPointerDown={cancelHold}
-      onDragStart={cancelHold}
-      onDrag={(_, info) => onDrag?.({ x: position.x + info.point.x - info.offset.x, y: position.y + info.point.y - info.offset.y })}
+      onDragStart={() => {
+        cancelHold();
+        dragOrigin.current = position;
+      }}
+      onDrag={(_, info) => {
+        if (!dragOrigin.current) return;
+        onDrag?.({
+          x: dragOrigin.current.x + info.offset.x,
+          y: dragOrigin.current.y + info.offset.y,
+        });
+      }}
       onDragEnd={(_, info) => {
-        const nextX = position.x + info.point.x - info.offset.x;
-        const nextY = position.y + info.point.y - info.offset.y;
+        if (!dragOrigin.current) return;
+        const nextX = dragOrigin.current.x + info.offset.x;
+        const nextY = dragOrigin.current.y + info.offset.y;
+        dragOrigin.current = null;
         onDrag?.({ x: nextX, y: nextY });
       }}
       animate={isOpen ? 'open' : 'closed'}
