@@ -33,7 +33,7 @@ export function LockersGrid({
     <div className="lockers-layer">
       {sorted.map((museum) => (
         <Locker
-          key={museum.id}
+          key={`${layout}-${museum.id}`}
           museum={museum}
           position={positions[museum.id] ?? { x: 0, y: 0 }}
           isActive={activeId === museum.id}

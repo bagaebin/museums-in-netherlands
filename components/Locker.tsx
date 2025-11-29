@@ -130,8 +130,9 @@ export function Locker({
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isHeld ? ' expanded' : ''}`}
-      style={{ x: position.x, y: position.y, zIndex: isHeld ? 5 : undefined }}
-      layout
+      style={{ zIndex: isHeld ? 5 : undefined }}
+      initial={{ x: position.x, y: position.y }}
+      animate={{ x: position.x, y: position.y }}
       drag
       dragMomentum={false}
       onPointerEnter={startHold}
@@ -155,25 +156,32 @@ export function Locker({
         dragOrigin.current = null;
         onDrag?.({ x: nextX, y: nextY });
       }}
-      animate={isOpen ? 'open' : 'closed'}
-      initial="closed"
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
+        animate={isOpen ? 'open' : 'closed'}
+        initial="closed"
         custom={radius}
         aria-hidden
       />
       <motion.button
         className="locker-surface"
         variants={doorVariants}
+        animate={isOpen ? 'open' : 'closed'}
+        initial="closed"
         style={{ transformOrigin: 'left center' }}
         onClick={onOpen}
       >
         {museum.name}
       </motion.button>
-      <motion.div className="detail-content" variants={detailContentVariants}>
+      <motion.div
+        className="detail-content"
+        variants={detailContentVariants}
+        animate={isOpen ? 'open' : 'closed'}
+        initial="closed"
+      >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
         <a href={museum.detail.url} target="_blank" rel="noreferrer">
