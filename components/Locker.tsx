@@ -111,7 +111,7 @@ export function Locker({
   const dragOrigin = useRef<Position | null>(null);
 
   const triggerExpand = () => {
-    if (isActive && onExpand) {
+    if ((isActive || isHeld) && onExpand) {
       onExpand();
     }
   };
@@ -145,7 +145,11 @@ export function Locker({
       dragMomentum={false}
       onPointerEnter={startHold}
       onPointerLeave={cancelHold}
-      onPointerDown={cancelHold}
+      onPointerDown={() => {
+        if (!isHeld) {
+          cancelHold();
+        }
+      }}
       onDragStart={() => {
         cancelHold();
         dragOrigin.current = position;
