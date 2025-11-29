@@ -25,7 +25,7 @@ const doorVariants: Variants = {
 
 const detailBgRectVariants: Variants = {
   open: {
-    clipPath: 'inset(0% 0% 0% 0% round 16px)',
+    clipPath: 'inset(0% 0% 0% 0% round 0px)',
     transition: {
       type: 'spring',
       stiffness: 40,
@@ -34,7 +34,7 @@ const detailBgRectVariants: Variants = {
     },
   },
   closed: {
-    clipPath: 'inset(50% 50% 50% 50% round 16px)',
+    clipPath: 'inset(50% 50% 50% 50% round 0px)',
     transition: {
       type: 'spring',
       stiffness: 400,
