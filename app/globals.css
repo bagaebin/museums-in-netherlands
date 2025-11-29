@@ -161,6 +161,18 @@ a {
   border-radius: 0;
 }
 
+.locker-inner-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: var(--text);
+  pointer-events: none;
+  text-align: center;
+  padding: 12px;
+}
+
 .detail-content {
   position: absolute;
   inset: 16px;

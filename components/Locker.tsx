@@ -173,6 +173,7 @@ export function Locker({
 
   const isDoorOpen = isActive;
   const isExpanded = isHeld;
+  const isBackgroundOpen = isActive && (isHovered || isExpanded);
   const radius = isExpanded ? expansionRadius : 700;
 
   const positionTransition = isDragging
@@ -195,6 +196,7 @@ export function Locker({
       }}
       onPointerLeave={() => {
         setIsHovered(false);
+        setIsHeld(false);
         clearHoverTimer();
         hoverStart.current = null;
         hoverIntentId.current++;
@@ -234,11 +236,20 @@ export function Locker({
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
-        animate={isExpanded ? 'open' : 'closed'}
+        animate={isBackgroundOpen ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
       />
+      <motion.div
+        className="locker-inner-label"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isActive ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
+        aria-hidden
+      >
+        {museum.name}
+      </motion.div>
       <motion.button
         className="locker-surface"
         variants={doorVariants}
@@ -251,6 +262,7 @@ export function Locker({
         }}
         onPointerLeave={() => {
           setIsHovered(false);
+          setIsHeld(false);
           clearHoverTimer();
           hoverStart.current = null;
           hoverIntentId.current++;

@@ -7,7 +7,7 @@
 
 ## Interaction Flow
 1. **Open door**: Clicking a locker toggles it to the open state, revealing the door interior and museum title. No detail popup should appear at this step.
-2. **Detail popup**: While the door is open, hovering for **1.5 seconds** should trigger the expanded state and show the information popup. Leaving the locker or dragging cancels the timer and closes the popup.
+2. **Detail popup**: While the door is open, hovering for **1.5 seconds** should trigger the expanded state and show the information popup. Leaving the locker or dragging cancels the timer and closes the popup; the interior title and hover background are visible only while the pointer stays over the opened locker.
 3. **Dragging**: Dragging should update the locker position smoothly without overshooting or briefly disappearing. During active dragging, positions should follow the pointer without spring/bounce effects.
 4. **Reordering transitions**: When layouts change or lockers are repositioned programmatically, movement should be linear/tweened (no bounce).
 
