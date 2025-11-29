@@ -157,11 +157,11 @@ export function Locker({
       animate={{ x: position.x, y: position.y }}
       drag
       dragMomentum={false}
-      onPointerEnter={() => {
+      onPointerOver={() => {
         if (isDragging) return;
         setIsHovered(true);
       }}
-      onPointerLeave={() => {
+      onPointerOut={() => {
         setIsHovered(false);
         cancelHold();
       }}
@@ -169,14 +169,6 @@ export function Locker({
         if (!isDragging) {
           startHold();
         }
-      }}
-      onHoverStart={() => {
-        if (isDragging) return;
-        setIsHovered(true);
-      }}
-      onHoverEnd={() => {
-        setIsHovered(false);
-        cancelHold();
       }}
       onDragStart={() => {
         cancelHold();
@@ -217,6 +209,14 @@ export function Locker({
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
+        onPointerOver={() => {
+          if (isDragging) return;
+          setIsHovered(true);
+        }}
+        onPointerOut={() => {
+          setIsHovered(false);
+          cancelHold();
+        }}
         onClick={() => {
           if (onExpand && canExpand) {
             onExpand();
