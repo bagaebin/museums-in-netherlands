@@ -136,6 +136,15 @@ export function Locker({
 
   useEffect(() => () => holdTimer.current && clearTimeout(holdTimer.current), []);
 
+  useEffect(() => {
+    if (isHovered && !isDragging) {
+      startHold();
+      return;
+    }
+
+    cancelHold();
+  }, [isHovered, isDragging]);
+
   const isOpen = isActive || isHeld || isHovered;
   const radius = isHeld ? expansionRadius : 700;
 
@@ -151,7 +160,6 @@ export function Locker({
       onPointerEnter={() => {
         if (isDragging) return;
         setIsHovered(true);
-        startHold();
       }}
       onPointerLeave={() => {
         setIsHovered(false);
@@ -165,7 +173,6 @@ export function Locker({
       onHoverStart={() => {
         if (isDragging) return;
         setIsHovered(true);
-        startHold();
       }}
       onHoverEnd={() => {
         setIsHovered(false);
