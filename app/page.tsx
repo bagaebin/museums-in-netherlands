@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import museumsData from '../data/museums.json';
 import { LayoutToggle } from '../components/LayoutToggle';
 import { LockersGrid } from '../components/LockersGrid';
@@ -16,6 +17,7 @@ export default function HomePage() {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<LayoutMode>('grid');
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [stageSize, setStageSize] = useState({ width: 1200, height: 760 });
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
@@ -35,17 +37,28 @@ export default function HomePage() {
 
   useEffect(() => {
     setPositions(computeLayoutPositions(museums, layout, stageSize));
+    setExpandedId(null);
   }, [layout, stageSize]);
 
   useEffect(() => {
     applyHashWarp(museums, {
-      onOpen: (id) => setActiveId(id),
+      onOpen: (id) => {
+        setActiveId(id);
+        setExpandedId(null);
+      },
       onHighlight: (id) => {
         setHighlightId(id);
         setTimeout(() => setHighlightId(null), 2600);
       },
     });
   }, []);
+
+  const museumById = useMemo(
+    () => Object.fromEntries(museums.map((museum) => [museum.id, museum])),
+    []
+  );
+
+  const expandedMuseum = expandedId ? museumById[expandedId] : null;
 
   const overviewContent = useMemo(
     () => (
@@ -69,6 +82,11 @@ export default function HomePage() {
 
   const [modal, setModal] = useState<'overview' | 'gallery' | null>(null);
 
+  const handleLockerOpen = (id: string) => {
+    setActiveId(id);
+    setExpandedId(null);
+  };
+
   const handlePositionChange = (id: string, pos: Position) => {
     setPositions((prev) => ({ ...prev, [id]: pos }));
   };
@@ -80,16 +98,21 @@ export default function HomePage() {
         <span style={{ color: 'var(--muted)', fontSize: 14 }}>Layout: {layout}</span>
       </header>
       <div className="atlas-stage" ref={stageRef}>
-        <RelationsLayer museums={museums} positions={positions} />
+        <RelationsLayer museums={museums} positions={positions} stage={stageSize} layout={layout} />
         <LockersGrid
           museums={museums}
           positions={positions}
           activeId={activeId}
           layout={layout}
           highlightId={highlightId}
-          onOpen={(id) => setActiveId(id === activeId ? null : id)}
+          onOpen={handleLockerOpen}
+          onExpand={(id) => {
+            setActiveId(id);
+            setExpandedId(id);
+          }}
           onPositionChange={handlePositionChange}
           clipStyle={layout === 'map' ? 'circle' : 'rect'}
+          expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
         />
       </div>
 
@@ -136,6 +159,61 @@ export default function HomePage() {
       )}
 
       <FabButtons onShowOverview={() => setModal('overview')} onShowGallery={() => setModal('gallery')} />
+
+      <AnimatePresence>
+        {expandedMuseum && (
+          <motion.div
+            className="mega-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setExpandedId(null)}
+          >
+            <motion.div
+              className="mega-panel"
+              initial={{ scale: 0.95, opacity: 0, y: 14 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 14 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 16 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button className="mega-close" onClick={() => setExpandedId(null)} aria-label="닫기">
+                ✕
+              </button>
+
+              <div className="mega-header">
+                <span className="mega-kicker">{expandedMuseum.city}</span>
+                <h2>{expandedMuseum.name}</h2>
+                <p>{expandedMuseum.detail.description}</p>
+              </div>
+
+              <div className="mega-grid">
+                <div className="mega-copy">
+                  <h4>연결된 파트너</h4>
+                  <ul>
+                    {expandedMuseum.relations.map((rel) => (
+                      <li key={rel.targetId}>
+                        <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
+                        <span> · {rel.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a href={expandedMuseum.detail.url} target="_blank" rel="noreferrer" className="mega-link">
+                    공식 사이트 바로가기 ↗
+                  </a>
+                </div>
+                <div className="mega-gallery">
+                  {expandedMuseum.detail.images?.map((src, index) => (
+                    <div key={src} className="mega-image">
+                      <img src={`${src}&auto=format&fit=crop&w=900&q=80`} alt={`${expandedMuseum.name} 이미지 ${index + 1}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

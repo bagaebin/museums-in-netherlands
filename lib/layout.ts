@@ -4,24 +4,29 @@ export interface LockerPlacement extends Position {
   id: string;
 }
 
-const TILE_WIDTH = 180;
-const TILE_HEIGHT = 140;
-const GRID_GAP = 18;
+export const TILE_WIDTH = 160;
+export const TILE_HEIGHT = 160;
+export const GRID_GAP = 0;
+export const STAGE_PADDING = 0;
 
 export function computeLayoutPositions(
   museums: Museum[],
   layout: LayoutMode,
   stage: { width: number; height: number }
 ): Record<string, Position> {
+  const usableStage = {
+    width: Math.max(stage.width - STAGE_PADDING * 2, TILE_WIDTH),
+    height: Math.max(stage.height - STAGE_PADDING * 2, TILE_HEIGHT),
+  };
   switch (layout) {
     case 'grid':
-      return buildGridPositions(museums, stage);
+      return buildGridPositions(museums, usableStage);
     case 'topic':
-      return buildTopicPositions(museums, stage);
+      return buildTopicPositions(museums, usableStage);
     case 'map':
-      return buildMapPositions(museums, stage);
+      return buildMapPositions(museums, usableStage);
     default:
-      return buildGridPositions(museums, stage);
+      return buildGridPositions(museums, usableStage);
   }
 }
 
@@ -71,11 +76,10 @@ function buildTopicPositions(museums: Museum[], stage: { width: number; height: 
 
 function buildMapPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
   const positions: Record<string, Position> = {};
-  const padding = 60;
   museums.forEach((museum) => {
     positions[museum.id] = {
-      x: padding + museum.positionMap.x * (stage.width - padding * 2),
-      y: padding + museum.positionMap.y * (stage.height - padding * 2),
+      x: museum.positionMap.x * Math.max(stage.width - TILE_WIDTH, 0),
+      y: museum.positionMap.y * Math.max(stage.height - TILE_HEIGHT, 0),
     };
   });
   return positions;
@@ -101,6 +105,13 @@ function centerPositions(positions: Record<string, Position>, stage: { width: nu
 }
 
 export function computePathPoints(a: Position, b: Position): string {
+  const distance = Math.hypot(b.x - a.x, b.y - a.y);
+  const straightThreshold = Math.min(TILE_WIDTH, TILE_HEIGHT);
+
+  if (distance <= straightThreshold) {
+    return `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+  }
+
   const midX = (a.x + b.x) / 2;
   const curve = 80;
   const c1x = midX;
