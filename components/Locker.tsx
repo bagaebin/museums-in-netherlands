@@ -2,7 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const HOVER_EXPAND_DELAY = 1500;
 
@@ -111,26 +111,27 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const lockerRef = useRef<HTMLDivElement | null>(null);
   const hoverStart = useRef<number | null>(null);
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const hoverIntentId = useRef(0);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
 
-  const clearHoverTimer = () => {
+  const clearHoverTimer = useCallback(() => {
     if (hoverTimer.current) {
       clearTimeout(hoverTimer.current);
       hoverTimer.current = null;
     }
-  };
+  }, []);
 
-  const resetHoverState = () => {
+  const resetHoverState = useCallback(() => {
     setIsHovered(false);
     setIsHeld(false);
     clearHoverTimer();
     hoverStart.current = null;
     hoverIntentId.current++;
-  };
+  }, [clearHoverTimer]);
 
   const scheduleHoverExpand = () => {
     clearHoverTimer();
@@ -179,6 +180,37 @@ export function Locker({
     }
   }, [isActive]);
 
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!lockerRef.current || isDragging || (!isHovered && !isHeld)) return;
+
+      const rect = lockerRef.current.getBoundingClientRect();
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      if (!inside) {
+        resetHoverState();
+      }
+    };
+
+    const handleWindowPointerLeave = () => {
+      if (isHovered || isHeld) {
+        resetHoverState();
+      }
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerleave', handleWindowPointerLeave);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerleave', handleWindowPointerLeave);
+    };
+  }, [isHovered, isHeld, isDragging, resetHoverState]);
+
   const isDoorOpen = isActive;
   const isExpanded = isHeld;
   const isBackgroundOpen = isActive && (isHovered || isExpanded);
@@ -192,6 +224,7 @@ export function Locker({
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isHeld ? ' expanded' : ''}`}
+      ref={lockerRef}
       style={{ zIndex: isHeld ? 5 : undefined }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
