@@ -1,19 +1,75 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Museum, Position } from '../lib/types';
+import { LayoutMode, Museum, Position } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, computePathPoints, estimateReveal } from '../lib/layout';
 
 interface RelationsLayerProps {
   museums: Museum[];
   positions: Record<string, Position>;
   stage: { width: number; height: number };
+  layout: LayoutMode;
 }
 
-export function RelationsLayer({ museums, positions, stage }: RelationsLayerProps) {
+export function RelationsLayer({ museums, positions, stage, layout }: RelationsLayerProps) {
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
 
   const getEdgeSegment = (source: Position, target: Position) => {
+    const edges = {
+      left: [
+        { x: source.x, y: source.y },
+        { x: source.x, y: source.y + TILE_HEIGHT },
+      ],
+      right: [
+        { x: source.x + TILE_WIDTH, y: source.y },
+        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+      ],
+      top: [
+        { x: source.x, y: source.y },
+        { x: source.x + TILE_WIDTH, y: source.y },
+      ],
+      bottom: [
+        { x: source.x, y: source.y + TILE_HEIGHT },
+        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+      ],
+    } as const;
+
+    const sourceRect = {
+      left: source.x,
+      right: source.x + TILE_WIDTH,
+      top: source.y,
+      bottom: source.y + TILE_HEIGHT,
+    };
+    const targetRect = {
+      left: target.x,
+      right: target.x + TILE_WIDTH,
+      top: target.y,
+      bottom: target.y + TILE_HEIGHT,
+    };
+
+    if (layout === 'grid') {
+      const horizontalGap =
+        targetRect.left >= sourceRect.right
+          ? targetRect.left - sourceRect.right
+          : sourceRect.left >= targetRect.right
+            ? sourceRect.left - targetRect.right
+            : 0;
+      const verticalGap =
+        targetRect.top >= sourceRect.bottom
+          ? targetRect.top - sourceRect.bottom
+          : sourceRect.top >= targetRect.bottom
+            ? sourceRect.top - targetRect.bottom
+            : 0;
+
+      if (horizontalGap <= verticalGap) {
+        if (targetRect.left >= sourceRect.right) return edges.right;
+        if (targetRect.right <= sourceRect.left) return edges.left;
+      }
+
+      if (targetRect.top >= sourceRect.bottom) return edges.bottom;
+      if (targetRect.bottom <= sourceRect.top) return edges.top;
+    }
+
     const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
     const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
     const dx = targetCenter.x - sourceCenter.x;
@@ -21,29 +77,13 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
     const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
 
     if (horizontalDominant) {
-      if (dx >= 0) {
-        return [
-          { x: source.x + TILE_WIDTH, y: source.y },
-          { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
-        ];
-      }
-      return [
-        { x: source.x, y: source.y },
-        { x: source.x, y: source.y + TILE_HEIGHT },
-      ];
+      if (dx >= 0) return edges.right;
+      return edges.left;
     }
 
-    if (dy >= 0) {
-      return [
-        { x: source.x, y: source.y + TILE_HEIGHT },
-        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
-      ];
-    }
+    if (dy >= 0) return edges.bottom;
 
-    return [
-      { x: source.x, y: source.y },
-      { x: source.x + TILE_WIDTH, y: source.y },
-    ];
+    return edges.top;
   };
 
   const renderedPairs = new Set<string>();

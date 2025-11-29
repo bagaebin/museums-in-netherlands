@@ -6,7 +6,7 @@ export interface LockerPlacement extends Position {
 
 export const TILE_WIDTH = 160;
 export const TILE_HEIGHT = 160;
-export const GRID_GAP = 18;
+export const GRID_GAP = 0;
 export const STAGE_PADDING = 0;
 
 export function computeLayoutPositions(

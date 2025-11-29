@@ -103,7 +103,7 @@ export default function HomePage() {
         <span style={{ color: 'var(--muted)', fontSize: 14 }}>Layout: {layout}</span>
       </header>
       <div className="atlas-stage" ref={stageRef}>
-        <RelationsLayer museums={museums} positions={positions} stage={stageSize} />
+        <RelationsLayer museums={museums} positions={positions} stage={stageSize} layout={layout} />
         <LockersGrid
           museums={museums}
           positions={positions}
