@@ -1,0 +1,78 @@
+[
+  {
+    "id": "museum-sonje",
+    "name": "Museum Sonje",
+    "type": "museum",
+    "region": "NL-Gelderland",
+    "city": "Arnhem",
+    "positionGrid": { "x": 0, "y": 0 },
+    "positionMap": { "x": 0.63, "y": 0.47 },
+    "relations": [
+      { "targetId": "stedelijk-amsterdam", "label": "공동 기획 경험" }
+    ],
+    "detail": {
+      "description": "동시대 미술을 중심으로 한 실험적 전시를 소개합니다.",
+      "images": [
+        "https://images.unsplash.com/photo-1529429617124-aee3a9344421?auto=format&fit=crop&w=800&q=80"
+      ],
+      "url": "https://museumsonje.com"
+    }
+  },
+  {
+    "id": "stedelijk-amsterdam",
+    "name": "Stedelijk Museum Amsterdam",
+    "type": "museum",
+    "region": "NL-NorthHolland",
+    "city": "Amsterdam",
+    "positionGrid": { "x": 1, "y": 0 },
+    "positionMap": { "x": 0.55, "y": 0.35 },
+    "relations": [
+      { "targetId": "boijmans-rotterdam", "label": "순회전시 협력" }
+    ],
+    "detail": {
+      "description": "네덜란드 현대미술 대표 기관으로 디자인 컬렉션이 방대합니다.",
+      "images": [
+        "https://images.unsplash.com/photo-1465311440653-ba9b1d9b0f5b?auto=format&fit=crop&w=800&q=80"
+      ],
+      "url": "https://www.stedelijk.nl"
+    }
+  },
+  {
+    "id": "boijmans-rotterdam",
+    "name": "Depot Boijmans Van Beuningen",
+    "type": "museum",
+    "region": "NL-SouthHolland",
+    "city": "Rotterdam",
+    "positionGrid": { "x": 0, "y": 1 },
+    "positionMap": { "x": 0.51, "y": 0.58 },
+    "relations": [
+      { "targetId": "groninger-museum", "label": "소장품 대여" }
+    ],
+    "detail": {
+      "description": "공개 수장고 컨셉으로 관람객이 작품 보관 과정을 체험할 수 있습니다.",
+      "images": [
+        "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=800&q=80"
+      ],
+      "url": "https://www.boijmans.nl"
+    }
+  },
+  {
+    "id": "groninger-museum",
+    "name": "Groninger Museum",
+    "type": "museum",
+    "region": "NL-Groningen",
+    "city": "Groningen",
+    "positionGrid": { "x": 1, "y": 1 },
+    "positionMap": { "x": 0.68, "y": 0.18 },
+    "relations": [
+      { "targetId": "stedelijk-amsterdam", "label": "디자인 네트워크" }
+    ],
+    "detail": {
+      "description": "포스트모더니즘 건축으로 유명하며 다양한 디자인 전시를 선보입니다.",
+      "images": [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80"
+      ],
+      "url": "https://www.groningermuseum.nl"
+    }
+  }
+]
