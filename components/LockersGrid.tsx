@@ -13,6 +13,7 @@ interface LockersGridProps {
   onPositionChange: (id: string, pos: Position) => void;
   highlightId?: string | null;
   clipStyle?: ClipStyle;
+  expansionRadius?: number;
 }
 
 export function LockersGrid({
@@ -24,6 +25,7 @@ export function LockersGrid({
   onPositionChange,
   highlightId,
   clipStyle = 'rect',
+  expansionRadius = 800,
 }: LockersGridProps) {
   const sorted = useMemo(() => museums.slice().sort((a, b) => a.name.localeCompare(b.name)), [museums]);
 
@@ -39,6 +41,7 @@ export function LockersGrid({
           onDrag={(pos) => onPositionChange(museum.id, pos)}
           clipStyle={clipStyle}
           highlight={highlightId === museum.id}
+          expansionRadius={expansionRadius}
         />
       ))}
     </div>

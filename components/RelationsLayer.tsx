@@ -7,11 +7,18 @@ import { computePathPoints, estimateReveal } from '../lib/layout';
 interface RelationsLayerProps {
   museums: Museum[];
   positions: Record<string, Position>;
+  stage: { width: number; height: number };
 }
 
-export function RelationsLayer({ museums, positions }: RelationsLayerProps) {
+export function RelationsLayer({ museums, positions, stage }: RelationsLayerProps) {
   return (
-    <svg className="relations-layer" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice">
+    <svg
+      className="relations-layer"
+      viewBox={`0 0 ${stage.width} ${stage.height}`}
+      preserveAspectRatio="xMidYMid slice"
+      width="100%"
+      height="100%"
+    >
       {museums.map((museum) =>
         museum.relations.map((rel) => {
           const targetPos = positions[rel.targetId];

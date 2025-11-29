@@ -80,7 +80,7 @@ export default function HomePage() {
         <span style={{ color: 'var(--muted)', fontSize: 14 }}>Layout: {layout}</span>
       </header>
       <div className="atlas-stage" ref={stageRef}>
-        <RelationsLayer museums={museums} positions={positions} />
+        <RelationsLayer museums={museums} positions={positions} stage={stageSize} />
         <LockersGrid
           museums={museums}
           positions={positions}
@@ -90,6 +90,7 @@ export default function HomePage() {
           onOpen={(id) => setActiveId(id === activeId ? null : id)}
           onPositionChange={handlePositionChange}
           clipStyle={layout === 'map' ? 'circle' : 'rect'}
+          expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
         />
       </div>
 

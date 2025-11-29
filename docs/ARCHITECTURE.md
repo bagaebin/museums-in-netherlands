@@ -11,8 +11,8 @@
 ## 주요 컴포넌트 관계
 - `app/page.tsx`: 전체 상태를 소유(레이아웃 모드, 활성 사물함, 위치 맵). `RelationsLayer`와 `LockersGrid`에 전달.
 - `LockersGrid`: 각 `Locker`를 렌더링하고 드래그 위치 변화를 부모에 보고.
-- `Locker`: 문(door)·내부 배경(detail background)·콘텐츠(detail content) 3계층을 한 상태(`open`|`closed`)로 구동.
-- `RelationsLayer`: 현재 위치값을 사용해 곡선 경로와 텍스트를 SVG로 그림.
+- `Locker`: 문(door)·내부 배경(detail background)·콘텐츠(detail content) 3계층을 한 상태(`open`|`closed`)로 구동. 포인터가 650ms 이상 머무르면 "held" 상태로 확장되어 배경이 스테이지 전체를 채운다.
+- `RelationsLayer`: 현재 위치값을 사용해 곡선 경로와 텍스트를 SVG로 그림. 스테이지 실측 크기로 `viewBox`를 동기화해 리사이즈 후에도 경로가 타일 모서리를 정확히 잇는다.
 - `FabButtons`/`LayoutToggle`: 인터랙션 제어 UI.
 
 ## React + SVG 구조

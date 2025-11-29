@@ -2,7 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const doorVariants: Variants = {
   open: {
@@ -87,6 +87,7 @@ interface LockerProps {
   clipStyle?: ClipStyle;
   highlight?: boolean;
   onDrag?: (pos: Position) => void;
+  expansionRadius?: number;
 }
 
 export function Locker({
@@ -97,33 +98,59 @@ export function Locker({
   clipStyle = 'rect',
   highlight = false,
   onDrag,
+  expansionRadius = 800,
 }: LockerProps) {
   const variants = useMemo(() => {
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
   }, [clipStyle]);
 
+  const [isHeld, setIsHeld] = useState(false);
+  const holdTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const startHold = () => {
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+    holdTimer.current = setTimeout(() => setIsHeld(true), 650);
+  };
+
+  const cancelHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    setIsHeld(false);
+  };
+
+  useEffect(() => () => holdTimer.current && clearTimeout(holdTimer.current), []);
+
+  const isOpen = isActive || isHeld;
+  const radius = isHeld ? expansionRadius : 700;
+
   return (
     <motion.div
       id={`locker-${museum.id}`}
-      className="locker-tile"
-      style={{ x: position.x, y: position.y }}
+      className={`locker-tile${isHeld ? ' expanded' : ''}`}
+      style={{ x: position.x, y: position.y, zIndex: isHeld ? 5 : undefined }}
       layout
       drag
       dragMomentum={false}
+      onPointerEnter={startHold}
+      onPointerLeave={cancelHold}
+      onPointerDown={cancelHold}
+      onDragStart={cancelHold}
       onDrag={(_, info) => onDrag?.({ x: position.x + info.point.x - info.offset.x, y: position.y + info.point.y - info.offset.y })}
       onDragEnd={(_, info) => {
         const nextX = position.x + info.point.x - info.offset.x;
         const nextY = position.y + info.point.y - info.offset.y;
         onDrag?.({ x: nextX, y: nextY });
       }}
-      animate={isActive ? 'open' : 'closed'}
+      animate={isOpen ? 'open' : 'closed'}
       initial="closed"
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
       <motion.div
-        className="detail-bg"
+        className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
-        custom={700}
+        custom={radius}
         aria-hidden
       />
       <motion.button
