@@ -1,0 +1,78 @@
+[
+  {
+    "id": "museum-sonje",
+    "name": "Museum Sonje",
+    "type": "museum",
+    "region": "NL-Gelderland",
+    "city": "Arnhem",
+    "topic": "현대미술",
+    "positionGrid": { "x": 0, "y": 0 },
+    "positionMap": { "x": 0.63, "y": 0.47 },
+    "relations": [
+      { "targetId": "stedelijk-amsterdam", "label": "공동 기획 경험" },
+      { "targetId": "groninger-museum", "label": "새로운 매체 연구" }
+    ],
+    "detail": {
+      "description": "아른험에 위치한 현대미술 중심 기관으로 실험적 전시를 선보인다.",
+      "images": ["https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"],
+      "url": "https://museum-sonje.example.com"
+    }
+  },
+  {
+    "id": "stedelijk-amsterdam",
+    "name": "Stedelijk Museum Amsterdam",
+    "type": "museum",
+    "region": "NL-North-Holland",
+    "city": "Amsterdam",
+    "topic": "디자인",
+    "positionGrid": { "x": 1, "y": 0 },
+    "positionMap": { "x": 0.42, "y": 0.32 },
+    "relations": [
+      { "targetId": "museum-sonje", "label": "공동 기획 경험" },
+      { "targetId": "boijmans-rotterdam", "label": "컬렉션 대여" }
+    ],
+    "detail": {
+      "description": "암스테르담의 대표 현대미술·디자인 미술관으로 대규모 소장품을 보유한다.",
+      "images": ["https://images.unsplash.com/photo-1489515217757-5fd1be406fef"],
+      "url": "https://www.stedelijk.nl"
+    }
+  },
+  {
+    "id": "boijmans-rotterdam",
+    "name": "Depot Boijmans Rotterdam",
+    "type": "museum",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "topic": "저장소",
+    "positionGrid": { "x": 0, "y": 1 },
+    "positionMap": { "x": 0.48, "y": 0.58 },
+    "relations": [
+      { "targetId": "stedelijk-amsterdam", "label": "컬렉션 대여" },
+      { "targetId": "groninger-museum", "label": "보존 연구" }
+    ],
+    "detail": {
+      "description": "보이만스의 공개 수장고로, 방문객이 수장 공간을 직접 탐험할 수 있다.",
+      "images": ["https://images.unsplash.com/photo-1511578314322-379afb476865"],
+      "url": "https://www.boijmans.nl"
+    }
+  },
+  {
+    "id": "groninger-museum",
+    "name": "Groninger Museum",
+    "type": "museum",
+    "region": "NL-Groningen",
+    "city": "Groningen",
+    "topic": "실험",
+    "positionGrid": { "x": 1, "y": 1 },
+    "positionMap": { "x": 0.68, "y": 0.18 },
+    "relations": [
+      { "targetId": "museum-sonje", "label": "새로운 매체 연구" },
+      { "targetId": "boijmans-rotterdam", "label": "보존 연구" }
+    ],
+    "detail": {
+      "description": "대담한 건축과 실험적 전시로 알려진 북부 대표 미술관.",
+      "images": ["https://images.unsplash.com/photo-1505761671935-60b3a7427bad"],
+      "url": "https://www.groningermuseum.nl"
+    }
+  }
+]
