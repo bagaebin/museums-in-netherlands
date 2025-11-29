@@ -11,6 +11,25 @@ interface RelationsLayerProps {
 }
 
 export function RelationsLayer({ museums, positions, stage }: RelationsLayerProps) {
+  const getAnchors = (source: Position, target: Position) => {
+    const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
+    const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
+    const dx = targetCenter.x - sourceCenter.x;
+    const dy = targetCenter.y - sourceCenter.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      return {
+        start: { x: dx > 0 ? source.x + TILE_WIDTH : source.x, y: sourceCenter.y },
+        end: { x: dx > 0 ? target.x : target.x + TILE_WIDTH, y: targetCenter.y },
+      };
+    }
+
+    return {
+      start: { x: sourceCenter.x, y: dy > 0 ? source.y + TILE_HEIGHT : source.y },
+      end: { x: targetCenter.x, y: dy > 0 ? target.y : target.y + TILE_HEIGHT },
+    };
+  };
+
   return (
     <svg
       className="relations-layer"
@@ -24,8 +43,7 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
           const targetPos = positions[rel.targetId];
           const sourcePos = positions[museum.id];
           if (!targetPos || !sourcePos) return null;
-          const start = { x: sourcePos.x + TILE_WIDTH, y: sourcePos.y + TILE_HEIGHT / 2 };
-          const end = { x: targetPos.x, y: targetPos.y + TILE_HEIGHT / 2 };
+          const { start, end } = getAnchors(sourcePos, targetPos);
           start.x += STAGE_PADDING;
           start.y += STAGE_PADDING;
           end.x += STAGE_PADDING;
