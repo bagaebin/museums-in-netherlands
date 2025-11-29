@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, Variants } from 'framer-motion';
+import { animate, motion, useMotionValue, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -116,6 +116,8 @@ export function Locker({
   const hoverIntentId = useRef(0);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
+  const x = useMotionValue(position.x);
+  const y = useMotionValue(position.y);
 
   const clearHoverTimer = () => {
     if (hoverTimer.current) {
@@ -171,16 +173,35 @@ export function Locker({
     }
   }, [isActive]);
 
-  const isOpen = isActive || isHeld;
+  useEffect(() => {
+    if (isDragging) return;
+
+    const controlsX = animate(x, position.x, {
+      type: 'spring',
+      stiffness: 260,
+      damping: 26,
+    });
+    const controlsY = animate(y, position.y, {
+      type: 'spring',
+      stiffness: 260,
+      damping: 26,
+    });
+
+    return () => {
+      controlsX.stop();
+      controlsY.stop();
+    };
+  }, [position.x, position.y, isDragging, x, y]);
+
+  const isDoorOpen = isActive;
+  const isDetailOpen = isHeld && isActive;
   const radius = isHeld ? expansionRadius : 700;
 
   return (
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isHeld ? ' expanded' : ''}`}
-      style={{ zIndex: isHeld ? 5 : undefined }}
-      initial={{ x: position.x, y: position.y }}
-      animate={{ x: position.x, y: position.y }}
+      style={{ x, y, zIndex: isHeld ? 5 : undefined }}
       drag
       dragMomentum={false}
       onPointerEnter={() => {
@@ -228,7 +249,7 @@ export function Locker({
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDetailOpen ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
@@ -236,7 +257,7 @@ export function Locker({
       <motion.button
         className="locker-surface"
         variants={doorVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDoorOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onPointerEnter={() => {
@@ -265,9 +286,9 @@ export function Locker({
       <motion.div
         className="detail-content"
         variants={detailContentVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDetailOpen ? 'open' : 'closed'}
         initial="closed"
-        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+        style={{ pointerEvents: isDetailOpen ? 'auto' : 'none' }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
