@@ -108,17 +108,19 @@ export function Locker({
 
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
   const dragOrigin = useRef<Position | null>(null);
 
   const triggerExpand = () => {
-    if ((isActive || isHeld) && onExpand) {
+    if ((isActive || isHeld || isHovered) && onExpand) {
       onExpand();
     }
   };
 
   const startHold = () => {
     if (holdTimer.current) clearTimeout(holdTimer.current);
+    if (isDragging) return;
     holdTimer.current = setTimeout(() => setIsHeld(true), 650);
   };
 
@@ -145,6 +147,7 @@ export function Locker({
       drag
       dragMomentum={false}
       onPointerEnter={() => {
+        if (isDragging) return;
         setIsHovered(true);
         startHold();
       }}
@@ -157,8 +160,20 @@ export function Locker({
           cancelHold();
         }
       }}
+      onHoverStart={() => {
+        if (isDragging) return;
+        setIsHovered(true);
+        startHold();
+      }}
+      onHoverEnd={() => {
+        setIsHovered(false);
+        cancelHold();
+      }}
       onDragStart={() => {
         cancelHold();
+        setIsDragging(true);
+        setIsHovered(false);
+        setIsHeld(false);
         dragOrigin.current = position;
       }}
       onDrag={(_, info) => {
@@ -173,6 +188,7 @@ export function Locker({
         const nextX = dragOrigin.current.x + info.offset.x;
         const nextY = dragOrigin.current.y + info.offset.y;
         dragOrigin.current = null;
+        setIsDragging(false);
         onDrag?.({ x: nextX, y: nextY });
       }}
     >
@@ -193,7 +209,7 @@ export function Locker({
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onClick={() => {
-          if (isActive && onExpand) {
+          if (onExpand && (isActive || isHeld || isHovered)) {
             onExpand();
             return;
           }

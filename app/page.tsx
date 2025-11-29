@@ -111,7 +111,10 @@ export default function HomePage() {
           layout={layout}
           highlightId={highlightId}
           onOpen={handleLockerOpen}
-          onExpand={(id) => setExpandedId(id)}
+          onExpand={(id) => {
+            setActiveId(id);
+            setExpandedId(id);
+          }}
           onPositionChange={handlePositionChange}
           clipStyle={layout === 'map' ? 'circle' : 'rect'}
           expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
