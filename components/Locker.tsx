@@ -4,6 +4,8 @@ import { motion, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+const HOVER_EXPAND_DELAY = 650;
+
 const doorVariants: Variants = {
   open: {
     rotateY: -90,
@@ -109,8 +111,11 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const hoverStart = useRef<number | null>(null);
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
+  const hoverIntentId = useRef(0);
   const dragOrigin = useRef<Position | null>(null);
+  const suppressClick = useRef(false);
 
   const clearHoverTimer = () => {
     if (hoverTimer.current) {
@@ -123,10 +128,20 @@ export function Locker({
     clearHoverTimer();
     if (!isActive || isDragging || !isHovered) return;
 
+    const intentId = ++hoverIntentId.current;
+    const startedAt = hoverStart.current ?? Date.now();
+    hoverStart.current = startedAt;
+
     hoverTimer.current = setTimeout(() => {
+      const dwell = hoverStart.current ? Date.now() - hoverStart.current : 0;
+      const stillValid =
+        intentId === hoverIntentId.current && isActive && isHovered && !isDragging && dwell >= HOVER_EXPAND_DELAY;
+
+      if (!stillValid) return;
+
       setIsHeld(true);
       onExpand?.();
-    }, 650);
+    }, HOVER_EXPAND_DELAY);
   };
 
   useEffect(() => () => clearHoverTimer(), []);
@@ -139,12 +154,16 @@ export function Locker({
 
     clearHoverTimer();
     setIsHeld(false);
+    hoverStart.current = null;
+    hoverIntentId.current++;
   }, [isActive, isHovered, isDragging]);
 
   useEffect(() => {
     if (!isActive) {
       setIsHeld(false);
       clearHoverTimer();
+      hoverStart.current = null;
+      hoverIntentId.current++;
     }
   }, [isActive]);
 
@@ -163,10 +182,13 @@ export function Locker({
       onPointerEnter={() => {
         if (isDragging) return;
         setIsHovered(true);
+        hoverStart.current = Date.now();
       }}
       onPointerLeave={() => {
         setIsHovered(false);
         clearHoverTimer();
+        hoverStart.current = null;
+        hoverIntentId.current++;
       }}
       onDragStart={() => {
         clearHoverTimer();
@@ -174,6 +196,7 @@ export function Locker({
         setIsHovered(false);
         setIsHeld(false);
         dragOrigin.current = position;
+        suppressClick.current = true;
       }}
       onDrag={(_, info) => {
         if (!dragOrigin.current) return;
@@ -188,6 +211,13 @@ export function Locker({
         const nextY = dragOrigin.current.y + info.offset.y;
         dragOrigin.current = null;
         setIsDragging(false);
+        suppressClick.current = true;
+        setTimeout(() => {
+          suppressClick.current = false;
+        }, 120);
+        setIsHovered(false);
+        hoverStart.current = null;
+        hoverIntentId.current++;
         onDrag?.({ x: nextX, y: nextY });
       }}
     >
@@ -209,14 +239,22 @@ export function Locker({
         onPointerEnter={() => {
           if (isDragging) return;
           setIsHovered(true);
+          hoverStart.current = Date.now();
         }}
         onPointerLeave={() => {
           setIsHovered(false);
           clearHoverTimer();
+          hoverStart.current = null;
+          hoverIntentId.current++;
         }}
         onClick={() => {
+          if (isDragging || suppressClick.current) {
+            return;
+          }
           setIsHeld(false);
           clearHoverTimer();
+          hoverStart.current = Date.now();
+          hoverIntentId.current++;
           onOpen();
         }}
       >

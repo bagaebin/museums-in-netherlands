@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { LayoutMode, Museum, Position } from '../lib/types';
-import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, computePathPoints, estimateReveal } from '../lib/layout';
+import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
 interface RelationsLayerProps {
   museums: Museum[];
@@ -124,7 +124,7 @@ export function RelationsLayer({ museums, positions, stage, layout }: RelationsL
           const angle = Math.atan2(dy, dx);
           const labelFrom = Math.abs(angle) > Math.PI / 2 ? labelEnd : labelStart;
           const labelTo = Math.abs(angle) > Math.PI / 2 ? labelStart : labelEnd;
-          const path = computePathPoints(labelFrom, labelTo);
+          const path = `M ${labelFrom.x} ${labelFrom.y} L ${labelTo.x} ${labelTo.y}`;
           const distance = Math.hypot(labelTo.x - labelFrom.x, labelTo.y - labelFrom.y);
           const label = estimateReveal(rel.label, distance);
           const pathId = `path-${pairId}`;
