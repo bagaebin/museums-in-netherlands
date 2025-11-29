@@ -109,43 +109,46 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const holdTimer = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const dragOrigin = useRef<Position | null>(null);
 
-  const canExpand = isActive || isHeld;
-
-  const triggerExpand = () => {
-    if (canExpand && onExpand) {
-      onExpand();
+  const clearHoverTimer = () => {
+    if (hoverTimer.current) {
+      clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
     }
   };
 
-  const startHold = () => {
-    if (holdTimer.current) clearTimeout(holdTimer.current);
-    if (isDragging) return;
-    holdTimer.current = setTimeout(() => setIsHeld(true), 650);
+  const scheduleHoverExpand = () => {
+    clearHoverTimer();
+    if (!isActive || isDragging || !isHovered) return;
+
+    hoverTimer.current = setTimeout(() => {
+      setIsHeld(true);
+      onExpand?.();
+    }, 650);
   };
 
-  const cancelHold = () => {
-    if (holdTimer.current) {
-      clearTimeout(holdTimer.current);
-      holdTimer.current = null;
-    }
-    setIsHeld(false);
-  };
-
-  useEffect(() => () => holdTimer.current && clearTimeout(holdTimer.current), []);
+  useEffect(() => () => clearHoverTimer(), []);
 
   useEffect(() => {
-    if (isHovered && !isDragging) {
-      startHold();
+    if (isActive && isHovered && !isDragging) {
+      scheduleHoverExpand();
       return;
     }
 
-    cancelHold();
-  }, [isHovered, isDragging]);
+    clearHoverTimer();
+    setIsHeld(false);
+  }, [isActive, isHovered, isDragging]);
 
-  const isOpen = isActive || isHeld || isHovered;
+  useEffect(() => {
+    if (!isActive) {
+      setIsHeld(false);
+      clearHoverTimer();
+    }
+  }, [isActive]);
+
+  const isOpen = isActive || isHeld;
   const radius = isHeld ? expansionRadius : 700;
 
   return (
@@ -163,15 +166,10 @@ export function Locker({
       }}
       onPointerLeave={() => {
         setIsHovered(false);
-        cancelHold();
-      }}
-      onPointerDown={() => {
-        if (!isDragging) {
-          startHold();
-        }
+        clearHoverTimer();
       }}
       onDragStart={() => {
-        cancelHold();
+        clearHoverTimer();
         setIsDragging(true);
         setIsHovered(false);
         setIsHeld(false);
@@ -201,7 +199,6 @@ export function Locker({
         initial="closed"
         custom={radius}
         aria-hidden
-        onClick={triggerExpand}
       />
       <motion.button
         className="locker-surface"
@@ -215,13 +212,11 @@ export function Locker({
         }}
         onPointerLeave={() => {
           setIsHovered(false);
-          cancelHold();
+          clearHoverTimer();
         }}
         onClick={() => {
-          if (onExpand && canExpand) {
-            onExpand();
-            return;
-          }
+          setIsHeld(false);
+          clearHoverTimer();
           onOpen();
         }}
       >
@@ -232,7 +227,6 @@ export function Locker({
         variants={detailContentVariants}
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
-        onClick={triggerExpand}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>

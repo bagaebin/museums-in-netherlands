@@ -83,11 +83,6 @@ export default function HomePage() {
   const [modal, setModal] = useState<'overview' | 'gallery' | null>(null);
 
   const handleLockerOpen = (id: string) => {
-    if (activeId === id) {
-      setExpandedId(id);
-      return;
-    }
-
     setActiveId(id);
     setExpandedId(null);
   };
