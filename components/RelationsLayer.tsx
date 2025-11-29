@@ -46,6 +46,8 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
     ];
   };
 
+  const renderedPairs = new Set<string>();
+
   return (
     <svg
       className="relations-layer"
@@ -57,6 +59,10 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
     >
       {museums.map((museum) =>
         museum.relations.map((rel) => {
+          const pairId = [museum.id, rel.targetId].sort().join('-');
+          if (renderedPairs.has(pairId)) return null;
+          renderedPairs.add(pairId);
+
           const targetPos = positions[rel.targetId];
           const sourcePos = positions[museum.id];
           if (!targetPos || !sourcePos) return null;
@@ -73,10 +79,15 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
           const [tA, tB] = targetSegment;
           const labelStart = { x: (sA.x + sB.x) / 2, y: (sA.y + sB.y) / 2 };
           const labelEnd = { x: (tA.x + tB.x) / 2, y: (tA.y + tB.y) / 2 };
-          const path = computePathPoints(labelStart, labelEnd);
-          const distance = Math.hypot(labelEnd.x - labelStart.x, labelEnd.y - labelStart.y);
+          const dx = labelEnd.x - labelStart.x;
+          const dy = labelEnd.y - labelStart.y;
+          const angle = Math.atan2(dy, dx);
+          const labelFrom = Math.abs(angle) > Math.PI / 2 ? labelEnd : labelStart;
+          const labelTo = Math.abs(angle) > Math.PI / 2 ? labelStart : labelEnd;
+          const path = computePathPoints(labelFrom, labelTo);
+          const distance = Math.hypot(labelTo.x - labelFrom.x, labelTo.y - labelFrom.y);
           const label = estimateReveal(rel.label, distance);
-          const pathId = `path-${museum.id}-${rel.targetId}`;
+          const pathId = `path-${pairId}`;
           const ribbonPoints = `${sA.x},${sA.y} ${sB.x},${sB.y} ${tB.x},${tB.y} ${tA.x},${tA.y}`;
           return (
             <g key={pathId}>
