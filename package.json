@@ -8,6 +8,12 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "overrides": {
+    "glob": "^10.4.5",
+    "rimraf": "^5.0.10",
+    "@humanwhocodes/config-array": "^0.13.0",
+    "@humanwhocodes/object-schema": "^2.1.3"
+  },
   "dependencies": {
     "@types/node": "22.4.0",
     "@types/react": "18.3.5",
