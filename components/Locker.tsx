@@ -4,7 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-const HOVER_EXPAND_DELAY = 650;
+const HOVER_EXPAND_DELAY = 1500;
 
 const doorVariants: Variants = {
   open: {
@@ -126,11 +126,9 @@ export function Locker({
 
   const scheduleHoverExpand = () => {
     clearHoverTimer();
-    if (!isActive || isDragging || !isHovered) return;
 
     const intentId = ++hoverIntentId.current;
-    const startedAt = hoverStart.current ?? Date.now();
-    hoverStart.current = startedAt;
+    hoverStart.current = Date.now();
 
     hoverTimer.current = setTimeout(() => {
       const dwell = hoverStart.current ? Date.now() - hoverStart.current : 0;
@@ -147,16 +145,22 @@ export function Locker({
   useEffect(() => () => clearHoverTimer(), []);
 
   useEffect(() => {
-    if (isActive && isHovered && !isDragging) {
+    clearHoverTimer();
+
+    if (isActive && isHovered && !isDragging && !isHeld) {
       scheduleHoverExpand();
       return;
     }
 
-    clearHoverTimer();
-    setIsHeld(false);
-    hoverStart.current = null;
-    hoverIntentId.current++;
-  }, [isActive, isHovered, isDragging]);
+    if (!isActive || isDragging || !isHovered) {
+      hoverStart.current = null;
+      hoverIntentId.current++;
+
+      if (isHeld) {
+        setIsHeld(false);
+      }
+    }
+  }, [isActive, isHovered, isDragging, isHeld]);
 
   useEffect(() => {
     if (!isActive) {
@@ -182,7 +186,6 @@ export function Locker({
       onPointerEnter={() => {
         if (isDragging) return;
         setIsHovered(true);
-        hoverStart.current = Date.now();
       }}
       onPointerLeave={() => {
         setIsHovered(false);
@@ -239,7 +242,6 @@ export function Locker({
         onPointerEnter={() => {
           if (isDragging) return;
           setIsHovered(true);
-          hoverStart.current = Date.now();
         }}
         onPointerLeave={() => {
           setIsHovered(false);
@@ -253,7 +255,7 @@ export function Locker({
           }
           setIsHeld(false);
           clearHoverTimer();
-          hoverStart.current = Date.now();
+          hoverStart.current = null;
           hoverIntentId.current++;
           onOpen();
         }}
