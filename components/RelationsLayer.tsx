@@ -19,16 +19,22 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
     const dx = targetCenter.x - sourceCenter.x;
     const dy = targetCenter.y - sourceCenter.y;
 
-    if (Math.abs(dx) > Math.abs(dy)) {
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
       return {
-        start: { x: dx > 0 ? source.x + TILE_WIDTH : source.x, y: sourceCenter.y },
-        end: { x: dx > 0 ? target.x : target.x + TILE_WIDTH, y: targetCenter.y },
+        start: sourceCenter,
+        end: targetCenter,
       };
     }
 
     return {
-      start: { x: sourceCenter.x, y: dy > 0 ? source.y + TILE_HEIGHT : source.y },
-      end: { x: targetCenter.x, y: dy > 0 ? target.y : target.y + TILE_HEIGHT },
+      start: {
+        x: dx >= 0 ? source.x + TILE_WIDTH : source.x,
+        y: dy >= 0 ? source.y + TILE_HEIGHT : source.y,
+      },
+      end: {
+        x: dx >= 0 ? target.x : target.x + TILE_WIDTH,
+        y: dy >= 0 ? target.y : target.y + TILE_HEIGHT,
+      },
     };
   };
 
