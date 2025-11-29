@@ -124,6 +124,14 @@ export function Locker({
     }
   };
 
+  const resetHoverState = () => {
+    setIsHovered(false);
+    setIsHeld(false);
+    clearHoverTimer();
+    hoverStart.current = null;
+    hoverIntentId.current++;
+  };
+
   const scheduleHoverExpand = () => {
     clearHoverTimer();
 
@@ -195,11 +203,7 @@ export function Locker({
         setIsHovered(true);
       }}
       onPointerLeave={() => {
-        setIsHovered(false);
-        setIsHeld(false);
-        clearHoverTimer();
-        hoverStart.current = null;
-        hoverIntentId.current++;
+        resetHoverState();
       }}
       onDragStart={() => {
         clearHoverTimer();
@@ -261,11 +265,7 @@ export function Locker({
           setIsHovered(true);
         }}
         onPointerLeave={() => {
-          setIsHovered(false);
-          setIsHeld(false);
-          clearHoverTimer();
-          hoverStart.current = null;
-          hoverIntentId.current++;
+          resetHoverState();
         }}
         onClick={() => {
           if (isDragging || suppressClick.current) {
@@ -286,6 +286,9 @@ export function Locker({
         animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
         style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
+        onPointerLeave={() => {
+          resetHoverState();
+        }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
