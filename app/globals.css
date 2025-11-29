@@ -196,6 +196,19 @@ a {
   fill: none;
 }
 
+.relation-ribbon {
+  fill: rgba(255, 255, 255, 0.18);
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+}
+
+.relation-label-path {
+  stroke: none;
+  fill: none;
+}
+
 .relation-label {
   fill: var(--text);
   font-size: 12px;

@@ -13,29 +13,37 @@ interface RelationsLayerProps {
 export function RelationsLayer({ museums, positions, stage }: RelationsLayerProps) {
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
 
-  const getAnchors = (source: Position, target: Position) => {
+  const getEdgeSegment = (source: Position, target: Position) => {
     const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
     const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
     const dx = targetCenter.x - sourceCenter.x;
     const dy = targetCenter.y - sourceCenter.y;
+    const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
 
-    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
-      return {
-        start: sourceCenter,
-        end: targetCenter,
-      };
+    if (horizontalDominant) {
+      if (dx >= 0) {
+        return [
+          { x: source.x + TILE_WIDTH, y: source.y },
+          { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+        ];
+      }
+      return [
+        { x: source.x, y: source.y },
+        { x: source.x, y: source.y + TILE_HEIGHT },
+      ];
     }
 
-    return {
-      start: {
-        x: dx >= 0 ? source.x + TILE_WIDTH : source.x,
-        y: dy >= 0 ? source.y + TILE_HEIGHT : source.y,
-      },
-      end: {
-        x: dx >= 0 ? target.x : target.x + TILE_WIDTH,
-        y: dy >= 0 ? target.y : target.y + TILE_HEIGHT,
-      },
-    };
+    if (dy >= 0) {
+      return [
+        { x: source.x, y: source.y + TILE_HEIGHT },
+        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+      ];
+    }
+
+    return [
+      { x: source.x, y: source.y },
+      { x: source.x + TILE_WIDTH, y: source.y },
+    ];
   };
 
   return (
@@ -52,27 +60,34 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
           const targetPos = positions[rel.targetId];
           const sourcePos = positions[museum.id];
           if (!targetPos || !sourcePos) return null;
-          const { start, end } = getAnchors(sourcePos, targetPos);
-          start.x += STAGE_PADDING;
-          start.y += STAGE_PADDING;
-          end.x += STAGE_PADDING;
-          end.y += STAGE_PADDING;
-          const path = computePathPoints(start, end);
-          const distance = Math.hypot(end.x - start.x, end.y - start.y);
+          const sourceSegment = getEdgeSegment(sourcePos, targetPos).map((p) => ({
+            x: p.x + STAGE_PADDING,
+            y: p.y + STAGE_PADDING,
+          }));
+          const targetSegment = getEdgeSegment(targetPos, sourcePos).map((p) => ({
+            x: p.x + STAGE_PADDING,
+            y: p.y + STAGE_PADDING,
+          }));
+
+          const [sA, sB] = sourceSegment;
+          const [tA, tB] = targetSegment;
+          const labelStart = { x: (sA.x + sB.x) / 2, y: (sA.y + sB.y) / 2 };
+          const labelEnd = { x: (tA.x + tB.x) / 2, y: (tA.y + tB.y) / 2 };
+          const path = computePathPoints(labelStart, labelEnd);
+          const distance = Math.hypot(labelEnd.x - labelStart.x, labelEnd.y - labelStart.y);
           const label = estimateReveal(rel.label, distance);
           const pathId = `path-${museum.id}-${rel.targetId}`;
+          const ribbonPoints = `${sA.x},${sA.y} ${sB.x},${sB.y} ${tB.x},${tB.y} ${tA.x},${tA.y}`;
           return (
             <g key={pathId}>
-              <motion.path
-                id={pathId}
-                d={path}
-                className="relation-path"
-                strokeWidth={relationThickness}
-                strokeDasharray="12 10"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 0.8 }}
+              <motion.polygon
+                points={ribbonPoints}
+                className="relation-ribbon"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
               />
+              <motion.path id={pathId} d={path} className="relation-label-path" />
               <motion.text className="relation-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <textPath xlinkHref={`#${pathId}`} startOffset="50%" textAnchor="middle">
                   {label}
