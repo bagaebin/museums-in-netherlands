@@ -1,0 +1,77 @@
+[
+  {
+    "id": "rijksmuseum",
+    "name": "Rijksmuseum",
+    "type": "museum",
+    "region": "NL-Noord-Holland",
+    "city": "Amsterdam",
+    "positionGrid": { "x": 0, "y": 0 },
+    "positionMap": { "x": 0.52, "y": 0.42 },
+    "topic": "national",
+    "relations": [
+      { "targetId": "stedelijk", "label": "근대/현대 예술 협업" },
+      { "targetId": "mauritshuis", "label": "17세기 회화 연구" }
+    ],
+    "detail": {
+      "description": "네덜란드 국립미술관으로, 렘브란트와 베르메르 작품을 중심으로 방대한 컬렉션을 보유.",
+      "images": ["https://images.unsplash.com/photo-1489515217757-5fd1be406fef"],
+      "url": "https://www.rijksmuseum.nl/"
+    }
+  },
+  {
+    "id": "stedelijk",
+    "name": "Stedelijk Museum",
+    "type": "museum",
+    "region": "NL-Noord-Holland",
+    "city": "Amsterdam",
+    "positionGrid": { "x": 1, "y": 0 },
+    "positionMap": { "x": 0.55, "y": 0.43 },
+    "topic": "modern",
+    "relations": [
+      { "targetId": "rijksmuseum", "label": "근대/현대 예술 협업" },
+      { "targetId": "boijmans", "label": "컨템포러리 교류" }
+    ],
+    "detail": {
+      "description": "모더니즘과 현대미술, 디자인 컬렉션을 폭넓게 전시하는 미술관.",
+      "images": ["https://images.unsplash.com/photo-1505761671935-60b3a7427bad"],
+      "url": "https://www.stedelijk.nl/en"
+    }
+  },
+  {
+    "id": "boijmans",
+    "name": "Boijmans Van Beuningen",
+    "type": "museum",
+    "region": "NL-Zuid-Holland",
+    "city": "Rotterdam",
+    "positionGrid": { "x": 0, "y": 1 },
+    "positionMap": { "x": 0.48, "y": 0.58 },
+    "topic": "design",
+    "relations": [
+      { "targetId": "stedelijk", "label": "컨템포러리 교류" },
+      { "targetId": "mauritshuis", "label": "도시 간 컬렉션 교류" }
+    ],
+    "detail": {
+      "description": "중세부터 현대까지 이어지는 다채로운 컬렉션과 미래지향적 수장고 큐브로 유명.",
+      "images": ["https://images.unsplash.com/photo-1505664194779-8beaceb93744"],
+      "url": "https://www.boijmans.nl/en"
+    }
+  },
+  {
+    "id": "mauritshuis",
+    "name": "Mauritshuis",
+    "type": "museum",
+    "region": "NL-Zuid-Holland",
+    "city": "Den Haag",
+    "positionGrid": { "x": 1, "y": 1 },
+    "positionMap": { "x": 0.53, "y": 0.51 },
+    "topic": "golden-age",
+    "relations": [
+      { "targetId": "rijksmuseum", "label": "17세기 회화 연구" }
+    ],
+    "detail": {
+      "description": "17세기 네덜란드 회화 중심의 소장품을 보유하며, 베르메르의 ‘진주 귀걸이를 한 소녀’가 대표 작품.",
+      "images": ["https://images.unsplash.com/photo-1441974231531-c6227db76b6e"],
+      "url": "https://www.mauritshuis.nl/en"
+    }
+  }
+]
