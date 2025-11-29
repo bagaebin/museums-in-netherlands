@@ -14,6 +14,7 @@
 - `Locker`: 문(door)·내부 배경(detail background)·콘텐츠(detail content) 3계층을 한 상태(`open`|`closed`)로 구동. 포인터가 650ms 이상 머무르면 "held" 상태로 확장되어 배경이 스테이지 전체를 채운다.
 - `RelationsLayer`: 현재 위치값을 사용해 곡선 경로와 텍스트를 SVG로 그림. 스테이지 실측 크기로 `viewBox`를 동기화해 리사이즈 후에도 경로가 타일 모서리를 정확히 잇는다.
 - `FabButtons`/`LayoutToggle`: 인터랙션 제어 UI.
+- stage는 시각적 여백을 주기 위해 32px padding이 있고, 레이아웃 계산은 padding을 제외한 usable 영역을 기준으로 수행된다. Relations 레이어는 최종 렌더링 시 padding 보정을 더해 SVG와 HTML 좌표계를 일치시킨다.
 
 ## React + SVG 구조
 - `atlas-stage`: HTML 레이어에 SVG(`RelationsLayer`)와 HTML 락커(`LockersGrid`)를 겹침.

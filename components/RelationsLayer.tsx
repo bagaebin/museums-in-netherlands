@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
-import { computePathPoints, estimateReveal } from '../lib/layout';
+import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, computePathPoints, estimateReveal } from '../lib/layout';
 
 interface RelationsLayerProps {
   museums: Museum[];
@@ -24,8 +24,12 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
           const targetPos = positions[rel.targetId];
           const sourcePos = positions[museum.id];
           if (!targetPos || !sourcePos) return null;
-          const start = { x: sourcePos.x + 160, y: sourcePos.y + 60 };
-          const end = { x: targetPos.x, y: targetPos.y + 60 };
+          const start = { x: sourcePos.x + TILE_WIDTH, y: sourcePos.y + TILE_HEIGHT / 2 };
+          const end = { x: targetPos.x, y: targetPos.y + TILE_HEIGHT / 2 };
+          start.x += STAGE_PADDING;
+          start.y += STAGE_PADDING;
+          end.x += STAGE_PADDING;
+          end.y += STAGE_PADDING;
           const path = computePathPoints(start, end);
           const distance = Math.hypot(end.x - start.x, end.y - start.y);
           const label = estimateReveal(rel.label, distance);
