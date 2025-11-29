@@ -11,6 +11,8 @@ interface RelationsLayerProps {
 }
 
 export function RelationsLayer({ museums, positions, stage }: RelationsLayerProps) {
+  const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
+
   const getAnchors = (source: Position, target: Position) => {
     const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
     const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
@@ -37,6 +39,7 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
       preserveAspectRatio="xMidYMid slice"
       width="100%"
       height="100%"
+      style={{ ['--relation-thickness' as string]: `${relationThickness}px` }}
     >
       {museums.map((museum) =>
         museum.relations.map((rel) => {
@@ -58,6 +61,7 @@ export function RelationsLayer({ museums, positions, stage }: RelationsLayerProp
                 id={pathId}
                 d={path}
                 className="relation-path"
+                strokeWidth={relationThickness}
                 strokeDasharray="12 10"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}

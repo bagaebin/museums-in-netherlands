@@ -10,6 +10,7 @@ interface LockersGridProps {
   activeId?: string | null;
   layout: LayoutMode;
   onOpen: (id: string) => void;
+  onExpand?: (id: string) => void;
   onPositionChange: (id: string, pos: Position) => void;
   highlightId?: string | null;
   clipStyle?: ClipStyle;
@@ -22,6 +23,7 @@ export function LockersGrid({
   activeId,
   layout,
   onOpen,
+  onExpand,
   onPositionChange,
   highlightId,
   clipStyle = 'rect',
@@ -38,6 +40,7 @@ export function LockersGrid({
           position={positions[museum.id] ?? { x: 0, y: 0 }}
           isActive={activeId === museum.id}
           onOpen={() => onOpen(museum.id)}
+          onExpand={() => onExpand?.(museum.id)}
           onDrag={(pos) => onPositionChange(museum.id, pos)}
           clipStyle={clipStyle}
           highlight={highlightId === museum.id}

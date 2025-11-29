@@ -84,6 +84,7 @@ interface LockerProps {
   position: Position;
   isActive: boolean;
   onOpen: () => void;
+  onExpand?: () => void;
   clipStyle?: ClipStyle;
   highlight?: boolean;
   onDrag?: (pos: Position) => void;
@@ -95,6 +96,7 @@ export function Locker({
   position,
   isActive,
   onOpen,
+  onExpand,
   clipStyle = 'rect',
   highlight = false,
   onDrag,
@@ -172,7 +174,13 @@ export function Locker({
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
-        onClick={onOpen}
+        onClick={() => {
+          if (isActive && onExpand) {
+            onExpand();
+            return;
+          }
+          onOpen();
+        }}
       >
         {museum.name}
       </motion.button>
