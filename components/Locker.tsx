@@ -106,6 +106,7 @@ export function Locker({
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
   }, [clipStyle]);
 
+  const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
   const dragOrigin = useRef<Position | null>(null);
@@ -131,7 +132,7 @@ export function Locker({
 
   useEffect(() => () => holdTimer.current && clearTimeout(holdTimer.current), []);
 
-  const isOpen = isActive || isHeld;
+  const isOpen = isActive || isHeld || isHovered;
   const radius = isHeld ? expansionRadius : 700;
 
   return (
@@ -143,8 +144,14 @@ export function Locker({
       animate={{ x: position.x, y: position.y }}
       drag
       dragMomentum={false}
-      onPointerEnter={startHold}
-      onPointerLeave={cancelHold}
+      onPointerEnter={() => {
+        setIsHovered(true);
+        startHold();
+      }}
+      onPointerLeave={() => {
+        setIsHovered(false);
+        cancelHold();
+      }}
       onPointerDown={() => {
         if (!isHeld) {
           cancelHold();
