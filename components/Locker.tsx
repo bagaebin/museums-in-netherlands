@@ -171,8 +171,13 @@ export function Locker({
     }
   }, [isActive]);
 
-  const isOpen = isActive || isHeld;
-  const radius = isHeld ? expansionRadius : 700;
+  const isDoorOpen = isActive;
+  const isExpanded = isHeld;
+  const radius = isExpanded ? expansionRadius : 700;
+
+  const positionTransition = isDragging
+    ? { type: 'tween', duration: 0 }
+    : { type: 'tween', ease: 'easeInOut', duration: 0.25 };
 
   return (
     <motion.div
@@ -181,6 +186,7 @@ export function Locker({
       style={{ zIndex: isHeld ? 5 : undefined }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
+      transition={positionTransition}
       drag
       dragMomentum={false}
       onPointerEnter={() => {
@@ -228,7 +234,7 @@ export function Locker({
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
@@ -236,7 +242,7 @@ export function Locker({
       <motion.button
         className="locker-surface"
         variants={doorVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDoorOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onPointerEnter={() => {
@@ -265,9 +271,9 @@ export function Locker({
       <motion.div
         className="detail-content"
         variants={detailContentVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
-        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+        style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
