@@ -227,6 +227,7 @@ export function Locker({
         variants={detailContentVariants}
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
+        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
