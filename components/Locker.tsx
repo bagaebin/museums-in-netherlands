@@ -112,8 +112,10 @@ export function Locker({
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
   const dragOrigin = useRef<Position | null>(null);
 
+  const canExpand = isActive || isHeld;
+
   const triggerExpand = () => {
-    if ((isActive || isHeld || isHovered) && onExpand) {
+    if (canExpand && onExpand) {
       onExpand();
     }
   };
@@ -156,8 +158,8 @@ export function Locker({
         cancelHold();
       }}
       onPointerDown={() => {
-        if (!isHeld) {
-          cancelHold();
+        if (!isDragging) {
+          startHold();
         }
       }}
       onHoverStart={() => {
@@ -209,7 +211,7 @@ export function Locker({
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onClick={() => {
-          if (onExpand && (isActive || isHeld || isHovered)) {
+          if (onExpand && canExpand) {
             onExpand();
             return;
           }
