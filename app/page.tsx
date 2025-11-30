@@ -95,7 +95,6 @@ export default function HomePage() {
     <main className="main-shell">
       <header className="controls">
         <LayoutToggle value={layout} onChange={setLayout} />
-        <span style={{ color: 'var(--muted)', fontSize: 14 }}>Layout: {layout}</span>
       </header>
       <div className="atlas-stage" ref={stageRef}>
         <RelationsLayer museums={museums} positions={positions} stage={stageSize} layout={layout} />

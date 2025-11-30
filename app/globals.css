@@ -130,10 +130,6 @@ a {
   overflow: hidden;
 }
 
-.locker-tile.expanded {
-  overflow: visible;
-}
-
 .locker-surface {
   position: absolute;
   inset: 0;
