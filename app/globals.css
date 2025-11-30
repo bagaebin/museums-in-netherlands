@@ -60,6 +60,12 @@ a {
   height: 100%;
 }
 
+.relation-ribbon.interactive,
+.relation-label.interactive {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 .controls {
   display: flex;
   gap: 12px;

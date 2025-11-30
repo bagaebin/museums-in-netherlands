@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import { LayoutMode, Museum, Position } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
@@ -9,9 +10,21 @@ interface RelationsLayerProps {
   positions: Record<string, Position>;
   stage: { width: number; height: number };
   layout: LayoutMode;
+  onRelationClick?: (sourceId: string, targetId: string) => void;
 }
 
-export function RelationsLayer({ museums, positions, stage, layout }: RelationsLayerProps) {
+export function RelationsLayer({
+  museums,
+  positions,
+  stage,
+  layout,
+  onRelationClick,
+}: RelationsLayerProps) {
+  const museumById = useMemo(
+    () => Object.fromEntries(museums.map((museum) => [museum.id, museum])),
+    [museums]
+  );
+
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
 
   const getEdgeSegment = (source: Position, target: Position) => {
@@ -129,17 +142,36 @@ export function RelationsLayer({ museums, positions, stage, layout }: RelationsL
           const label = estimateReveal(rel.label, distance);
           const pathId = `path-${pairId}`;
           const ribbonPoints = `${sA.x},${sA.y} ${sB.x},${sB.y} ${tB.x},${tB.y} ${tA.x},${tA.y}`;
+          const activateRelation = () => onRelationClick?.(museum.id, rel.targetId);
+
           return (
-            <g key={pathId}>
+            <g
+              key={pathId}
+              role="button"
+              tabIndex={0}
+              aria-label={`${museum.name} – ${museumById[rel.targetId]?.name ?? rel.targetId} 연결 보기`}
+              onClick={activateRelation}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  activateRelation();
+                }
+              }}
+              style={{ pointerEvents: 'auto' }}
+            >
               <motion.polygon
                 points={ribbonPoints}
-                className="relation-ribbon"
+                className="relation-ribbon interactive"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
               />
               <motion.path id={pathId} d={path} className="relation-label-path" />
-              <motion.text className="relation-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <motion.text
+                className="relation-label interactive"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
                 <textPath xlinkHref={`#${pathId}`} startOffset="50%" textAnchor="middle">
                   {label}
                 </textPath>

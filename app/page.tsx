@@ -87,6 +87,13 @@ export default function HomePage() {
     setExpandedId(null);
   };
 
+  const handleRelationClick = (sourceId: string, targetId: string) => {
+    const candidate =
+      activeId && (activeId === sourceId || activeId === targetId) ? activeId : sourceId;
+    setActiveId(candidate);
+    setExpandedId(candidate);
+  };
+
   const handlePositionChange = (id: string, pos: Position) => {
     setPositions((prev) => ({ ...prev, [id]: pos }));
   };
@@ -97,7 +104,13 @@ export default function HomePage() {
         <LayoutToggle value={layout} onChange={setLayout} />
       </header>
       <div className="atlas-stage" ref={stageRef}>
-        <RelationsLayer museums={museums} positions={positions} stage={stageSize} layout={layout} />
+        <RelationsLayer
+          museums={museums}
+          positions={positions}
+          stage={stageSize}
+          layout={layout}
+          onRelationClick={handleRelationClick}
+        />
         <LockersGrid
           museums={museums}
           positions={positions}
