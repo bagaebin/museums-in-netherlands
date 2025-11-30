@@ -150,7 +150,10 @@ export function Locker({
     const start = performance.now();
 
     const tick = (now: number) => {
-      if (!pointerInsideRef.current || !isActive || isDragging) {
+      const lockerHovered = lockerRef.current?.matches(':hover') ?? false;
+      pointerInsideRef.current = lockerHovered;
+
+      if (!lockerHovered || !isActive || isDragging) {
         resetHoverState();
         return;
       }

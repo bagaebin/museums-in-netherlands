@@ -13,7 +13,7 @@
 4. **Reordering transitions**: When layouts change or lockers are repositioned programmatically, movement should be linear/tweened (no bounce).
 
 ## Edge Cases
-- Cancelling hover (pointer leave, drag start, or deactivation) resets the hover timer and hides the popup.
+- Cancelling hover (pointer leave, drag start, or deactivation) resets the hover timer and hides the popup. A locker must actively report `:hover` on each frame for the dwell to advance; losing hover instantly zeros the gauge.
 - Moving the pointer outside the locker (including fast exits or leaving the window) should instantly zero any hover dwell so the popup cannot continue opening, and the dwell counter should only advance while the pointer position is confirmed to be inside the locker bounds.
 - Click suppression after dragging prevents accidental reopen events.
 - Expanded state uses an increased clip radius suited to the current viewport, but only after the hover dwell completes.
