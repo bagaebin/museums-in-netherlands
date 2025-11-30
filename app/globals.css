@@ -8,6 +8,7 @@
 
 * {
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
@@ -18,7 +19,6 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow: hidden;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 a {
@@ -244,6 +244,13 @@ a {
 .relation-label:hover {
   fill: var(--accent);
   text-shadow: 0 0 10px rgba(255, 180, 0, 0.45);
+}
+
+.relation-hit:focus-visible .relation-ribbon,
+.relation-hit:focus-visible .relation-label {
+  fill: unset;
+  stroke: unset;
+  text-shadow: unset;
 }
 
 .relation-overlay {
@@ -496,6 +503,15 @@ a {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* 네덜란드 지도 배경 */
+.map-background {
+  background: url('/(pixelized)netherlands.svg') no-repeat center center;
+  background-size: contain;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 }
 
 @media (max-width: 900px) {

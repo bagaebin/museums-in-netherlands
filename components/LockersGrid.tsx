@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { LayoutMode, Museum, Position } from '../lib/types';
 import { Locker, ClipStyle } from './Locker';
+import { RelationsLayer } from './RelationsLayer';
 
 interface LockersGridProps {
   museums: Museum[];
@@ -15,6 +16,8 @@ interface LockersGridProps {
   highlightId?: string | null;
   clipStyle?: ClipStyle;
   expansionRadius?: number;
+  stage: { width: number; height: number };
+  onRelationClick?: (sourceId: string, targetId: string) => void;
 }
 
 export function LockersGrid({
@@ -28,7 +31,10 @@ export function LockersGrid({
   highlightId,
   clipStyle = 'rect',
   expansionRadius = 800,
+  stage,
+  onRelationClick,
 }: LockersGridProps) {
+  const [animationComplete, setAnimationComplete] = useState(false);
   const sorted = useMemo(() => museums.slice().sort((a, b) => a.name.localeCompare(b.name)), [museums]);
 
   return (
@@ -42,11 +48,21 @@ export function LockersGrid({
           onOpen={() => onOpen(museum.id)}
           onExpand={() => onExpand?.(museum.id)}
           onDrag={(pos) => onPositionChange(museum.id, pos)}
+          onAnimationComplete={() => setAnimationComplete(true)}
           clipStyle={clipStyle}
           highlight={highlightId === museum.id}
           expansionRadius={expansionRadius}
         />
       ))}
+      {animationComplete && (
+        <RelationsLayer
+          museums={museums}
+          positions={positions}
+          stage={stage}
+          layout={layout}
+          onRelationClick={onRelationClick}
+        />
+      )}
     </div>
   );
 }
