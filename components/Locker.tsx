@@ -111,105 +111,85 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [hoverProgress, setHoverProgress] = useState(0);
   const lockerRef = useRef<HTMLDivElement | null>(null);
-  const hoverStart = useRef<number | null>(null);
-  const hoverTimer = useRef<NodeJS.Timeout | null>(null);
-  const hoverIntentId = useRef(0);
+  const hoverRaf = useRef<number | null>(null);
+  const hoverSessionActive = useRef(false);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
 
-  const clearHoverTimer = useCallback(() => {
-    if (hoverTimer.current) {
-      clearTimeout(hoverTimer.current);
-      hoverTimer.current = null;
-    }
-  }, []);
+  const stopHoverTracking = useCallback(
+    (preserveProgress = false) => {
+      if (hoverRaf.current) {
+        cancelAnimationFrame(hoverRaf.current);
+      }
+      hoverRaf.current = null;
+      hoverSessionActive.current = false;
+
+      if (!preserveProgress) {
+        setHoverProgress(0);
+      }
+    },
+    []
+  );
 
   const resetHoverState = useCallback(() => {
     setIsHovered(false);
     setIsHeld(false);
-    clearHoverTimer();
-    hoverStart.current = null;
-    hoverIntentId.current++;
-  }, [clearHoverTimer]);
+    stopHoverTracking();
+  }, [stopHoverTracking]);
 
-  const scheduleHoverExpand = () => {
-    clearHoverTimer();
+  const beginHoverTracking = useCallback(() => {
+    if (hoverSessionActive.current || !isActive || isDragging || isHeld || !isHovered) return;
 
-    const intentId = ++hoverIntentId.current;
-    hoverStart.current = Date.now();
+    hoverSessionActive.current = true;
+    setHoverProgress(0);
 
-    hoverTimer.current = setTimeout(() => {
-      const dwell = hoverStart.current ? Date.now() - hoverStart.current : 0;
-      const stillValid =
-        intentId === hoverIntentId.current && isActive && isHovered && !isDragging && dwell >= HOVER_EXPAND_DELAY;
+    const start = performance.now();
 
-      if (!stillValid) return;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / HOVER_EXPAND_DELAY, 1);
+      setHoverProgress(progress);
 
-      setIsHeld(true);
-      onExpand?.();
-    }, HOVER_EXPAND_DELAY);
-  };
+      if (progress >= 1) {
+        stopHoverTracking(true);
+        setIsHeld(true);
+        onExpand?.();
+        return;
+      }
 
-  useEffect(() => () => clearHoverTimer(), []);
+      hoverRaf.current = requestAnimationFrame(tick);
+    };
+
+    hoverRaf.current = requestAnimationFrame(tick);
+  }, [isActive, isDragging, isHeld, isHovered, onExpand, stopHoverTracking]);
 
   useEffect(() => {
-    clearHoverTimer();
-
     if (isActive && isHovered && !isDragging && !isHeld) {
-      scheduleHoverExpand();
-      return;
-    }
-
-    if (!isActive || isDragging || !isHovered) {
-      hoverStart.current = null;
-      hoverIntentId.current++;
-
-      if (isHeld) {
+      beginHoverTracking();
+    } else {
+      stopHoverTracking(isHeld);
+      if (!isActive || !isHovered || isDragging) {
         setIsHeld(false);
       }
     }
-  }, [isActive, isHovered, isDragging, isHeld]);
+  }, [isActive, isHovered, isDragging, isHeld, beginHoverTracking, stopHoverTracking]);
 
   useEffect(() => {
-    if (!isActive) {
-      setIsHeld(false);
-      clearHoverTimer();
-      hoverStart.current = null;
-      hoverIntentId.current++;
-    }
-  }, [isActive]);
-
-  useEffect(() => {
-    const handlePointerMove = (event: PointerEvent) => {
-      if (!lockerRef.current || isDragging || (!isHovered && !isHeld)) return;
-
-      const rect = lockerRef.current.getBoundingClientRect();
-      const inside =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom;
-
-      if (!inside) {
-        resetHoverState();
-      }
-    };
-
     const handleWindowPointerLeave = () => {
       if (isHovered || isHeld) {
         resetHoverState();
       }
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerleave', handleWindowPointerLeave);
 
     return () => {
-      window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerleave', handleWindowPointerLeave);
+      stopHoverTracking();
     };
-  }, [isHovered, isHeld, isDragging, resetHoverState]);
+  }, [isHovered, isHeld, resetHoverState, stopHoverTracking]);
 
   const isDoorOpen = isActive;
   const isExpanded = isHeld;
@@ -239,10 +219,11 @@ export function Locker({
         resetHoverState();
       }}
       onDragStart={() => {
-        clearHoverTimer();
         setIsDragging(true);
         setIsHovered(false);
         setIsHeld(false);
+        setHoverProgress(0);
+        stopHoverTracking();
         dragOrigin.current = position;
         suppressClick.current = true;
       }}
@@ -264,12 +245,20 @@ export function Locker({
           suppressClick.current = false;
         }, 120);
         setIsHovered(false);
-        hoverStart.current = null;
-        hoverIntentId.current++;
+        setHoverProgress(0);
+        stopHoverTracking();
         onDrag?.({ x: nextX, y: nextY });
       }}
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
+      <div className="hover-gauge" aria-hidden>
+        <motion.div
+          className="hover-gauge-fill"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: hoverProgress }}
+          transition={{ type: 'tween', duration: 0.08 }}
+        />
+      </div>
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
@@ -305,9 +294,8 @@ export function Locker({
             return;
           }
           setIsHeld(false);
-          clearHoverTimer();
-          hoverStart.current = null;
-          hoverIntentId.current++;
+          setHoverProgress(0);
+          stopHoverTracking();
           onOpen();
         }}
       >
