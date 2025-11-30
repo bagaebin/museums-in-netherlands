@@ -191,6 +191,31 @@ export function Locker({
     };
   }, [isHovered, isHeld, resetHoverState, stopHoverTracking]);
 
+  useEffect(() => {
+    if (!isHovered && !hoverSessionActive.current && !isHeld) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = lockerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      if (!inside) {
+        resetHoverState();
+      }
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+    };
+  }, [isHovered, isHeld, resetHoverState]);
+
   const isDoorOpen = isActive;
   const isExpanded = isHeld;
   const isBackgroundOpen = isActive && (isHovered || isExpanded);
