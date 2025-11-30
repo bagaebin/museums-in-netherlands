@@ -209,7 +209,10 @@ export default function HomePage() {
             >
               <button
                 className="relation-close"
-                onClick={() => setRelationDetail(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRelationDetail(null);
+                }}
                 aria-label="연결 정보 닫기"
               >
                 ✕

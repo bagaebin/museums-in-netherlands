@@ -1,8 +1,18 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 
-const inter = Inter({ subsets: ['latin'] });
+const clashDisplay = localFont({
+  src: [
+    {
+      path: '../fonts/ClashDisplay-Variable.woff2',
+      weight: '200 700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-clash-display',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Museum Lockers Atlas',
@@ -12,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={clashDisplay.className}>{children}</body>
     </html>
   );
 }

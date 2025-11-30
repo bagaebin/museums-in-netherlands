@@ -9,8 +9,8 @@
     "positionGrid": { "x": 0, "y": 0 },
     "positionMap": { "x": 0.63, "y": 0.47 },
     "relations": [
-      { "targetId": "stedelijk-amsterdam", "label": "공동 기획 경험" },
-      { "targetId": "groninger-museum", "label": "새로운 매체 연구" }
+      { "targetId": "stedelijk-amsterdam", "label": "co-production" },
+      { "targetId": "groninger-museum", "label": "new media research" }
     ],
     "detail": {
       "description": "아른험에 위치한 현대미술 중심 기관으로 실험적 전시를 선보인다.",
