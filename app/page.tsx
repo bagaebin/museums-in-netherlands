@@ -19,6 +19,14 @@ export default function HomePage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [relationDetail, setRelationDetail] = useState<
+    | {
+        source: Museum;
+        target: Museum;
+        label: string;
+      }
+    | null
+  >(null);
   const [stageSize, setStageSize] = useState({ width: 1200, height: 760 });
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
     computeLayoutPositions(museums, 'grid', { width: 1200, height: 760 })
@@ -85,6 +93,23 @@ export default function HomePage() {
   const handleLockerOpen = (id: string) => {
     setActiveId(id);
     setExpandedId(null);
+    setRelationDetail(null);
+  };
+
+  const handleRelationClick = (sourceId: string, targetId: string) => {
+    const source = museumById[sourceId];
+    const target = museumById[targetId];
+    const forwardLabel = source?.relations.find((rel) => rel.targetId === targetId)?.label;
+    const reverseLabel = target?.relations.find((rel) => rel.targetId === sourceId)?.label;
+
+    if (!source || !target) return;
+
+    setRelationDetail({
+      source,
+      target,
+      label: forwardLabel ?? reverseLabel ?? '연결 정보',
+    });
+    setExpandedId(null);
   };
 
   const handlePositionChange = (id: string, pos: Position) => {
@@ -95,10 +120,15 @@ export default function HomePage() {
     <main className="main-shell">
       <header className="controls">
         <LayoutToggle value={layout} onChange={setLayout} />
-        <span style={{ color: 'var(--muted)', fontSize: 14 }}>Layout: {layout}</span>
       </header>
       <div className="atlas-stage" ref={stageRef}>
-        <RelationsLayer museums={museums} positions={positions} stage={stageSize} layout={layout} />
+        <RelationsLayer
+          museums={museums}
+          positions={positions}
+          stage={stageSize}
+          layout={layout}
+          onRelationClick={handleRelationClick}
+        />
         <LockersGrid
           museums={museums}
           positions={positions}
@@ -159,6 +189,54 @@ export default function HomePage() {
       )}
 
       <FabButtons onShowOverview={() => setModal('overview')} onShowGallery={() => setModal('gallery')} />
+
+      <AnimatePresence>
+        {relationDetail && (
+          <motion.div
+            className="relation-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setRelationDetail(null)}
+          >
+            <motion.div
+              className="relation-panel"
+              initial={{ scale: 0.96, opacity: 0, y: 12 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.96, opacity: 0, y: 12 }}
+              transition={{ type: 'spring', stiffness: 140, damping: 18 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="relation-close"
+                onClick={() => setRelationDetail(null)}
+                aria-label="연결 정보 닫기"
+              >
+                ✕
+              </button>
+              <div className="relation-head">
+                <span className="relation-chip">연결 정보</span>
+                <h3>
+                  {relationDetail.source.name} ↔ {relationDetail.target.name}
+                </h3>
+                <p>{relationDetail.label}</p>
+              </div>
+              <div className="relation-meta">
+                <div>
+                  <small>출발</small>
+                  <strong>{relationDetail.source.name}</strong>
+                  <span>{relationDetail.source.city}</span>
+                </div>
+                <div>
+                  <small>도착</small>
+                  <strong>{relationDetail.target.name}</strong>
+                  <span>{relationDetail.target.city}</span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {expandedMuseum && (
