@@ -46,6 +46,20 @@ a {
   overflow: hidden;
 }
 
+.atlas-stage.map-mode {
+  cursor: grab;
+}
+
+.atlas-stage.is-panning {
+  cursor: grabbing;
+}
+
+.atlas-content {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.1s ease-out;
+}
+
 .lockers-layer {
   position: absolute;
   inset: 0;
