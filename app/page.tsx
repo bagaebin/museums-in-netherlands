@@ -54,7 +54,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (layout === 'map') {
-      const initialScale = 0.72;
+      const initialScale = 0.38;
       setMapScale(initialScale);
       setMapOffset({
         x: (stageSize.width - stageSize.width * initialScale) / 2,
@@ -143,7 +143,7 @@ export default function HomePage() {
 
     const cursor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     const zoomIntensity = 0.0012;
-    const nextScale = Math.min(Math.max(mapScale - event.deltaY * zoomIntensity, 0.5), 2.6);
+    const nextScale = Math.min(Math.max(mapScale - event.deltaY * zoomIntensity, 0.3), 2.6);
     const scaleRatio = nextScale / mapScale;
 
     const nextOffset = {
