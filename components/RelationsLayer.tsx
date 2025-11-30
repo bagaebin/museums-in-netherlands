@@ -149,6 +149,7 @@ export function RelationsLayer({
               key={pathId}
               role="button"
               tabIndex={0}
+              className="relation-hit"
               aria-label={`${museum.name} – ${museumById[rel.targetId]?.name ?? rel.targetId} 연결 보기`}
               onClick={activateRelation}
               onKeyDown={(event) => {
