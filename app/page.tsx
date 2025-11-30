@@ -121,7 +121,8 @@ export default function HomePage() {
       <header className="controls">
         <LayoutToggle value={layout} onChange={setLayout} />
       </header>
-      <div className="atlas-stage" ref={stageRef}>
+      <div ref={stageRef} className="atlas-stage">
+        {layout === 'map' && <div className="map-background" />}
         <RelationsLayer
           museums={museums}
           positions={positions}

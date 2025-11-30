@@ -505,6 +505,15 @@ a {
   display: block;
 }
 
+/* 네덜란드 지도 배경 */
+.map-background {
+  background: url('/(pixelized)netherlands.svg') no-repeat center center;
+  background-size: contain;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
 @media (max-width: 900px) {
   .mega-grid {
     grid-template-columns: 1fr;
