@@ -225,6 +225,109 @@ a {
   font-size: 12px;
 }
 
+.relation-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 24;
+  padding: 18px;
+}
+
+.relation-panel {
+  position: relative;
+  width: min(480px, 92vw);
+  background: linear-gradient(145deg, rgba(26, 30, 38, 0.9), rgba(12, 14, 18, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px 24px 18px;
+  box-shadow: 0 20px 90px rgba(0, 0, 0, 0.55);
+  color: var(--text);
+}
+
+.relation-panel::after {
+  content: '';
+  position: absolute;
+  inset: -20% auto auto 60%;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(255, 180, 0, 0.18), transparent 60%);
+  filter: blur(50px);
+  transform: translate(-50%, -20%);
+  pointer-events: none;
+}
+
+.relation-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.relation-head {
+  position: relative;
+  z-index: 1;
+}
+
+.relation-head h3 {
+  margin: 10px 0 8px;
+  font-size: 22px;
+}
+
+.relation-head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.relation-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.relation-meta {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.relation-meta div {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: grid;
+  gap: 4px;
+}
+
+.relation-meta small {
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.relation-meta strong {
+  font-size: 16px;
+}
+
 .mega-overlay {
   position: fixed;
   inset: 0;
