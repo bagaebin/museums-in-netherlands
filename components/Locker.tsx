@@ -2,7 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const HOVER_EXPAND_DELAY = 1500;
 
@@ -111,93 +111,155 @@ export function Locker({
   const [isHovered, setIsHovered] = useState(false);
   const [isHeld, setIsHeld] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const hoverStart = useRef<number | null>(null);
-  const hoverTimer = useRef<NodeJS.Timeout | null>(null);
-  const hoverIntentId = useRef(0);
+  const [hoverProgress, setHoverProgress] = useState(0);
+  const lockerRef = useRef<HTMLDivElement | null>(null);
+  const hoverRaf = useRef<number | null>(null);
+  const hoverSessionActive = useRef(false);
+  const pointerInsideRef = useRef(false);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
 
-  const clearHoverTimer = () => {
-    if (hoverTimer.current) {
-      clearTimeout(hoverTimer.current);
-      hoverTimer.current = null;
-    }
-  };
+  const stopHoverTracking = useCallback(
+    (preserveProgress = false) => {
+      if (hoverRaf.current) {
+        cancelAnimationFrame(hoverRaf.current);
+      }
+      hoverRaf.current = null;
+      hoverSessionActive.current = false;
 
-  const scheduleHoverExpand = () => {
-    clearHoverTimer();
+      if (!preserveProgress) {
+        setHoverProgress(0);
+      }
+    },
+    []
+  );
 
-    const intentId = ++hoverIntentId.current;
-    hoverStart.current = Date.now();
+  const resetHoverState = useCallback(() => {
+    pointerInsideRef.current = false;
+    setIsHovered(false);
+    setIsHeld(false);
+    stopHoverTracking();
+  }, [stopHoverTracking]);
 
-    hoverTimer.current = setTimeout(() => {
-      const dwell = hoverStart.current ? Date.now() - hoverStart.current : 0;
-      const stillValid =
-        intentId === hoverIntentId.current && isActive && isHovered && !isDragging && dwell >= HOVER_EXPAND_DELAY;
+  const beginHoverTracking = useCallback(() => {
+    if (hoverSessionActive.current || !isActive || isDragging || isHeld || !isHovered) return;
 
-      if (!stillValid) return;
+    hoverSessionActive.current = true;
+    setHoverProgress(0);
 
-      setIsHeld(true);
-      onExpand?.();
-    }, HOVER_EXPAND_DELAY);
-  };
+    const start = performance.now();
 
-  useEffect(() => () => clearHoverTimer(), []);
+    const tick = (now: number) => {
+      const lockerHovered = pointerInsideRef.current;
+
+      if (!lockerHovered || !isActive || isDragging) {
+        resetHoverState();
+        return;
+      }
+
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / HOVER_EXPAND_DELAY, 1);
+      setHoverProgress(progress);
+
+      if (progress >= 1) {
+        stopHoverTracking(true);
+        setIsHeld(true);
+        onExpand?.();
+        return;
+      }
+
+      hoverRaf.current = requestAnimationFrame(tick);
+    };
+
+    hoverRaf.current = requestAnimationFrame(tick);
+  }, [isActive, isDragging, isHeld, isHovered, onExpand, resetHoverState, stopHoverTracking]);
 
   useEffect(() => {
-    clearHoverTimer();
-
     if (isActive && isHovered && !isDragging && !isHeld) {
-      scheduleHoverExpand();
-      return;
-    }
-
-    if (!isActive || isDragging || !isHovered) {
-      hoverStart.current = null;
-      hoverIntentId.current++;
-
-      if (isHeld) {
+      beginHoverTracking();
+    } else {
+      stopHoverTracking(isHeld);
+      if (!isActive || !isHovered || isDragging) {
         setIsHeld(false);
       }
     }
-  }, [isActive, isHovered, isDragging, isHeld]);
+  }, [isActive, isHovered, isDragging, isHeld, beginHoverTracking, stopHoverTracking]);
 
   useEffect(() => {
-    if (!isActive) {
-      setIsHeld(false);
-      clearHoverTimer();
-      hoverStart.current = null;
-      hoverIntentId.current++;
-    }
-  }, [isActive]);
+    const handleWindowPointerLeave = () => {
+      if (isHovered || isHeld) {
+        resetHoverState();
+      }
+    };
 
-  const isOpen = isActive || isHeld;
-  const radius = isHeld ? expansionRadius : 700;
+    window.addEventListener('pointerleave', handleWindowPointerLeave);
+
+    return () => {
+      window.removeEventListener('pointerleave', handleWindowPointerLeave);
+      stopHoverTracking();
+    };
+  }, [isHovered, isHeld, resetHoverState, stopHoverTracking]);
+
+  useEffect(() => {
+    if (!isHovered && !hoverSessionActive.current && !isHeld) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = lockerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const inside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
+
+      pointerInsideRef.current = inside;
+      if (!inside) resetHoverState();
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+    };
+  }, [isHovered, isHeld, resetHoverState]);
+
+  const isDoorOpen = isActive;
+  const isExpanded = isHeld;
+  const isBackgroundOpen = isActive && (isHovered || isExpanded);
+  const radius = isExpanded ? expansionRadius : 700;
+
+  const positionTransition = isDragging
+    ? { type: 'tween', duration: 0 }
+    : { type: 'tween', ease: 'easeInOut', duration: 0.25 };
 
   return (
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isHeld ? ' expanded' : ''}`}
+      ref={lockerRef}
       style={{ zIndex: isHeld ? 5 : undefined }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
+      transition={positionTransition}
       drag
       dragMomentum={false}
       onPointerEnter={() => {
         if (isDragging) return;
+        pointerInsideRef.current = true;
         setIsHovered(true);
       }}
       onPointerLeave={() => {
-        setIsHovered(false);
-        clearHoverTimer();
-        hoverStart.current = null;
-        hoverIntentId.current++;
+        pointerInsideRef.current = false;
+        resetHoverState();
       }}
       onDragStart={() => {
-        clearHoverTimer();
         setIsDragging(true);
+        pointerInsideRef.current = false;
         setIsHovered(false);
         setIsHeld(false);
+        setHoverProgress(0);
+        stopHoverTracking();
         dragOrigin.current = position;
         suppressClick.current = true;
       }}
@@ -219,44 +281,59 @@ export function Locker({
           suppressClick.current = false;
         }, 120);
         setIsHovered(false);
-        hoverStart.current = null;
-        hoverIntentId.current++;
+        setHoverProgress(0);
+        stopHoverTracking();
         onDrag?.({ x: nextX, y: nextY });
       }}
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
+      <div className="hover-gauge" aria-hidden>
+        <motion.div
+          className="hover-gauge-fill"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: hoverProgress }}
+          transition={{ type: 'tween', duration: 0.08 }}
+        />
+      </div>
       <motion.div
         className={`detail-bg${isHeld ? ' expanded' : ''}`}
         variants={variants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isBackgroundOpen ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
       />
+      <motion.div
+        className="locker-inner-label"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isActive ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
+        aria-hidden
+      >
+        {museum.name}
+      </motion.div>
       <motion.button
         className="locker-surface"
         variants={doorVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isDoorOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
         onPointerEnter={() => {
           if (isDragging) return;
+          pointerInsideRef.current = true;
           setIsHovered(true);
         }}
         onPointerLeave={() => {
-          setIsHovered(false);
-          clearHoverTimer();
-          hoverStart.current = null;
-          hoverIntentId.current++;
+          pointerInsideRef.current = false;
+          resetHoverState();
         }}
         onClick={() => {
           if (isDragging || suppressClick.current) {
             return;
           }
           setIsHeld(false);
-          clearHoverTimer();
-          hoverStart.current = null;
-          hoverIntentId.current++;
+          setHoverProgress(0);
+          stopHoverTracking();
           onOpen();
         }}
       >
@@ -265,9 +342,12 @@ export function Locker({
       <motion.div
         className="detail-content"
         variants={detailContentVariants}
-        animate={isOpen ? 'open' : 'closed'}
+        animate={isExpanded ? 'open' : 'closed'}
         initial="closed"
-        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
+        style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
+        onPointerLeave={() => {
+          resetHoverState();
+        }}
       >
         <h4>{museum.name}</h4>
         <p>{museum.detail.description}</p>
