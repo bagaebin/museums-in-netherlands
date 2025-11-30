@@ -219,6 +219,7 @@ a {
   stroke-width: 1px;
   vector-effect: non-scaling-stroke;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+  transition: fill 0.2s ease, stroke 0.2s ease;
 }
 
 .relation-label-path {
@@ -229,6 +230,20 @@ a {
 .relation-label {
   fill: var(--text);
   font-size: 12px;
+  transition: fill 0.2s ease, text-shadow 0.2s ease;
+}
+
+.relation-hit:hover .relation-ribbon,
+.relation-hit:focus-visible .relation-ribbon {
+  fill: rgba(255, 180, 0, 0.28);
+  stroke: rgba(255, 180, 0, 0.6);
+}
+
+.relation-hit:hover .relation-label,
+.relation-hit:focus-visible .relation-label,
+.relation-label:hover {
+  fill: var(--accent);
+  text-shadow: 0 0 10px rgba(255, 180, 0, 0.45);
 }
 
 .relation-overlay {
