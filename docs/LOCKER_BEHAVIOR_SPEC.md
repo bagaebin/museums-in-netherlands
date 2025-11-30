@@ -14,6 +14,6 @@
 
 ## Edge Cases
 - Cancelling hover (pointer leave, drag start, or deactivation) resets the hover timer and hides the popup.
-- Moving the pointer outside the locker (including fast exits or leaving the window) should instantly zero any hover dwell so the popup cannot continue opening.
+- Moving the pointer outside the locker (including fast exits or leaving the window) should instantly zero any hover dwell so the popup cannot continue opening, and the dwell counter should only advance while the pointer position is confirmed to be inside the locker bounds.
 - Click suppression after dragging prevents accidental reopen events.
 - Expanded state uses an increased clip radius suited to the current viewport, but only after the hover dwell completes.

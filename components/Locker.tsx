@@ -115,6 +115,7 @@ export function Locker({
   const lockerRef = useRef<HTMLDivElement | null>(null);
   const hoverRaf = useRef<number | null>(null);
   const hoverSessionActive = useRef(false);
+  const pointerInsideRef = useRef(false);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
 
@@ -134,6 +135,7 @@ export function Locker({
   );
 
   const resetHoverState = useCallback(() => {
+    pointerInsideRef.current = false;
     setIsHovered(false);
     setIsHeld(false);
     stopHoverTracking();
@@ -148,6 +150,11 @@ export function Locker({
     const start = performance.now();
 
     const tick = (now: number) => {
+      if (!pointerInsideRef.current || !isActive || isDragging) {
+        resetHoverState();
+        return;
+      }
+
       const elapsed = now - start;
       const progress = Math.min(elapsed / HOVER_EXPAND_DELAY, 1);
       setHoverProgress(progress);
@@ -163,7 +170,7 @@ export function Locker({
     };
 
     hoverRaf.current = requestAnimationFrame(tick);
-  }, [isActive, isDragging, isHeld, isHovered, onExpand, stopHoverTracking]);
+  }, [isActive, isDragging, isHeld, isHovered, onExpand, resetHoverState, stopHoverTracking]);
 
   useEffect(() => {
     if (isActive && isHovered && !isDragging && !isHeld) {
@@ -204,6 +211,8 @@ export function Locker({
         event.clientY >= rect.top &&
         event.clientY <= rect.bottom;
 
+      pointerInsideRef.current = inside;
+
       if (!inside) {
         resetHoverState();
       }
@@ -238,13 +247,16 @@ export function Locker({
       dragMomentum={false}
       onPointerEnter={() => {
         if (isDragging) return;
+        pointerInsideRef.current = true;
         setIsHovered(true);
       }}
       onPointerLeave={() => {
+        pointerInsideRef.current = false;
         resetHoverState();
       }}
       onDragStart={() => {
         setIsDragging(true);
+        pointerInsideRef.current = false;
         setIsHovered(false);
         setIsHeld(false);
         setHoverProgress(0);
@@ -309,9 +321,11 @@ export function Locker({
         style={{ transformOrigin: 'left center' }}
         onPointerEnter={() => {
           if (isDragging) return;
+          pointerInsideRef.current = true;
           setIsHovered(true);
         }}
         onPointerLeave={() => {
+          pointerInsideRef.current = false;
           resetHoverState();
         }}
         onClick={() => {
