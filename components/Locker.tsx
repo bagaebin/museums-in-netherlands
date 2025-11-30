@@ -150,8 +150,7 @@ export function Locker({
     const start = performance.now();
 
     const tick = (now: number) => {
-      const lockerHovered = lockerRef.current?.matches(':hover') ?? false;
-      pointerInsideRef.current = lockerHovered;
+      const lockerHovered = pointerInsideRef.current;
 
       if (!lockerHovered || !isActive || isDragging) {
         resetHoverState();
@@ -215,10 +214,7 @@ export function Locker({
         event.clientY <= rect.bottom;
 
       pointerInsideRef.current = inside;
-
-      if (!inside) {
-        resetHoverState();
-      }
+      if (!inside) resetHoverState();
     };
 
     window.addEventListener('pointermove', handlePointerMove);
