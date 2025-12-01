@@ -9,6 +9,8 @@ export const TILE_HEIGHT = 160;
 export const GRID_GAP = 0;
 export const STAGE_PADDING = 0;
 const MAP_OVERSCAN = 2;
+const MAP_BASE_WIDTH = 612;
+const MAP_BASE_HEIGHT = 792;
 
 export function computeLayoutPositions(
   museums: Museum[],
@@ -78,12 +80,12 @@ function buildTopicPositions(museums: Museum[], stage: { width: number; height: 
 function buildMapPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
   const positions: Record<string, Position> = {};
   const expandedStage = {
-    width: stage.width * (1 + MAP_OVERSCAN),
-    height: stage.height * (1 + MAP_OVERSCAN),
+    width: MAP_BASE_WIDTH * (1 + MAP_OVERSCAN),
+    height: MAP_BASE_HEIGHT * (1 + MAP_OVERSCAN),
   };
   const offset = {
-    x: (stage.width - expandedStage.width) / 2,
-    y: (stage.height - expandedStage.height) / 2,
+    x: (MAP_BASE_WIDTH - expandedStage.width) / 2,
+    y: (MAP_BASE_HEIGHT - expandedStage.height) / 2,
   };
   museums.forEach((museum) => {
     positions[museum.id] = {
