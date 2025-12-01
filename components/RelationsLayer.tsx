@@ -108,7 +108,7 @@ export function RelationsLayer({
       preserveAspectRatio="xMidYMid slice"
       width="100%"
       height="100%"
-      style={{ ['--relation-thickness' as string]: `${relationThickness}px` }}
+      style={{ overflow: 'visible', ['--relation-thickness' as string]: `${relationThickness}px` }}
     >
       {museums.map((museum) =>
         museum.relations.map((rel) => {

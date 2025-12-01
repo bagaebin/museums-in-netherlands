@@ -8,7 +8,7 @@ import { LockersGrid } from '../components/LockersGrid';
 import { RelationsLayer } from '../components/RelationsLayer';
 import { FabButtons } from '../components/FabButtons';
 import { applyHashWarp } from '../lib/warp';
-import { computeLayoutPositions } from '../lib/layout';
+import { TILE_HEIGHT, TILE_WIDTH, computeLayoutPositions } from '../lib/layout';
 import { LayoutMode, Museum, Position } from '../lib/types';
 
 const museums = museumsData as Museum[];
@@ -53,19 +53,37 @@ export default function HomePage() {
   }, [layout, stageSize]);
 
   useEffect(() => {
-    if (layout === 'map') {
-      const initialScale = 1;
-      setMapScale(initialScale);
-      setMapOffset({
-        x: 0,
-        y: 0,
-      });
+    if (layout !== 'map') {
+      setMapScale(1);
+      setMapOffset({ x: 0, y: 0 });
       return;
     }
 
-    setMapScale(1);
-    setMapOffset({ x: 0, y: 0 });
-  }, [layout, stageSize]);
+    const entries = Object.values(positions);
+    if (!entries.length) return;
+
+    const minX = Math.min(...entries.map((p) => p.x));
+    const minY = Math.min(...entries.map((p) => p.y));
+    const maxX = Math.max(...entries.map((p) => p.x));
+    const maxY = Math.max(...entries.map((p) => p.y));
+    const contentWidth = maxX - minX + TILE_WIDTH;
+    const contentHeight = maxY - minY + TILE_HEIGHT;
+
+    const padding = 120;
+    const fitScale = Math.min(
+      stageSize.width / (contentWidth + padding * 2),
+      stageSize.height / (contentHeight + padding * 2)
+    );
+
+    const clampedScale = Math.min(Math.max(fitScale, 0.3), 2.6);
+    const centeredOffset = {
+      x: -minX * clampedScale + (stageSize.width - contentWidth * clampedScale) / 2,
+      y: -minY * clampedScale + (stageSize.height - contentHeight * clampedScale) / 2,
+    };
+
+    setMapScale(clampedScale);
+    setMapOffset(centeredOffset);
+  }, [layout, positions, stageSize]);
 
   useEffect(() => {
     applyHashWarp(museums, {
