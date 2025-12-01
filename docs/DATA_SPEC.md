@@ -8,6 +8,9 @@
 - `type`: 기관 유형(예: museum, gallery 등).
 - `region`: 행정 구역 코드.
 - `city`: 도시명.
+- `doorSvg`: 닫힌 문 위에 표시할 SVG 경로. 체커보드 배경 위에 꽉 차게 렌더링된다.
+- `interiorBaseColor`: 문이 열리기 전부터 내부 전체를 채우는 기본 배경색. 문에 뚫린 구멍 사이로도 보인다.
+- `interiorHoverColor`: 문이 열리면서 중앙에서 안쪽으로 차오르는 포인트 배경색. 기본 배경과 구분되도록 살짝 안쪽에 인셋된다.
 - `topic`: 주제/테마 클러스터링에 사용되는 키워드.
 - `positionGrid {x, y}`: 그리드 레이아웃의 정수 좌표.
 - `positionMap {x, y}`: 지도 레이아웃에서 0~1 정규화된 좌표.
@@ -23,10 +26,13 @@
 ```json
 {
   "id": "museum-sonje",
-  "name": "Museum Sonje",
+  "name": "Arnhem Museum - arnhem.svg",
   "type": "museum",
   "region": "NL-Gelderland",
   "city": "Arnhem",
+  "doorSvg": "/lockers/arnhem.svg",
+  "interiorBaseColor": "#f1eae0",
+  "interiorHoverColor": "#f6c27a",
   "topic": "현대미술",
   "positionGrid": { "x": 0, "y": 0 },
   "positionMap": { "x": 0.63, "y": 0.47 },

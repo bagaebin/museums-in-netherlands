@@ -3,19 +3,19 @@
 프로토타입의 디자인·애니메이션 요소를 빠르게 수정할 때 참조해야 할 위치와 상수를 한글로 정리했습니다. 각 항목은 기본값, 역할, 연관 동작을 함께 명시해 두었습니다.
 
 ## 전역 색상·배경·컨트롤
-- **전역 컬러 토큰**: `app/globals.css`의 `:root`에 정의된 `--bg`, `--panel`, `--accent`, `--muted`, `--text` 값으로 전체 테마 색을 제어합니다(1~6행). 배경·패널·강조·보조 텍스트 색 모두 여기서 일괄 변경 가능합니다.
-- **바디 배경 그래디언트**: 동일 파일의 `body` 섹션에서 두 개의 radial-gradient와 기본 배경색을 합성합니다(13~21행). 무드 변경 시 투명도와 위치(예: `circle at 20% 20%`)를 조정하세요.
-- **전체 캔버스 레이아웃**: `.main-shell`(29~35행)과 `.atlas-stage`(37~47행)가 전체 뷰포트 크기, 블러, 배경 그라디언트, 테두리 제거를 담당합니다. 스테이지 블러 강도는 `backdrop-filter: blur(10px)`으로 제어합니다.
-- **상단 컨트롤 스타일**: `.controls` 블록(75~88행)과 `.layout-toggle button`(90~108행)이 레이아웃 토글 패널의 배경 알파, 테두리 투명도, 버튼 패딩·반응 효과를 관리합니다.
-- **FAB(오른쪽 하단) 스타일**: `.fab-cluster`와 `.fab-button`(110~131행)에서 위치, 간격, 라운딩(999px), 그림자 강도를 수정합니다.
+- **전역 컬러 토큰**: `app/globals.css`의 `:root`에 정의된 `--bg`, `--panel`, `--accent`, `--muted`, `--text` 값으로 전체 테마 색을 제어합니다. 배경·패널·강조·보조 텍스트 색 모두 여기서 일괄 변경 가능합니다.
+- **체커보드 무늬 스테이지**: `.atlas-stage::before`가 밝은 회색 두께가 다른 격자(38px 간격)와 보조 radial highlight를 합성해 즉시 보이는 체커보드를 그립니다. 색상 농도는 `rgba(230/218, 232/221, 238/229, 0.9)` 투명도 값을 조정하면 됩니다.
+- **스테이지 오버레이**: `.atlas-stage::after`가 반투명 화이트 그래디언트와 얇은 인셋 보더를 추가해 체커보드를 부드럽게 덮습니다. 필요하면 불투명도를 키워 체크 패턴 노출 정도를 조절하세요.
+- **상단 컨트롤 스타일**: `.controls` 블록과 `.layout-toggle button`이 레이아웃 토글 패널의 배경 알파, 테두리 투명도, 버튼 패딩·반응 효과를 관리합니다.
+- **FAB(오른쪽 하단) 스타일**: `.fab-cluster`와 `.fab-button`에서 위치, 간격, 라운딩(999px), 그림자 강도를 수정합니다.
 
 ## 사물함 타일 및 디테일 노출
-- **타일 기본 크기·스타일**: `.locker-tile`(133~143행)이 너비·높이 160px, 원근감(`perspective: 1400px`), 테두리/그림자 투명도를 관리합니다. 크기를 변경하면 `lib/layout.ts`의 `TILE_WIDTH`, `TILE_HEIGHT`도 함께 맞춰야 합니다.
-- **도어 면 스타일**: `.locker-surface`(145~156행)에서 표면 그라디언트, 테두리, 글자 두께를 조정합니다.
-- **내부 배경/확장 모션**: `.detail-bg`(158~170행)이 사물함 내부 그라디언트와 확장 시 inset 변화를 정의합니다. 드래그/확장 모션은 `components/Locker.tsx`의 `detailBgRectVariants`와 `detailBgCircleVariants`에서 스프링 강성, 지연 시간, `clipPath` 형태를 제어합니다(26~64행).
-- **디테일 텍스트 레이어**: `.detail-content`(172~188행)에서 내부 타이포 크기와 패딩을, `detailContentVariants`에서 등장 시 투명도·Y축 이동·지연을 관리합니다(66~78행).
-- **하이라이트 링**: `.highlight-ring`(189~196행)의 점선 색상과 `@keyframes pulse`(198~208행)의 투명도 사이클로 깜박임 강도를 조정합니다.
-- **확장 반경**: 사물함을 확장할 때 배경 원이 커지는 반경 기본값은 `Locker` 컴포넌트의 `expansionRadius` prop 기본값 `800`이며, 확장 상태는 `radius = isExpanded ? expansionRadius : 700` 로직으로 제어됩니다(120~123행 및 103~104행). 외부에서 다른 값을 넘겨 효과를 튜닝할 수 있습니다.
+- **타일 기본 크기·스타일**: `.locker-tile`이 너비·높이 160px, 원근감(`perspective: 1400px`), 테두리/그림자 투명도를 관리합니다. 크기를 변경하면 `lib/layout.ts`의 `TILE_WIDTH`, `TILE_HEIGHT`도 함께 맞춰야 합니다.
+- **도어 면 스타일**: `.locker-surface`에서 표면 그라디언트, 테두리, SVG 드롭섀도우를 조정합니다. 텍스트는 제거되었지만 `aria-label`로 접근성을 유지합니다.
+- **내부 배경/강조 레이어**: `.detail-bg`는 항상 가득 채워진 기본 배경을 그리며, `::after`가 문이 열릴 때만 중앙에서 스케일 업되는 포인트 배경을 담당합니다(10px 인셋). `detailBgRectVariants`/`detailBgCircleVariants`는 `clipPath`를 고정시켜 별도 확장 애니메이션 없이 색상 변화만 전달합니다.
+- **디테일 텍스트 레이어**: `.detail-content`에서 내부 타이포 크기와 패딩을, `detailContentVariants`에서 등장 시 투명도·Y축 이동·지연을 관리합니다.
+- **하이라이트 링**: `.highlight-ring`의 점선 색상과 `@keyframes pulse`의 투명도 사이클로 깜박임 강도를 조정합니다.
+- **확장 반경**: 사물함을 확장할 때 배경 원이 커지는 반경 기본값은 `Locker` 컴포넌트의 `expansionRadius` prop 기본값 `800`이며, 확장 상태는 `radius = isExpanded ? expansionRadius : 700` 로직으로 제어됩니다. 외부에서 다른 값을 넘겨 효과를 튜닝할 수 있습니다.
 
 ## 레이아웃 및 위치 계산 상수
 - **타일 치수·패딩**: `lib/layout.ts` 상단의 `TILE_WIDTH`, `TILE_HEIGHT`, `GRID_GAP`, `STAGE_PADDING` 상수(7~10행)가 배치 계산의 기본 단위를 정의합니다. CSS 타일 크기와 동기화 필수입니다.

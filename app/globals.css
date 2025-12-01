@@ -14,12 +14,6 @@
 body {
   margin: 0;
   background-color: var(--bg);
-  background-image: linear-gradient(90deg, rgba(230, 232, 238, 0.8) 50%, rgba(218, 221, 229, 0.8) 50%),
-    linear-gradient(rgba(230, 232, 238, 0.8) 50%, rgba(218, 221, 229, 0.8) 50%),
-    radial-gradient(circle at 25% 20%, rgba(255, 180, 0, 0.08), transparent 36%),
-    radial-gradient(circle at 80% 70%, rgba(124, 152, 255, 0.1), transparent 42%);
-  background-size: 38px 38px, 38px 38px, auto, auto;
-  background-position: 0 0, 19px 19px, 0 0, 0 0;
   color: var(--text);
   min-height: 100vh;
   overflow: hidden;
@@ -43,11 +37,37 @@ a {
   width: 100vw;
   height: 100vh;
   border-radius: 0;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(235, 238, 243, 0.9));
+  background: transparent;
+  isolation: isolate;
   backdrop-filter: blur(12px);
   border: none;
   box-shadow: inset 0 0 0 1px rgba(21, 24, 33, 0.04);
   overflow: hidden;
+}
+
+.atlas-stage::before,
+.atlas-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.atlas-stage::before {
+  background-color: var(--bg);
+  background-image: linear-gradient(90deg, rgba(230, 232, 238, 0.9) 50%, rgba(218, 221, 229, 0.9) 50%),
+    linear-gradient(rgba(230, 232, 238, 0.9) 50%, rgba(218, 221, 229, 0.9) 50%),
+    radial-gradient(circle at 25% 20%, rgba(255, 180, 0, 0.08), transparent 36%),
+    radial-gradient(circle at 80% 70%, rgba(124, 152, 255, 0.1), transparent 42%);
+  background-size: 38px 38px, 38px 38px, auto, auto;
+  background-position: 0 0, 19px 19px, 0 0, 0 0;
+  z-index: 0;
+}
+
+.atlas-stage::after {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(235, 238, 243, 0.82));
+  box-shadow: inset 0 0 0 1px rgba(21, 24, 33, 0.04);
+  z-index: 1;
 }
 
 .atlas-stage.map-mode {
@@ -66,6 +86,7 @@ a {
   transition: transform 0.1s ease-out;
   isolation: isolate;
   backdrop-filter: blur(2px);
+  z-index: 2;
 }
 
 .lockers-layer {
