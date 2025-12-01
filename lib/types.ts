@@ -22,6 +22,7 @@ export interface Museum {
   type: string;
   region: string;
   city: string;
+  doorSvg?: string;
   positionGrid: Position;
   positionMap: Position;
   topic?: string;

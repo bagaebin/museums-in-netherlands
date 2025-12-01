@@ -188,7 +188,15 @@ export function Locker({
           onOpen();
         }}
       >
-        {museum.name}
+        {museum.doorSvg && (
+          <img
+            src={museum.doorSvg}
+            alt={`${museum.name} locker graphic`}
+            className={`door-graphic${isOpen ? ' hidden' : ''}`}
+            aria-hidden={isOpen}
+          />
+        )}
+        <span className="locker-label">{museum.name}</span>
       </motion.button>
       <motion.div
         className="detail-content"
