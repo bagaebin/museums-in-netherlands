@@ -262,6 +262,21 @@ export function RelationsLayer({
         const hasHubInfo = Boolean(hub.info);
         const hubRadius = 80;
         const hubHitRadius = 100;
+        const memberMeta = hub.members
+          .map((memberId) => {
+            const memberPosition = positions[memberId];
+            if (!memberPosition) return null;
+
+            const segment = getEdgeTowardsPoint(memberPosition, anchor);
+            const [mA, mB] = segment;
+            const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
+            const angle = Math.atan2(mid.y - anchor.y, mid.x - anchor.x);
+
+            return { memberId, segment, mid, angle };
+          })
+          .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+          .sort((a, b) => a.angle - b.angle);
+
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
@@ -310,25 +325,38 @@ export function RelationsLayer({
             >
               {hubLabel}
             </motion.text>
-            {hub.members.map((memberId) => {
-              const memberPosition = positions[memberId];
-              if (!memberPosition) return null;
-              const segment = getEdgeTowardsPoint(memberPosition, anchor);
+            {memberMeta.map((meta, index) => {
+              const { memberId, segment, mid, angle } = meta;
               const [mA, mB] = segment;
-              const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
-              const dir = { x: mid.x - anchor.x, y: mid.y - anchor.y };
-              const len = Math.hypot(dir.x, dir.y) || 1;
-              const dirNorm = { x: dir.x / len, y: dir.y / len };
-              const perp = { x: -dirNorm.y * hubRadius, y: dirNorm.x * hubRadius };
-              const hubEdgeCenter = { x: anchor.x, y: anchor.y };
-              const hubA = { x: hubEdgeCenter.x + perp.x, y: hubEdgeCenter.y + perp.y };
-              const hubB = { x: hubEdgeCenter.x - perp.x, y: hubEdgeCenter.y - perp.y };
+              const prev = memberMeta[(index - 1 + memberMeta.length) % memberMeta.length]?.angle ?? angle;
+              const next = memberMeta[(index + 1) % memberMeta.length]?.angle ?? angle;
+              const twoPi = Math.PI * 2;
+              const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
+              const gapNext = ((next - angle + twoPi) % twoPi) / 2;
+              const minSpread = 0.18;
+              const arcPadding = 0.05;
+              const maxHalf = Math.max(0, Math.min(gapPrev, gapNext) - arcPadding);
+              const halfAngle = Math.min(Math.max(minSpread, maxHalf), Math.PI / 2);
+              const baseA = angle - halfAngle;
+              const baseB = angle + halfAngle;
+              const hubA = {
+                x: anchor.x + Math.cos(baseA) * hubRadius,
+                y: anchor.y + Math.sin(baseA) * hubRadius,
+              };
+              const hubB = {
+                x: anchor.x + Math.cos(baseB) * hubRadius,
+                y: anchor.y + Math.sin(baseB) * hubRadius,
+              };
               const alignedDistance =
                 Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
               const crossedDistance =
                 Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
               const [memberA, memberB] =
                 crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
+              const hubEdgeCenter = {
+                x: anchor.x + Math.cos(angle) * hubRadius,
+                y: anchor.y + Math.sin(angle) * hubRadius,
+              };
               const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
               const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
               const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
