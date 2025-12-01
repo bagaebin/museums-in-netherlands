@@ -61,7 +61,7 @@ const detailContentVariants: Variants = {
 
 export type ClipStyle = 'rect' | 'circle';
 
-type LockerMotionStyle = MotionStyle & {
+type CustomMotionStyle = MotionStyle & {
   '--detail-base'?: string;
   '--detail-hover'?: string;
 };
@@ -102,7 +102,7 @@ export function Locker({
   const [isDragging, setIsDragging] = useState(false);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
-  
+
   useEffect(() => {
     if (!isActive) {
       setIsExpanded(false);
@@ -126,7 +126,7 @@ export function Locker({
         zIndex: isExpanded ? 5 : undefined,
         ['--detail-base']: baseColor,
         ['--detail-hover']: hoverColor,
-      } satisfies LockerMotionStyle}
+      } satisfies CustomMotionStyle}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
       drag={draggable}
@@ -170,7 +170,7 @@ export function Locker({
           visibility: 'visible',
           ['--detail-base']: baseColor,
           ['--detail-hover']: hoverColor,
-        } satisfies LockerMotionStyle}
+        } satisfies CustomMotionStyle}
       />
       <motion.button
         className="locker-surface"
