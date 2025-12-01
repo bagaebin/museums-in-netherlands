@@ -56,12 +56,12 @@ a {
 .atlas-stage::before {
   background-color: var(--bg);
   background-image:
-    linear-gradient(45deg, rgba(223, 227, 234, 0.95) 25%, transparent 25%, transparent 75%, rgba(223, 227, 234, 0.95) 75%, rgba(223, 227, 234, 0.95)),
-    linear-gradient(45deg, rgba(204, 209, 220, 0.9) 25%, transparent 25%, transparent 75%, rgba(204, 209, 220, 0.9) 75%, rgba(204, 209, 220, 0.9)),
+    linear-gradient(45deg, rgba(180, 185, 195, 0.95) 25%, transparent 25%, transparent 75%, rgba(180, 185, 195, 0.95) 75%, rgba(180, 185, 195, 0.95)),
+    linear-gradient(45deg, rgba(160, 165, 175, 0.9) 25%, transparent 25%, transparent 75%, rgba(160, 165, 175, 0.9) 75%, rgba(160, 165, 175, 0.9)),
     radial-gradient(circle at 25% 20%, rgba(255, 180, 0, 0.08), transparent 36%),
     radial-gradient(circle at 80% 70%, rgba(124, 152, 255, 0.1), transparent 42%);
-  background-size: 48px 48px, 48px 48px, auto, auto;
-  background-position: 0 0, 24px 24px, 0 0, 0 0;
+  background-size: 128px 128px, 128px 128px, auto, auto;
+  background-position: 0 0, 64px 64px, 0 0, 0 0;
   background-blend-mode: normal;
   z-index: 0;
 }
@@ -126,7 +126,6 @@ a {
 
 .controls {
   display: flex;
-  gap: 12px;
   align-items: center;
   position: fixed;
   top: 16px;
@@ -138,6 +137,11 @@ a {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(21, 24, 33, 0.06);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.layout-toggle {
+  display: flex;
+  gap: 8px !important;
 }
 
 .layout-toggle button {
@@ -599,7 +603,7 @@ a {
 
 .mega-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
 }
 

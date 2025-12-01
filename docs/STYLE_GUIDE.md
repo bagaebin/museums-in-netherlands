@@ -20,6 +20,27 @@
 - 힌지 회전 중심: `transform-origin: left center`
 - clip-path 라운드 값: 16px 기준, 필요 시 토큰화 가능
 
+## 사물함 크기 조정
+- 사물함 크기를 줄이려면 `app/globals.css`의 `.locker-tile` 클래스에서 `width`와 `height` 값을 조정하세요.
+- 기본값: `width: 160px;`, `height: 160px;`
+- 예: 크기를 120px로 줄이려면 다음과 같이 설정합니다:
+  ```css
+  .locker-tile {
+    width: 120px;
+    height: 120px;
+  }
+  ```
+
+## 연결선 크기 조정
+- 연결선의 크기를 줄이려면 `app/globals.css`의 `.relation-path` 클래스에서 `stroke-width` 값을 조정하세요.
+- 기본값: `stroke-width: 2px;`
+- 예: 크기를 1px로 줄이려면 다음과 같이 설정합니다:
+  ```css
+  .relation-path {
+    stroke-width: 1px;
+  }
+  ```
+
 ## 기타
 - FAB: pill 형태, 그림자 강조, hover 시 scale 1.04
 - 관계 곡선: stroke 2px, 점선 12/10 패턴, 텍스트 12px
