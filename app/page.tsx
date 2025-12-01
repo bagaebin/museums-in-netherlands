@@ -54,11 +54,11 @@ export default function HomePage() {
 
   useEffect(() => {
     if (layout === 'map') {
-      const initialScale = 0.38;
+      const initialScale = 1;
       setMapScale(initialScale);
       setMapOffset({
-        x: (stageSize.width - stageSize.width * initialScale) / 2,
-        y: (stageSize.height - stageSize.height * initialScale) / 2,
+        x: 0,
+        y: 0,
       });
       return;
     }
