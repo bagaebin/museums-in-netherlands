@@ -277,6 +277,75 @@ export function RelationsLayer({
           .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
           .sort((a, b) => a.angle - b.angle);
 
+        const enrichedMembers = memberMeta.map((meta, index) => {
+          const { memberId, segment, mid, angle } = meta;
+          const [mA, mB] = segment;
+          const prev = memberMeta[(index - 1 + memberMeta.length) % memberMeta.length]?.angle ?? angle;
+          const next = memberMeta[(index + 1) % memberMeta.length]?.angle ?? angle;
+          const twoPi = Math.PI * 2;
+          const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
+          const gapNext = ((next - angle + twoPi) % twoPi) / 2;
+          const arcPadding = 0.04;
+          const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
+          const memberWidth = Math.hypot(mA.x - mB.x, mA.y - mB.y);
+          const halfFromWidth = Math.asin(Math.min(1, memberWidth / (2 * hubRadius)));
+          const halfAngle = Math.min(halfFromWidth || availableHalf, availableHalf);
+          const baseA = angle - halfAngle;
+          const baseB = angle + halfAngle;
+          const hubA = {
+            x: anchor.x + Math.cos(baseA) * hubRadius,
+            y: anchor.y + Math.sin(baseA) * hubRadius,
+          };
+          const hubB = {
+            x: anchor.x + Math.cos(baseB) * hubRadius,
+            y: anchor.y + Math.sin(baseB) * hubRadius,
+          };
+          const alignedDistance =
+            Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
+          const crossedDistance =
+            Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
+          const [memberA, memberB] = crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
+          const hubEdgeCenter = {
+            x: anchor.x + Math.cos(angle) * hubRadius,
+            y: anchor.y + Math.sin(angle) * hubRadius,
+          };
+
+          return {
+            memberId,
+            segment,
+            mid,
+            angle,
+            baseA,
+            baseB,
+            hubA,
+            hubB,
+            memberA,
+            memberB,
+            hubEdgeCenter,
+          };
+        });
+
+        const mergedPath = (() => {
+          if (!enrichedMembers.length) return null;
+          const first = enrichedMembers[0];
+          let d = `M ${first.hubA.x} ${first.hubA.y} L ${first.memberA.x} ${first.memberA.y} L ${first.memberB.x} ${first.memberB.y} L ${first.hubB.x} ${first.hubB.y}`;
+
+          for (let i = 1; i < enrichedMembers.length; i += 1) {
+            const prev = enrichedMembers[i - 1];
+            const curr = enrichedMembers[i];
+            const delta = ((curr.baseA - prev.baseB + Math.PI * 2) % (Math.PI * 2));
+            const largeArc = delta > Math.PI ? 1 : 0;
+            d += ` A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`;
+            d += ` L ${curr.memberA.x} ${curr.memberA.y} L ${curr.memberB.x} ${curr.memberB.y} L ${curr.hubB.x} ${curr.hubB.y}`;
+          }
+
+          const last = enrichedMembers[enrichedMembers.length - 1];
+          const deltaBack = ((first.baseA - last.baseB + Math.PI * 2) % (Math.PI * 2));
+          const largeArcBack = deltaBack > Math.PI ? 1 : 0;
+          d += ` A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y} Z`;
+          return d;
+        })();
+
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
@@ -315,48 +384,16 @@ export function RelationsLayer({
                 animate={{ opacity: 1 }}
               />
             </g>
-            <motion.text
-              className="relation-label relation-hub-label"
-              x={anchor.x}
-              y={anchor.y - (hubRadius + 8)}
-              textAnchor="middle"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {hubLabel}
-            </motion.text>
-            {memberMeta.map((meta, index) => {
-              const { memberId, segment, mid, angle } = meta;
-              const [mA, mB] = segment;
-              const prev = memberMeta[(index - 1 + memberMeta.length) % memberMeta.length]?.angle ?? angle;
-              const next = memberMeta[(index + 1) % memberMeta.length]?.angle ?? angle;
-              const twoPi = Math.PI * 2;
-              const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
-              const gapNext = ((next - angle + twoPi) % twoPi) / 2;
-              const minSpread = 0.18;
-              const arcPadding = 0.05;
-              const maxHalf = Math.max(0, Math.min(gapPrev, gapNext) - arcPadding);
-              const halfAngle = Math.min(Math.max(minSpread, maxHalf), Math.PI / 2);
-              const baseA = angle - halfAngle;
-              const baseB = angle + halfAngle;
-              const hubA = {
-                x: anchor.x + Math.cos(baseA) * hubRadius,
-                y: anchor.y + Math.sin(baseA) * hubRadius,
-              };
-              const hubB = {
-                x: anchor.x + Math.cos(baseB) * hubRadius,
-                y: anchor.y + Math.sin(baseB) * hubRadius,
-              };
-              const alignedDistance =
-                Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
-              const crossedDistance =
-                Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
-              const [memberA, memberB] =
-                crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
-              const hubEdgeCenter = {
-                x: anchor.x + Math.cos(angle) * hubRadius,
-                y: anchor.y + Math.sin(angle) * hubRadius,
-              };
+            {mergedPath ? (
+              <motion.path
+                className="relation-hub-merged"
+                d={mergedPath}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              />
+            ) : null}
+            {enrichedMembers.map((meta) => {
+              const { memberId, mid, hubEdgeCenter, memberA, memberB, hubA, hubB } = meta;
               const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
               const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
               const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
@@ -404,6 +441,16 @@ export function RelationsLayer({
                 </g>
               );
             })}
+            <motion.text
+              className="relation-label relation-hub-label"
+              x={anchor.x}
+              y={anchor.y - (hubRadius + 8)}
+              textAnchor="middle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {hubLabel}
+            </motion.text>
           </g>
         );
       })}

@@ -360,8 +360,8 @@ a {
 }
 
 .relation-hub-ribbon {
-  fill: rgba(255, 180, 0, 0.22);
-  stroke: rgba(255, 180, 0, 0.46);
+  fill: transparent;
+  stroke: transparent;
 }
 
 .relation-hub-hit-zone {
@@ -373,22 +373,27 @@ a {
 }
 
 .relation-hub-node {
-  fill: rgba(255, 180, 0, 0.8);
-  stroke: rgba(21, 24, 33, 0.35);
-  stroke-width: 1px;
-  filter: drop-shadow(0 4px 16px rgba(255, 180, 0, 0.35));
+  fill: none;
+  stroke: none;
+  filter: none;
 }
 
 .relation-hub-node-hit:focus-visible .relation-hub-node,
 .relation-hub-node-hit:hover .relation-hub-node {
-  stroke: rgba(21, 24, 33, 0.5);
-  box-shadow: 0 0 0 4px rgba(255, 180, 0, 0.35);
+  stroke: none;
+  box-shadow: none;
 }
 
 .relation-hub-label {
   font-weight: 600;
   font-size: 11px;
   letter-spacing: 0.01em;
+}
+
+.relation-hub-merged {
+  fill: rgba(255, 180, 0, 0.22);
+  stroke: rgba(255, 180, 0, 0.42);
+  stroke-linejoin: round;
 }
 
 .relation-hit:focus-visible .relation-ribbon,
