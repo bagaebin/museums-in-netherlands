@@ -26,41 +26,23 @@ const doorVariants: Variants = {
 const detailBgRectVariants: Variants = {
   open: {
     clipPath: 'inset(0% 0% 0% 0% round 0px)',
-    transition: {
-      type: 'spring',
-      stiffness: 40,
-      damping: 18,
-      delay: 0.12,
-    },
+    transition: { duration: 0 },
   },
   closed: {
-    clipPath: 'inset(50% 50% 50% 50% round 0px)',
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 40,
-    },
+    clipPath: 'inset(0% 0% 0% 0% round 0px)',
+    transition: { duration: 0 },
   },
 };
 
 const detailBgCircleVariants: Variants = {
   open: (radius: number = 800) => ({
     clipPath: `circle(${radius}px at 50% 50%)`,
-    transition: {
-      type: 'spring',
-      stiffness: 20,
-      restDelta: 2,
-      delay: 0.12,
-    },
+    transition: { duration: 0 },
   }),
-  closed: {
-    clipPath: 'circle(0px at 50% 50%)',
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 40,
-    },
-  },
+  closed: (radius: number = 800) => ({
+    clipPath: `circle(${radius}px at 50% 50%)`,
+    transition: { duration: 0 },
+  }),
 };
 
 const detailContentVariants: Variants = {
