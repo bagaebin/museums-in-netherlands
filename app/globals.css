@@ -55,12 +55,13 @@ a {
 
 .atlas-stage::before {
   background-color: var(--bg);
-  background-image: linear-gradient(90deg, rgba(210, 214, 222, 0.8) 50%, transparent 50%),
-    linear-gradient(0deg, rgba(210, 214, 222, 0.8) 50%, transparent 50%),
+  background-image:
+    linear-gradient(45deg, rgba(223, 227, 234, 0.95) 25%, transparent 25%, transparent 75%, rgba(223, 227, 234, 0.95) 75%, rgba(223, 227, 234, 0.95)),
+    linear-gradient(45deg, rgba(204, 209, 220, 0.9) 25%, transparent 25%, transparent 75%, rgba(204, 209, 220, 0.9) 75%, rgba(204, 209, 220, 0.9)),
     radial-gradient(circle at 25% 20%, rgba(255, 180, 0, 0.08), transparent 36%),
     radial-gradient(circle at 80% 70%, rgba(124, 152, 255, 0.1), transparent 42%);
-  background-size: 46px 46px, 46px 46px, auto, auto;
-  background-position: 0 0, 23px 23px, 0 0, 0 0;
+  background-size: 48px 48px, 48px 48px, auto, auto;
+  background-position: 0 0, 24px 24px, 0 0, 0 0;
   background-blend-mode: normal;
   z-index: 0;
 }
