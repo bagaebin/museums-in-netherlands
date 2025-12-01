@@ -63,6 +63,11 @@ a {
   isolation: isolate;
 }
 
+.atlas-stage.map-mode .atlas-content {
+  width: 260%;
+  height: 260%;
+}
+
 .lockers-layer {
   position: absolute;
   inset: 0;

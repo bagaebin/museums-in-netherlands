@@ -14,6 +14,8 @@ import { LayoutMode, Museum, Position } from '../lib/types';
 const museums = museumsData as Museum[];
 
 export default function HomePage() {
+  const MAP_BASE_SCALE = 2.6;
+  const MAP_MIN_SCALE = 1 / MAP_BASE_SCALE;
   const stageRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<LayoutMode>('grid');
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -54,11 +56,13 @@ export default function HomePage() {
 
   useEffect(() => {
     if (layout === 'map') {
-      const initialScale = 0.38;
+      const initialScale = MAP_MIN_SCALE;
+      const contentWidth = stageSize.width * MAP_BASE_SCALE;
+      const contentHeight = stageSize.height * MAP_BASE_SCALE;
       setMapScale(initialScale);
       setMapOffset({
-        x: (stageSize.width - stageSize.width * initialScale) / 2,
-        y: (stageSize.height - stageSize.height * initialScale) / 2,
+        x: (stageSize.width - contentWidth * initialScale) / 2,
+        y: (stageSize.height - contentHeight * initialScale) / 2,
       });
       return;
     }
@@ -143,7 +147,10 @@ export default function HomePage() {
 
     const cursor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     const zoomIntensity = 0.0012;
-    const nextScale = Math.min(Math.max(mapScale - event.deltaY * zoomIntensity, 0.3), 2.6);
+    const nextScale = Math.min(
+      Math.max(mapScale - event.deltaY * zoomIntensity, MAP_MIN_SCALE),
+      MAP_BASE_SCALE
+    );
     const scaleRatio = nextScale / mapScale;
 
     const nextOffset = {
