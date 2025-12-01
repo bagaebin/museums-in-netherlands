@@ -8,7 +8,7 @@ export const TILE_WIDTH = 160;
 export const TILE_HEIGHT = 160;
 export const GRID_GAP = 0;
 export const STAGE_PADDING = 0;
-const MAP_OVERSCAN = 0.18;
+const MAP_OVERSCAN = 0.34;
 
 export function computeLayoutPositions(
   museums: Museum[],

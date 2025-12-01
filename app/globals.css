@@ -530,7 +530,7 @@ a {
 /* 네덜란드 지도 배경 */
 .map-background {
   background: url('/(pixelized)netherlands.svg') no-repeat center center;
-  background-size: cover;
+  background-size: contain;
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -539,11 +539,11 @@ a {
 
 .map-layer {
   position: absolute;
-  inset: -8%;
-  width: 116%;
-  height: 116%;
-  min-width: 116vw;
-  min-height: 116vh;
+  inset: -18%;
+  width: 136%;
+  height: 136%;
+  min-width: 136vw;
+  min-height: 136vh;
   overflow: visible;
   z-index: 0;
   pointer-events: none;
