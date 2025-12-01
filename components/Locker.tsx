@@ -162,7 +162,7 @@ export function Locker({
         custom={radius}
         aria-hidden
         style={{
-          visibility: isOpen ? 'visible' : 'hidden',
+          visibility: 'visible',
           ['--detail-base' as const]: baseColor,
           ['--detail-hover' as const]: hoverColor,
         }}
