@@ -7,7 +7,7 @@
     "city": "Arnhem",
     "topic": "현대미술",
     "positionGrid": { "x": 0, "y": 0 },
-    "positionMap": { "x": 0.63, "y": 0.47 },
+    "positionMap": { "x": 1, "y": 1 },
     "relations": [
       { "targetId": "stedelijk-amsterdam", "label": "co-production" },
       { "targetId": "groninger-museum", "label": "new media research" }

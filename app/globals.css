@@ -539,9 +539,9 @@ a {
 
 .map-layer {
   position: absolute;
-  inset: -18%;
-  width: 136%;
-  height: 136%;
+  inset: -100%;
+  width: 300%;
+  height: 300%;
   min-width: 136vw;
   min-height: 136vh;
   overflow: visible;
