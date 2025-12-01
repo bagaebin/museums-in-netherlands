@@ -233,7 +233,7 @@ a {
 .detail-bg::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 10px;
   background: var(--detail-hover, var(--detail-base, #ffe3a3));
   transform-origin: center;
   transform: scale(0);

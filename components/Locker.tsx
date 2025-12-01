@@ -179,7 +179,11 @@ export function Locker({
         initial="closed"
         custom={radius}
         aria-hidden
-        style={{ visibility: isOpen ? 'visible' : 'hidden' }}
+        style={{
+          visibility: isOpen ? 'visible' : 'hidden',
+          ['--detail-base' as const]: baseColor,
+          ['--detail-hover' as const]: hoverColor,
+        }}
       />
       <motion.button
         className="locker-surface"
