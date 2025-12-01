@@ -180,6 +180,7 @@ export function Locker({
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
+        aria-label={`${museum.name} locker`}
         onClick={() => {
           if (isDragging || suppressClick.current) {
             return;
@@ -196,7 +197,6 @@ export function Locker({
             aria-hidden={isOpen}
           />
         )}
-        <span className="locker-label">{museum.name}</span>
       </motion.button>
       <motion.div
         className="detail-content"
