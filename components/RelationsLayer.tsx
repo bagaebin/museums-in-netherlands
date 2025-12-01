@@ -101,55 +101,14 @@ export function RelationsLayer({
 
   const renderedPairs = new Set<string>();
 
-  const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = useMemo(() => {
-    const padding = relationThickness * 0.8;
-    const segments = Object.values(positions);
-
-    if (!segments.length) {
-      return [0, 0, stage.width, stage.height];
-    }
-
-    const bounds = segments.reduce(
-      (acc, pos) => {
-        const startX = pos.x + STAGE_PADDING;
-        const startY = pos.y + STAGE_PADDING;
-        const endX = startX + TILE_WIDTH;
-        const endY = startY + TILE_HEIGHT;
-
-        return {
-          minX: Math.min(acc.minX, startX),
-          minY: Math.min(acc.minY, startY),
-          maxX: Math.max(acc.maxX, endX),
-          maxY: Math.max(acc.maxY, endY),
-        };
-      },
-      {
-        minX: Number.POSITIVE_INFINITY,
-        minY: Number.POSITIVE_INFINITY,
-        maxX: Number.NEGATIVE_INFINITY,
-        maxY: Number.NEGATIVE_INFINITY,
-      }
-    );
-
-    const width = bounds.maxX - bounds.minX;
-    const height = bounds.maxY - bounds.minY;
-
-    return [
-      bounds.minX - padding,
-      bounds.minY - padding,
-      width + padding * 2,
-      height + padding * 2,
-    ];
-  }, [positions, relationThickness, stage.height, stage.width]);
-
   return (
     <svg
       className="relations-layer"
-      viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`}
+      viewBox={`0 0 ${stage.width} ${stage.height}`}
       preserveAspectRatio="xMidYMid slice"
       width="100%"
       height="100%"
-      style={{ ['--relation-thickness' as string]: `${relationThickness}px` }}
+      style={{ overflow: 'visible', ['--relation-thickness' as string]: `${relationThickness}px` }}
     >
       {museums.map((museum) =>
         museum.relations.map((rel) => {
