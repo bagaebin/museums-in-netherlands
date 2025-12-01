@@ -126,7 +126,7 @@ export function Locker({
         zIndex: isExpanded ? 5 : undefined,
         ['--detail-base']: baseColor,
         ['--detail-hover']: hoverColor,
-      } satisfies CustomMotionStyle}
+      } as React.CSSProperties}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
       drag={draggable}
@@ -170,7 +170,7 @@ export function Locker({
           visibility: 'visible',
           ['--detail-base']: baseColor,
           ['--detail-hover']: hoverColor,
-        } satisfies CustomMotionStyle}
+        } as React.CSSProperties}
       />
       <motion.button
         className="locker-surface"
