@@ -172,7 +172,10 @@ export function Locker({
         initial="closed"
         custom={radius}
         aria-hidden
-        style={{ visibility: isOpen ? 'visible' : 'hidden' }}
+        style={{
+          visibility: isOpen ? 'visible' : 'hidden',
+          ['--detail-bg' as const]: museum.interiorColor || '#ffe3a3',
+        }}
       />
       <motion.button
         className="locker-surface"
@@ -189,6 +192,9 @@ export function Locker({
           onOpen();
         }}
       >
+        <div className={`door-peek-label${isOpen ? ' hidden' : ''}`} aria-hidden>
+          {museum.name}
+        </div>
         {museum.doorSvg && (
           <img
             src={museum.doorSvg}
