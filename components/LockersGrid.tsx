@@ -48,7 +48,6 @@ export function LockersGrid({
           onOpen={() => onOpen(museum.id)}
           onExpand={() => onExpand?.(museum.id)}
           onDrag={(pos) => onPositionChange(museum.id, pos)}
-          // Removed onAnimationComplete prop as it's not defined in LockerProps
           clipStyle={clipStyle}
           highlight={highlightId === museum.id}
           expansionRadius={expansionRadius}
