@@ -1,78 +1,470 @@
 [
   {
-    "id": "museum-sonje",
-    "name": "Museum Sonje",
+    "id": "arnhem-museum",
+    "name": "Arnhem Museum - arnhem.svg",
     "type": "museum",
     "region": "NL-Gelderland",
     "city": "Arnhem",
+    "doorSvg": "/locker-doors/arnhem.svg",
+    "positionGrid": {
+      "x": 0,
+      "y": 0
+    },
+    "positionMap": {
+      "x": 0.67,
+      "y": 0.58
+    },
     "topic": "현대미술",
-    "positionGrid": { "x": 0, "y": 0 },
-    "positionMap": { "x": 1, "y": 1 },
     "relations": [
-      { "targetId": "stedelijk-amsterdam", "label": "co-production" },
-      { "targetId": "groninger-museum", "label": "new media research" }
+      {
+        "targetId": "nijntje-museum",
+        "label": "가족 참여 프로그램"
+      },
+      {
+        "targetId": "rijksmuseum-amsterdam",
+        "label": "공동 소장품 연구"
+      }
     ],
     "detail": {
-      "description": "아른험에 위치한 현대미술 중심 기관으로 실험적 전시를 선보인다.",
-      "images": ["https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"],
-      "url": "https://museum-sonje.example.com"
-    }
+      "description": "라인 강변의 예술 허브로, 지역성과 실험성을 아우르는 현대미술 전시를 선보인다.",
+      "images": [
+        "https://images.unsplash.com/photo-1517817748497-61c8956dbe22"
+      ],
+      "url": "https://arnhem-museum.example.com"
+    },
+    "interiorBaseColor": "#f9d976",
+    "interiorHoverColor": "#f6c33d"
   },
   {
-    "id": "stedelijk-amsterdam",
-    "name": "Stedelijk Museum Amsterdam",
+    "id": "bauhaus-dessau",
+    "name": "Bauhaus Museum Dessau - bauhaus-dessau.svg",
     "type": "museum",
-    "region": "NL-North-Holland",
-    "city": "Amsterdam",
+    "region": "DE-Saxony-Anhalt",
+    "city": "Dessau",
+    "doorSvg": "/locker-doors/bauhaus-dessau.svg",
+    "positionGrid": {
+      "x": 1,
+      "y": 0
+    },
+    "positionMap": {
+      "x": 0.9,
+      "y": 0.48
+    },
     "topic": "디자인",
-    "positionGrid": { "x": 1, "y": 0 },
-    "positionMap": { "x": 0.42, "y": 0.32 },
     "relations": [
-      { "targetId": "museum-sonje", "label": "공동 기획 경험" },
-      { "targetId": "boijmans-rotterdam", "label": "컬렉션 대여" }
+      {
+        "targetId": "design-den-bosch",
+        "label": "모더니즘 공동 연구"
+      },
+      {
+        "targetId": "nieuwe-instituut",
+        "label": "아카이브 교류"
+      }
     ],
     "detail": {
-      "description": "암스테르담의 대표 현대미술·디자인 미술관으로 대규모 소장품을 보유한다.",
-      "images": ["https://images.unsplash.com/photo-1489515217757-5fd1be406fef"],
-      "url": "https://www.stedelijk.nl"
-    }
+      "description": "바우하우스 원형 자료를 보유하며 디자인 교육과 전시를 연결하는 플랫폼 역할을 한다.",
+      "images": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
+      ],
+      "url": "https://www.bauhaus-dessau.de"
+    },
+    "interiorBaseColor": "#c9e1ff",
+    "interiorHoverColor": "#a8caff"
   },
   {
-    "id": "boijmans-rotterdam",
-    "name": "Depot Boijmans Rotterdam",
+    "id": "depot-boijmans",
+    "name": "Het Depot van Museum Boijmans Van Beuningen - depot.svg",
+    "type": "depot",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "doorSvg": "/locker-doors/depot.svg",
+    "positionGrid": {
+      "x": 2,
+      "y": 0
+    },
+    "positionMap": {
+      "x": 0.46,
+      "y": 0.64
+    },
+    "topic": "수장고",
+    "relations": [
+      {
+        "targetId": "kunsthal-rotterdam",
+        "label": "컬렉션 대여"
+      },
+      {
+        "targetId": "kunstinstituut-melly",
+        "label": "컨퍼런스 파트너"
+      }
+    ],
+    "detail": {
+      "description": "유리 외피의 공개 수장고로, 방문객이 보존·관리 과정을 직접 체험할 수 있다.",
+      "images": [
+        "https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"
+      ],
+      "url": "https://www.boijmans.nl/en/depot"
+    },
+    "interiorBaseColor": "#d5c9ff",
+    "interiorHoverColor": "#d5c9ff"
+  },
+  {
+    "id": "design-den-bosch",
+    "name": "Design Museum Den Bosch - design-den-bosch.svg",
+    "type": "museum",
+    "region": "NL-North-Brabant",
+    "city": "'s-Hertogenbosch",
+    "doorSvg": "/locker-doors/design-den-bosch.svg",
+    "positionGrid": {
+      "x": 3,
+      "y": 0
+    },
+    "positionMap": {
+      "x": 0.55,
+      "y": 0.68
+    },
+    "topic": "디자인",
+    "relations": [
+      {
+        "targetId": "next-nature",
+        "label": "테크놀로지 협업"
+      },
+      {
+        "targetId": "bauhaus-dessau",
+        "label": "모더니즘 공동 연구"
+      }
+    ],
+    "detail": {
+      "description": "산업 디자인부터 디지털 아트까지 다루며, 미래지향적 큐레이션으로 주목받는다.",
+      "images": [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+      ],
+      "url": "https://designmuseum.nl"
+    },
+    "interiorBaseColor": "#ffe0b3",
+    "interiorHoverColor": "#ffc87a"
+  },
+  {
+    "id": "huis-sonneveld",
+    "name": "Huis Sonneveld - huis-sonneveld.svg",
+    "type": "house-museum",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "doorSvg": "/locker-doors/huis-sonneveld.svg",
+    "positionGrid": {
+      "x": 0,
+      "y": 1
+    },
+    "positionMap": {
+      "x": 0.47,
+      "y": 0.62
+    },
+    "topic": "건축",
+    "relations": [
+      {
+        "targetId": "nieuwe-instituut",
+        "label": "현대건축 라인"
+      },
+      {
+        "targetId": "kunsthal-rotterdam",
+        "label": "도시 산책 코스"
+      }
+    ],
+    "detail": {
+      "description": "Nieuwe Bouwen 양식의 대표 주택으로, 생활 공간 속 근대 디자인을 체험하게 한다.",
+      "images": [
+        "https://images.unsplash.com/photo-1460317442991-0ec209397118"
+      ],
+      "url": "https://huis-sonneveld.nl"
+    },
+    "interiorBaseColor": "#d7f0d7",
+    "interiorHoverColor": "#bfe7c0"
+  },
+  {
+    "id": "kunsthal-rotterdam",
+    "name": "Kunsthal Rotterdam - kunsthal-rotterdam.svg",
     "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
-    "topic": "저장소",
-    "positionGrid": { "x": 0, "y": 1 },
-    "positionMap": { "x": 0.48, "y": 0.58 },
+    "doorSvg": "/locker-doors/kunsthal-rotterdam.svg",
+    "positionGrid": {
+      "x": 1,
+      "y": 1
+    },
+    "positionMap": {
+      "x": 0.45,
+      "y": 0.62
+    },
+    "topic": "현대미술",
     "relations": [
-      { "targetId": "stedelijk-amsterdam", "label": "컬렉션 대여" },
-      { "targetId": "groninger-museum", "label": "보존 연구" }
+      {
+        "targetId": "kunstinstituut-melly",
+        "label": "커뮤니티 라인업"
+      },
+      {
+        "targetId": "depot-boijmans",
+        "label": "컬렉션 순환"
+      }
     ],
     "detail": {
-      "description": "보이만스의 공개 수장고로, 방문객이 수장 공간을 직접 탐험할 수 있다.",
-      "images": ["https://images.unsplash.com/photo-1511578314322-379afb476865"],
-      "url": "https://www.boijmans.nl"
-    }
+      "description": "다양한 장르의 단기 전시를 빠르게 순환시키며 공공성을 강조하는 전시관.",
+      "images": [
+        "https://images.unsplash.com/photo-1505842679547-5133c17caa2c"
+      ],
+      "url": "https://www.kunsthal.nl"
+    },
+    "interiorBaseColor": "#ffd6e8",
+    "interiorHoverColor": "#ffadd1"
   },
   {
-    "id": "groninger-museum",
-    "name": "Groninger Museum",
-    "type": "museum",
-    "region": "NL-Groningen",
-    "city": "Groningen",
-    "topic": "실험",
-    "positionGrid": { "x": 1, "y": 1 },
-    "positionMap": { "x": 0.68, "y": 0.18 },
+    "id": "kunstinstituut-melly",
+    "name": "Kunstinstituut Melly - kunstinstituut-melly.svg",
+    "type": "art-center",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "doorSvg": "/locker-doors/kunstinstituut-melly.svg",
+    "positionGrid": {
+      "x": 2,
+      "y": 1
+    },
+    "positionMap": {
+      "x": 0.47,
+      "y": 0.63
+    },
+    "topic": "커뮤니티",
     "relations": [
-      { "targetId": "museum-sonje", "label": "새로운 매체 연구" },
-      { "targetId": "boijmans-rotterdam", "label": "보존 연구" }
+      {
+        "targetId": "kunsthal-rotterdam",
+        "label": "공동 교육"
+      },
+      {
+        "targetId": "depot-boijmans",
+        "label": "작가 리서치"
+      }
     ],
     "detail": {
-      "description": "대담한 건축과 실험적 전시로 알려진 북부 대표 미술관.",
-      "images": ["https://images.unsplash.com/photo-1505761671935-60b3a7427bad"],
-      "url": "https://www.groningermuseum.nl"
-    }
+      "description": "포용성과 참여를 내세운 프로그램으로 지역 커뮤니티와 긴밀히 연결된다.",
+      "images": [
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429"
+      ],
+      "url": "https://www.kunstinstituutmelly.nl"
+    },
+    "interiorBaseColor": "#c4f1ff",
+    "interiorHoverColor": "#99e4ff"
+  },
+  {
+    "id": "natural-history-rotterdam",
+    "name": "Het Natuurhistorisch Museum Rotterdam - natural-history-rotterdam.svg",
+    "type": "museum",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "doorSvg": "/locker-doors/natural-history-rotterdam.svg",
+    "positionGrid": {
+      "x": 3,
+      "y": 1
+    },
+    "positionMap": {
+      "x": 0.44,
+      "y": 0.64
+    },
+    "topic": "자연사",
+    "relations": [
+      {
+        "targetId": "next-nature",
+        "label": "자연-기술 교차"
+      },
+      {
+        "targetId": "nijntje-museum",
+        "label": "어린이 교육"
+      }
+    ],
+    "detail": {
+      "description": "도시 생태와 자연사를 아우르는 전시로, 유쾌한 스토리텔링을 선보인다.",
+      "images": [
+        "https://images.unsplash.com/photo-1469474968028-56623f02e42e"
+      ],
+      "url": "https://www.hetnatuurhistorisch.nl"
+    },
+    "interiorBaseColor": "#f4e2b8",
+    "interiorHoverColor": "#e8c888"
+  },
+  {
+    "id": "next-nature",
+    "name": "Next Nature Museum - next-nature.svg",
+    "type": "museum",
+    "region": "NL-North-Brabant",
+    "city": "Eindhoven",
+    "doorSvg": "/locker-doors/next-nature.svg",
+    "positionGrid": {
+      "x": 0,
+      "y": 2
+    },
+    "positionMap": {
+      "x": 0.58,
+      "y": 0.72
+    },
+    "topic": "미디어아트",
+    "relations": [
+      {
+        "targetId": "design-den-bosch",
+        "label": "미래 디자인"
+      },
+      {
+        "targetId": "natural-history-rotterdam",
+        "label": "자연-기술 교차"
+      }
+    ],
+    "detail": {
+      "description": "기술이 빚어내는 새로운 자연을 탐구하며 몰입형 미디어 전시를 제안한다.",
+      "images": [
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+      ],
+      "url": "https://nextnature.net/museum"
+    },
+    "interiorBaseColor": "#d1ffe3",
+    "interiorHoverColor": "#9cf3c4"
+  },
+  {
+    "id": "nieuwe-instituut",
+    "name": "Nieuwe Instituut - nieuwe-instituut.svg",
+    "type": "institute",
+    "region": "NL-South-Holland",
+    "city": "Rotterdam",
+    "doorSvg": "/locker-doors/nieuwe-instituut.svg",
+    "positionGrid": {
+      "x": 1,
+      "y": 2
+    },
+    "positionMap": {
+      "x": 0.47,
+      "y": 0.65
+    },
+    "topic": "건축",
+    "relations": [
+      {
+        "targetId": "huis-sonneveld",
+        "label": "근대건축 라인"
+      },
+      {
+        "targetId": "bauhaus-dessau",
+        "label": "아카이브 교류"
+      }
+    ],
+    "detail": {
+      "description": "건축·디자인·디지털 문화 아카이브를 기반으로 연구 전시와 포럼을 연계한다.",
+      "images": [
+        "https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"
+      ],
+      "url": "https://nieuweinstituut.nl"
+    },
+    "interiorBaseColor": "#f0d1ff",
+    "interiorHoverColor": "#d4a8ff"
+  },
+  {
+    "id": "nijntje-museum",
+    "name": "Nijntje Museum - nijntje.svg",
+    "type": "children",
+    "region": "NL-Utrecht",
+    "city": "Utrecht",
+    "doorSvg": "/locker-doors/nijntje.svg",
+    "positionGrid": {
+      "x": 2,
+      "y": 2
+    },
+    "positionMap": {
+      "x": 0.53,
+      "y": 0.6
+    },
+    "topic": "어린이",
+    "relations": [
+      {
+        "targetId": "arnhem-museum",
+        "label": "가족 참여 프로그램"
+      },
+      {
+        "targetId": "natural-history-rotterdam",
+        "label": "어린이 교육"
+      }
+    ],
+    "detail": {
+      "description": "미피 캐릭터로 유명한 딕 브루나의 세계를 상호작용 전시와 워크숍으로 풀어낸다.",
+      "images": [
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
+      ],
+      "url": "https://nijntjemuseum.nl"
+    },
+    "interiorBaseColor": "#fff2b3",
+    "interiorHoverColor": "#ffe280"
+  },
+  {
+    "id": "rijksmuseum-amsterdam",
+    "name": "Rijksmuseum Amsterdam - rijks-amsterdam.svg",
+    "type": "museum",
+    "region": "NL-North-Holland",
+    "city": "Amsterdam",
+    "doorSvg": "/locker-doors/rijks-amsterdam.svg",
+    "positionGrid": {
+      "x": 0,
+      "y": 3
+    },
+    "positionMap": {
+      "x": 0.42,
+      "y": 0.39
+    },
+    "topic": "국립",
+    "relations": [
+      {
+        "targetId": "stedelijk-amsterdam",
+        "label": "뮤지엄플레인 협업"
+      },
+      {
+        "targetId": "arnhem-museum",
+        "label": "공동 소장품 연구"
+      }
+    ],
+    "detail": {
+      "description": "네덜란드 국립 미술관으로, 렘브란트와 베르메르 등 걸작을 중심으로 방대한 컬렉션을 보유한다.",
+      "images": [
+        "https://images.unsplash.com/photo-1505761671935-60b3a7427bad"
+      ],
+      "url": "https://www.rijksmuseum.nl"
+    },
+    "interiorBaseColor": "#e3d4ff",
+    "interiorHoverColor": "#c5a8ff"
+  },
+  {
+    "id": "stedelijk-amsterdam",
+    "name": "Stedelijk Museum Amsterdam - stedelijk-amsterdam.svg",
+    "type": "museum",
+    "region": "NL-North-Holland",
+    "city": "Amsterdam",
+    "doorSvg": "/locker-doors/stedelijk-amsterdam.svg",
+    "positionGrid": {
+      "x": 1,
+      "y": 3
+    },
+    "positionMap": {
+      "x": 0.43,
+      "y": 0.41
+    },
+    "topic": "현대미술",
+    "relations": [
+      {
+        "targetId": "rijksmuseum-amsterdam",
+        "label": "뮤지엄플레인 협업"
+      },
+      {
+        "targetId": "depot-boijmans",
+        "label": "컬렉션 대여"
+      }
+    ],
+    "detail": {
+      "description": "현대미술·디자인을 아우르는 소장품과 대규모 기획전으로 국제적 명성을 갖춘다.",
+      "images": [
+        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef"
+      ],
+      "url": "https://www.stedelijk.nl"
+    },
+    "interiorBaseColor": "#d9f0ff",
+    "interiorHoverColor": "#b6e0ff"
   }
 ]

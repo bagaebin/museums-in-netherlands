@@ -26,41 +26,23 @@ const doorVariants: Variants = {
 const detailBgRectVariants: Variants = {
   open: {
     clipPath: 'inset(0% 0% 0% 0% round 0px)',
-    transition: {
-      type: 'spring',
-      stiffness: 40,
-      damping: 18,
-      delay: 0.12,
-    },
+    transition: { duration: 0 },
   },
   closed: {
-    clipPath: 'inset(50% 50% 50% 50% round 0px)',
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 40,
-    },
+    clipPath: 'inset(0% 0% 0% 0% round 0px)',
+    transition: { duration: 0 },
   },
 };
 
 const detailBgCircleVariants: Variants = {
   open: (radius: number = 800) => ({
     clipPath: `circle(${radius}px at 50% 50%)`,
-    transition: {
-      type: 'spring',
-      stiffness: 20,
-      restDelta: 2,
-      delay: 0.12,
-    },
+    transition: { duration: 0 },
   }),
-  closed: {
-    clipPath: 'circle(0px at 50% 50%)',
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 40,
-    },
-  },
+  closed: (radius: number = 800) => ({
+    clipPath: `circle(${radius}px at 50% 50%)`,
+    transition: { duration: 0 },
+  }),
 };
 
 const detailContentVariants: Variants = {
@@ -108,6 +90,9 @@ export function Locker({
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
   }, [clipStyle]);
 
+  const baseColor = museum.interiorBaseColor || museum.interiorColor || '#ffe3a3';
+  const hoverColor = museum.interiorHoverColor || baseColor;
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const dragOrigin = useRef<Position | null>(null);
@@ -132,7 +117,11 @@ export function Locker({
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isExpanded ? ' expanded' : ''}`}
-      style={{ zIndex: isExpanded ? 5 : undefined }}
+      style={{
+        zIndex: isExpanded ? 5 : undefined,
+        ['--detail-base' as const]: baseColor,
+        ['--detail-hover' as const]: hoverColor,
+      }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
       drag={draggable}
@@ -166,13 +155,17 @@ export function Locker({
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
       <motion.div
-        className={`detail-bg${isExpanded ? ' expanded' : ''}`}
+        className={`detail-bg${isExpanded ? ' expanded' : ''}${isOpen ? ' opened' : ''}`}
         variants={variants}
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
         custom={radius}
         aria-hidden
-        style={{ visibility: isOpen ? 'visible' : 'hidden' }}
+        style={{
+          visibility: 'visible',
+          ['--detail-base' as const]: baseColor,
+          ['--detail-hover' as const]: hoverColor,
+        }}
       />
       <motion.button
         className="locker-surface"
@@ -180,6 +173,7 @@ export function Locker({
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
         style={{ transformOrigin: 'left center' }}
+        aria-label={`${museum.name} locker`}
         onClick={() => {
           if (isDragging || suppressClick.current) {
             return;
@@ -188,7 +182,17 @@ export function Locker({
           onOpen();
         }}
       >
-        {museum.name}
+        <div className={`door-peek-label${isOpen ? ' hidden' : ''}`} aria-hidden>
+          {museum.name}
+        </div>
+        {museum.doorSvg && (
+          <img
+            src={museum.doorSvg}
+            alt={`${museum.name} locker graphic`}
+            className={`door-graphic${isOpen ? ' hidden' : ''}`}
+            aria-hidden={isOpen}
+          />
+        )}
       </motion.button>
       <motion.div
         className="detail-content"
