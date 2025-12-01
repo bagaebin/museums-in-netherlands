@@ -253,7 +253,7 @@
   },
   {
     "id": "natural-history-rotterdam",
-    "name": "Het Natuurhistorisch Museum Rotterdam - natural-history-rotterdam.svg",
+    "name": "Het Natuurhistorisch Museum Rotterdam",
     "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -289,7 +289,7 @@
   },
   {
     "id": "next-nature",
-    "name": "Next Nature Museum - next-nature.svg",
+    "name": "Next Nature Museum",
     "type": "museum",
     "region": "NL-North-Brabant",
     "city": "Eindhoven",
@@ -325,7 +325,7 @@
   },
   {
     "id": "nieuwe-instituut",
-    "name": "Nieuwe Instituut - nieuwe-instituut.svg",
+    "name": "Nieuwe Instituut",
     "type": "institute",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -361,7 +361,7 @@
   },
   {
     "id": "nijntje-museum",
-    "name": "Nijntje Museum - nijntje.svg",
+    "name": "Nijntje Museum",
     "type": "children",
     "region": "NL-Utrecht",
     "city": "Utrecht",
@@ -397,7 +397,7 @@
   },
   {
     "id": "rijksmuseum-amsterdam",
-    "name": "Rijksmuseum Amsterdam - rijks-amsterdam.svg",
+    "name": "Rijksmuseum Amsterdam",
     "type": "museum",
     "region": "NL-North-Holland",
     "city": "Amsterdam",
@@ -433,7 +433,7 @@
   },
   {
     "id": "stedelijk-amsterdam",
-    "name": "Stedelijk Museum Amsterdam - stedelijk-amsterdam.svg",
+    "name": "Stedelijk Museum Amsterdam",
     "type": "museum",
     "region": "NL-North-Holland",
     "city": "Amsterdam",
