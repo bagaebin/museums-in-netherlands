@@ -35,6 +35,11 @@ export function RelationsLayer({
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
 
   const getEdgeSegment = (source: Position, target: Position) => {
+    const diagonalMode: 'aligned' | 'opposite' = 'opposite';
+
+    const pickDiagonal = (usePrimaryDiagonal: boolean) =>
+      diagonalMode === 'opposite' ? !usePrimaryDiagonal : usePrimaryDiagonal;
+
     const diagonals = {
       primary: [
         { x: source.x, y: source.y },
@@ -50,12 +55,17 @@ export function RelationsLayer({
     const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
     const dx = targetCenter.x - sourceCenter.x;
     const dy = targetCenter.y - sourceCenter.y;
-    const usePrimaryDiagonal = dx * dy >= 0;
+    const usePrimaryDiagonal = pickDiagonal(dx * dy >= 0);
 
     return usePrimaryDiagonal ? diagonals.primary : diagonals.secondary;
   };
 
   const getEdgeTowardsPoint = (source: Position, targetPoint: Position) => {
+    const diagonalMode: 'aligned' | 'opposite' = 'opposite';
+
+    const pickDiagonal = (usePrimaryDiagonal: boolean) =>
+      diagonalMode === 'opposite' ? !usePrimaryDiagonal : usePrimaryDiagonal;
+
     const paddedSource = {
       x: source.x + STAGE_PADDING,
       y: source.y + STAGE_PADDING,
@@ -78,7 +88,7 @@ export function RelationsLayer({
     };
     const dx = targetPoint.x - center.x;
     const dy = targetPoint.y - center.y;
-    const usePrimaryDiagonal = dx * dy >= 0;
+    const usePrimaryDiagonal = pickDiagonal(dx * dy >= 0);
 
     return usePrimaryDiagonal ? diagonals.primary : diagonals.secondary;
   };
