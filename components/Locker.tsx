@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, Variants } from 'framer-motion';
+import { motion, MotionStyle, Variants } from 'framer-motion';
 import { Museum, Position } from '../lib/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -61,6 +61,11 @@ const detailContentVariants: Variants = {
 
 export type ClipStyle = 'rect' | 'circle';
 
+type LockerMotionStyle = MotionStyle & {
+  '--detail-base'?: string;
+  '--detail-hover'?: string;
+};
+
 interface LockerProps {
   museum: Museum;
   position: Position;
@@ -119,9 +124,9 @@ export function Locker({
       className={`locker-tile${isExpanded ? ' expanded' : ''}`}
       style={{
         zIndex: isExpanded ? 5 : undefined,
-        ['--detail-base' as const]: baseColor,
-        ['--detail-hover' as const]: hoverColor,
-      }}
+        ['--detail-base']: baseColor,
+        ['--detail-hover']: hoverColor,
+      } satisfies LockerMotionStyle}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
       drag={draggable}
@@ -163,9 +168,9 @@ export function Locker({
         aria-hidden
         style={{
           visibility: 'visible',
-          ['--detail-base' as const]: baseColor,
-          ['--detail-hover' as const]: hoverColor,
-        }}
+          ['--detail-base']: baseColor,
+          ['--detail-hover']: hoverColor,
+        } satisfies LockerMotionStyle}
       />
       <motion.button
         className="locker-surface"
