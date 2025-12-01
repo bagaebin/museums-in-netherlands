@@ -89,6 +89,7 @@ interface LockerProps {
   highlight?: boolean;
   onDrag?: (pos: Position) => void;
   expansionRadius?: number;
+  draggable?: boolean;
 }
 
 export function Locker({
@@ -101,6 +102,7 @@ export function Locker({
   highlight = false,
   onDrag,
   expansionRadius = 800,
+  draggable = true,
 }: LockerProps) {
   const variants = useMemo(() => {
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
@@ -133,23 +135,24 @@ export function Locker({
       style={{ zIndex: isExpanded ? 5 : undefined }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
-      drag
+      drag={draggable}
       dragMomentum={false}
       onDragStart={() => {
+        if (!draggable) return;
         setIsDragging(true);
         setIsExpanded(false);
         dragOrigin.current = position;
         suppressClick.current = true;
       }}
       onDrag={(_, info) => {
-        if (!dragOrigin.current) return;
+        if (!draggable || !dragOrigin.current) return;
         onDrag?.({
           x: dragOrigin.current.x + info.offset.x,
           y: dragOrigin.current.y + info.offset.y,
         });
       }}
       onDragEnd={(_, info) => {
-        if (!dragOrigin.current) return;
+        if (!draggable || !dragOrigin.current) return;
         const nextX = dragOrigin.current.x + info.offset.x;
         const nextY = dragOrigin.current.y + info.offset.y;
         dragOrigin.current = null;

@@ -52,6 +52,7 @@ export function LockersGrid({
           clipStyle={clipStyle}
           highlight={highlightId === museum.id}
           expansionRadius={expansionRadius}
+          draggable={layout !== 'map'}
         />
       ))}
       {animationComplete && (

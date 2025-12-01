@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import museumsData from '../data/museums.json';
 import { LayoutToggle } from '../components/LayoutToggle';
@@ -14,6 +14,8 @@ import { LayoutMode, Museum, Position } from '../lib/types';
 const museums = museumsData as Museum[];
 
 export default function HomePage() {
+  const MAP_BASE_SCALE = 2.6;
+  const MAP_MIN_SCALE = 1 / MAP_BASE_SCALE;
   const stageRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<LayoutMode>('grid');
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -31,6 +33,10 @@ export default function HomePage() {
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
     computeLayoutPositions(museums, 'grid', { width: 1200, height: 760 })
   );
+  const [mapScale, setMapScale] = useState(1);
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const panOrigin = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const resize = () => {
@@ -46,6 +52,23 @@ export default function HomePage() {
   useEffect(() => {
     setPositions(computeLayoutPositions(museums, layout, stageSize));
     setExpandedId(null);
+  }, [layout, stageSize]);
+
+  useEffect(() => {
+    if (layout === 'map') {
+      const initialScale = MAP_MIN_SCALE;
+      const contentWidth = stageSize.width * MAP_BASE_SCALE;
+      const contentHeight = stageSize.height * MAP_BASE_SCALE;
+      setMapScale(initialScale);
+      setMapOffset({
+        x: (stageSize.width - contentWidth * initialScale) / 2,
+        y: (stageSize.height - contentHeight * initialScale) / 2,
+      });
+      return;
+    }
+
+    setMapScale(1);
+    setMapOffset({ x: 0, y: 0 });
   }, [layout, stageSize]);
 
   useEffect(() => {
@@ -116,35 +139,101 @@ export default function HomePage() {
     setPositions((prev) => ({ ...prev, [id]: pos }));
   };
 
+  const handleWheelZoom = (event: React.WheelEvent) => {
+    if (layout !== 'map') return;
+    event.preventDefault();
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const cursor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    const zoomIntensity = 0.0012;
+    const nextScale = Math.min(
+      Math.max(mapScale - event.deltaY * zoomIntensity, MAP_MIN_SCALE),
+      MAP_BASE_SCALE
+    );
+    const scaleRatio = nextScale / mapScale;
+
+    const nextOffset = {
+      x: cursor.x - (cursor.x - mapOffset.x) * scaleRatio,
+      y: cursor.y - (cursor.y - mapOffset.y) * scaleRatio,
+    };
+
+    setMapScale(nextScale);
+    setMapOffset(nextOffset);
+  };
+
+  const handlePointerDown = (event: React.PointerEvent) => {
+    if (layout !== 'map' || event.button !== 0) return;
+    setIsPanning(true);
+    panOrigin.current = { x: event.clientX, y: event.clientY };
+    (event.target as HTMLElement)?.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event: React.PointerEvent) => {
+    if (layout !== 'map' || !isPanning || !panOrigin.current) return;
+    const dx = event.clientX - panOrigin.current.x;
+    const dy = event.clientY - panOrigin.current.y;
+    panOrigin.current = { x: event.clientX, y: event.clientY };
+    setMapOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+  };
+
+  const stopPanning = (event: React.PointerEvent) => {
+    if (!isPanning) return;
+    setIsPanning(false);
+    panOrigin.current = null;
+    (event.target as HTMLElement)?.releasePointerCapture(event.pointerId);
+  };
+
   return (
     <main className="main-shell">
       <header className="controls">
         <LayoutToggle value={layout} onChange={setLayout} />
       </header>
-      <div ref={stageRef} className="atlas-stage">
-        {layout === 'map' && <div className="map-background" />}
-        <RelationsLayer
-          museums={museums}
-          positions={positions}
-          stage={stageSize}
-          layout={layout}
-          onRelationClick={handleRelationClick}
-        />
-        <LockersGrid
-          museums={museums}
-          positions={positions}
-          activeId={activeId}
-          layout={layout}
-          highlightId={highlightId}
-          onOpen={handleLockerOpen}
-          onExpand={(id) => {
-            setActiveId(id);
-            setExpandedId(id);
+      <div
+        ref={stageRef}
+        className={`atlas-stage${layout === 'map' ? ' map-mode' : ''}${isPanning ? ' is-panning' : ''}`}
+        onWheel={handleWheelZoom}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={stopPanning}
+        onPointerCancel={stopPanning}
+      >
+        <div
+          className="atlas-content"
+          style={{
+            transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${mapScale})`,
+            transformOrigin: '0 0',
           }}
-          onPositionChange={handlePositionChange}
-          clipStyle={layout === 'map' ? 'circle' : 'rect'}
-          expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
-        />
+        >
+          {layout === 'map' && (
+            <div className="map-layer" aria-hidden>
+              <div className="map-background" />
+            </div>
+          )}
+          <RelationsLayer
+            museums={museums}
+            positions={positions}
+            stage={stageSize}
+            layout={layout}
+            onRelationClick={handleRelationClick}
+          />
+          <LockersGrid
+            museums={museums}
+            positions={positions}
+            activeId={activeId}
+            layout={layout}
+            highlightId={highlightId}
+            onOpen={handleLockerOpen}
+            onExpand={(id) => {
+              setActiveId(id);
+              setExpandedId(id);
+            }}
+            onPositionChange={handlePositionChange}
+            clipStyle={layout === 'map' ? 'circle' : 'rect'}
+            expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
+            stage={stageSize}
+          />
+        </div>
       </div>
 
       {modal && (
