@@ -531,6 +531,14 @@ a {
   pointer-events: none;
 }
 
+.map-layer {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  z-index: 0;
+  pointer-events: none;
+}
+
 @media (max-width: 900px) {
   .mega-grid {
     grid-template-columns: 1fr;

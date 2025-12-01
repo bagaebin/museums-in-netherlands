@@ -198,7 +198,11 @@ export default function HomePage() {
             transformOrigin: '0 0',
           }}
         >
-          {layout === 'map' && <div className="map-background" />}
+          {layout === 'map' && (
+            <div className="map-layer" aria-hidden>
+              <div className="map-background" />
+            </div>
+          )}
           <RelationsLayer
             museums={museums}
             positions={positions}
