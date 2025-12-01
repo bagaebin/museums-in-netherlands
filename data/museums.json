@@ -1,7 +1,7 @@
 [
   {
     "id": "arnhem-museum",
-    "name": "Arnhem Museum - arnhem.svg",
+    "name": "Arnhem Museum",
     "type": "museum",
     "region": "NL-Gelderland",
     "city": "Arnhem",
@@ -32,12 +32,12 @@
       ],
       "url": "https://arnhem-museum.example.com"
     },
-    "interiorBaseColor": "#f9d976",
-    "interiorHoverColor": "#f6c33d"
+    "interiorBaseColor": "#f9c74f",
+    "interiorHoverColor": "#f8961e"
   },
   {
     "id": "bauhaus-dessau",
-    "name": "Bauhaus Museum Dessau - bauhaus-dessau.svg",
+    "name": "Bauhaus Museum Dessau",
     "type": "museum",
     "region": "DE-Saxony-Anhalt",
     "city": "Dessau",
@@ -68,12 +68,12 @@
       ],
       "url": "https://www.bauhaus-dessau.de"
     },
-    "interiorBaseColor": "#c9e1ff",
-    "interiorHoverColor": "#a8caff"
+    "interiorBaseColor": "#90caf9",
+    "interiorHoverColor": "#42a5f5"
   },
   {
     "id": "depot-boijmans",
-    "name": "Het Depot van Museum Boijmans Van Beuningen - depot.svg",
+    "name": "Het Depot van Museum Boijmans Van Beuningen",
     "type": "depot",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -104,12 +104,12 @@
       ],
       "url": "https://www.boijmans.nl/en/depot"
     },
-    "interiorBaseColor": "#d5c9ff",
-    "interiorHoverColor": "#d5c9ff"
+    "interiorBaseColor": "#b39ddb",
+    "interiorHoverColor": "#7e57c2"
   },
   {
     "id": "design-den-bosch",
-    "name": "Design Museum Den Bosch - design-den-bosch.svg",
+    "name": "Design Museum Den Bosch",
     "type": "museum",
     "region": "NL-North-Brabant",
     "city": "'s-Hertogenbosch",
@@ -140,12 +140,12 @@
       ],
       "url": "https://designmuseum.nl"
     },
-    "interiorBaseColor": "#ffe0b3",
-    "interiorHoverColor": "#ffc87a"
+    "interiorBaseColor": "#ffcc80",
+    "interiorHoverColor": "#ffa726"
   },
   {
     "id": "huis-sonneveld",
-    "name": "Huis Sonneveld - huis-sonneveld.svg",
+    "name": "Huis Sonneveld",
     "type": "house-museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -176,12 +176,12 @@
       ],
       "url": "https://huis-sonneveld.nl"
     },
-    "interiorBaseColor": "#d7f0d7",
-    "interiorHoverColor": "#bfe7c0"
+    "interiorBaseColor": "#a5d6a7",
+    "interiorHoverColor": "#66bb6a"
   },
   {
     "id": "kunsthal-rotterdam",
-    "name": "Kunsthal Rotterdam - kunsthal-rotterdam.svg",
+    "name": "Kunsthal Rotterdam",
     "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -212,12 +212,12 @@
       ],
       "url": "https://www.kunsthal.nl"
     },
-    "interiorBaseColor": "#ffd6e8",
-    "interiorHoverColor": "#ffadd1"
+    "interiorBaseColor": "#f48fb1",
+    "interiorHoverColor": "#ec407a"
   },
   {
     "id": "kunstinstituut-melly",
-    "name": "Kunstinstituut Melly - kunstinstituut-melly.svg",
+    "name": "Kunstinstituut Melly",
     "type": "art-center",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
@@ -248,8 +248,8 @@
       ],
       "url": "https://www.kunstinstituutmelly.nl"
     },
-    "interiorBaseColor": "#c4f1ff",
-    "interiorHoverColor": "#99e4ff"
+    "interiorBaseColor": "#80deea",
+    "interiorHoverColor": "#26c6da"
   },
   {
     "id": "natural-history-rotterdam",
@@ -284,8 +284,8 @@
       ],
       "url": "https://www.hetnatuurhistorisch.nl"
     },
-    "interiorBaseColor": "#f4e2b8",
-    "interiorHoverColor": "#e8c888"
+    "interiorBaseColor": "#ffe082",
+    "interiorHoverColor": "#ffca28"
   },
   {
     "id": "next-nature",
@@ -320,8 +320,8 @@
       ],
       "url": "https://nextnature.net/museum"
     },
-    "interiorBaseColor": "#d1ffe3",
-    "interiorHoverColor": "#9cf3c4"
+    "interiorBaseColor": "#a5d6a7",
+    "interiorHoverColor": "#66bb6a"
   },
   {
     "id": "nieuwe-instituut",
@@ -356,8 +356,8 @@
       ],
       "url": "https://nieuweinstituut.nl"
     },
-    "interiorBaseColor": "#f0d1ff",
-    "interiorHoverColor": "#d4a8ff"
+    "interiorBaseColor": "#ce93d8",
+    "interiorHoverColor": "#ab47bc"
   },
   {
     "id": "nijntje-museum",
@@ -392,8 +392,8 @@
       ],
       "url": "https://nijntjemuseum.nl"
     },
-    "interiorBaseColor": "#fff2b3",
-    "interiorHoverColor": "#ffe280"
+    "interiorBaseColor": "#fff59d",
+    "interiorHoverColor": "#ffee58"
   },
   {
     "id": "rijksmuseum-amsterdam",
@@ -428,8 +428,8 @@
       ],
       "url": "https://www.rijksmuseum.nl"
     },
-    "interiorBaseColor": "#e3d4ff",
-    "interiorHoverColor": "#c5a8ff"
+    "interiorBaseColor": "#d1c4e9",
+    "interiorHoverColor": "#9575cd"
   },
   {
     "id": "stedelijk-amsterdam",
@@ -464,7 +464,7 @@
       ],
       "url": "https://www.stedelijk.nl"
     },
-    "interiorBaseColor": "#d9f0ff",
-    "interiorHoverColor": "#b6e0ff"
+    "interiorBaseColor": "#81d4fa",
+    "interiorHoverColor": "#29b6f6"
   }
 ]
