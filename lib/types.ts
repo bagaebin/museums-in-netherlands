@@ -24,6 +24,8 @@ export interface Museum {
   city: string;
   doorSvg?: string;
   interiorColor?: string;
+  interiorBaseColor?: string;
+  interiorHoverColor?: string;
   positionGrid: Position;
   positionMap: Position;
   topic?: string;

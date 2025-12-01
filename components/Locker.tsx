@@ -108,6 +108,9 @@ export function Locker({
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
   }, [clipStyle]);
 
+  const baseColor = museum.interiorBaseColor || museum.interiorColor || '#ffe3a3';
+  const hoverColor = museum.interiorHoverColor || baseColor;
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const dragOrigin = useRef<Position | null>(null);
@@ -132,7 +135,11 @@ export function Locker({
     <motion.div
       id={`locker-${museum.id}`}
       className={`locker-tile${isExpanded ? ' expanded' : ''}`}
-      style={{ zIndex: isExpanded ? 5 : undefined }}
+      style={{
+        zIndex: isExpanded ? 5 : undefined,
+        ['--detail-base' as const]: baseColor,
+        ['--detail-hover' as const]: hoverColor,
+      }}
       initial={{ x: position.x, y: position.y }}
       animate={{ x: position.x, y: position.y }}
       drag={draggable}
@@ -172,10 +179,7 @@ export function Locker({
         initial="closed"
         custom={radius}
         aria-hidden
-        style={{
-          visibility: isOpen ? 'visible' : 'hidden',
-          ['--detail-bg' as const]: museum.interiorColor || '#ffe3a3',
-        }}
+        style={{ visibility: isOpen ? 'visible' : 'hidden' }}
       />
       <motion.button
         className="locker-surface"

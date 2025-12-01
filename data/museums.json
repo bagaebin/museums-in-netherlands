@@ -32,7 +32,8 @@
       ],
       "url": "https://arnhem-museum.example.com"
     },
-    "interiorColor": "#f9d976"
+    "interiorBaseColor": "#f9d976",
+    "interiorHoverColor": "#f6c33d"
   },
   {
     "id": "bauhaus-dessau",
@@ -67,7 +68,8 @@
       ],
       "url": "https://www.bauhaus-dessau.de"
     },
-    "interiorColor": "#c9e1ff"
+    "interiorBaseColor": "#c9e1ff",
+    "interiorHoverColor": "#a8caff"
   },
   {
     "id": "depot-boijmans",
@@ -102,7 +104,8 @@
       ],
       "url": "https://www.boijmans.nl/en/depot"
     },
-    "interiorColor": "#d5c9ff"
+    "interiorBaseColor": "#d5c9ff",
+    "interiorHoverColor": "#d5c9ff"
   },
   {
     "id": "design-den-bosch",
@@ -137,7 +140,8 @@
       ],
       "url": "https://designmuseum.nl"
     },
-    "interiorColor": "#ffe0b3"
+    "interiorBaseColor": "#ffe0b3",
+    "interiorHoverColor": "#ffc87a"
   },
   {
     "id": "huis-sonneveld",
@@ -172,7 +176,8 @@
       ],
       "url": "https://huis-sonneveld.nl"
     },
-    "interiorColor": "#d7f0d7"
+    "interiorBaseColor": "#d7f0d7",
+    "interiorHoverColor": "#bfe7c0"
   },
   {
     "id": "kunsthal-rotterdam",
@@ -207,7 +212,8 @@
       ],
       "url": "https://www.kunsthal.nl"
     },
-    "interiorColor": "#ffd6e8"
+    "interiorBaseColor": "#ffd6e8",
+    "interiorHoverColor": "#ffadd1"
   },
   {
     "id": "kunstinstituut-melly",
@@ -242,7 +248,8 @@
       ],
       "url": "https://www.kunstinstituutmelly.nl"
     },
-    "interiorColor": "#c4f1ff"
+    "interiorBaseColor": "#c4f1ff",
+    "interiorHoverColor": "#99e4ff"
   },
   {
     "id": "natural-history-rotterdam",
@@ -277,7 +284,8 @@
       ],
       "url": "https://www.hetnatuurhistorisch.nl"
     },
-    "interiorColor": "#f4e2b8"
+    "interiorBaseColor": "#f4e2b8",
+    "interiorHoverColor": "#e8c888"
   },
   {
     "id": "next-nature",
@@ -312,7 +320,8 @@
       ],
       "url": "https://nextnature.net/museum"
     },
-    "interiorColor": "#d1ffe3"
+    "interiorBaseColor": "#d1ffe3",
+    "interiorHoverColor": "#9cf3c4"
   },
   {
     "id": "nieuwe-instituut",
@@ -347,7 +356,8 @@
       ],
       "url": "https://nieuweinstituut.nl"
     },
-    "interiorColor": "#f0d1ff"
+    "interiorBaseColor": "#f0d1ff",
+    "interiorHoverColor": "#d4a8ff"
   },
   {
     "id": "nijntje-museum",
@@ -382,7 +392,8 @@
       ],
       "url": "https://nijntjemuseum.nl"
     },
-    "interiorColor": "#fff2b3"
+    "interiorBaseColor": "#fff2b3",
+    "interiorHoverColor": "#ffe280"
   },
   {
     "id": "rijksmuseum-amsterdam",
@@ -417,7 +428,8 @@
       ],
       "url": "https://www.rijksmuseum.nl"
     },
-    "interiorColor": "#e3d4ff"
+    "interiorBaseColor": "#e3d4ff",
+    "interiorHoverColor": "#c5a8ff"
   },
   {
     "id": "stedelijk-amsterdam",
@@ -452,6 +464,7 @@
       ],
       "url": "https://www.stedelijk.nl"
     },
-    "interiorColor": "#d9f0ff"
+    "interiorBaseColor": "#d9f0ff",
+    "interiorHoverColor": "#b6e0ff"
   }
 ]
