@@ -320,14 +320,17 @@ export function RelationsLayer({
               const len = Math.hypot(dir.x, dir.y) || 1;
               const dirNorm = { x: dir.x / len, y: dir.y / len };
               const perp = { x: -dirNorm.y * hubRadius, y: dirNorm.x * hubRadius };
-              const hubEdgeCenter = {
-                x: anchor.x + dirNorm.x * hubRadius,
-                y: anchor.y + dirNorm.y * hubRadius,
-              };
+              const hubEdgeCenter = { x: anchor.x, y: anchor.y };
               const hubA = { x: hubEdgeCenter.x + perp.x, y: hubEdgeCenter.y + perp.y };
               const hubB = { x: hubEdgeCenter.x - perp.x, y: hubEdgeCenter.y - perp.y };
+              const alignedDistance =
+                Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
+              const crossedDistance =
+                Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
+              const [memberA, memberB] =
+                crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
               const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
-              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${mA.x},${mA.y} ${mB.x},${mB.y}`;
+              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
               const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
               const pathId = `hub-path-${hub.id}-${memberId}`;
               const label = estimateReveal(
