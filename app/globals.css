@@ -217,7 +217,7 @@ a {
 
 .detail-bg {
   position: absolute;
-  inset: 8px;
+  inset: 0;
   background: var(--detail-base, #ffe3a3);
   border-radius: 0;
   overflow: hidden;
@@ -235,15 +235,14 @@ a {
   position: absolute;
   inset: 0;
   background: var(--detail-hover, var(--detail-base, #ffe3a3));
-  transform-origin: bottom;
-  transform: scaleY(0);
+  transform-origin: center;
+  transform: scale(0);
   transition: transform 0.35s ease;
   z-index: 0;
 }
 
-.locker-tile:hover .detail-bg::after,
-.locker-tile.expanded .detail-bg::after {
-  transform: scaleY(1);
+.detail-bg.opened::after {
+  transform: scale(1);
 }
 
 .detail-content {

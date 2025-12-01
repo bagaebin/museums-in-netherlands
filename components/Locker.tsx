@@ -173,7 +173,7 @@ export function Locker({
     >
       {highlight && <div className="highlight-ring" aria-hidden />}
       <motion.div
-        className={`detail-bg${isExpanded ? ' expanded' : ''}`}
+        className={`detail-bg${isExpanded ? ' expanded' : ''}${isOpen ? ' opened' : ''}`}
         variants={variants}
         animate={isOpen ? 'open' : 'closed'}
         initial="closed"
