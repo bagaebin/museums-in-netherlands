@@ -35,50 +35,99 @@ export function RelationsLayer({
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
 
   const getEdgeSegment = (source: Position, target: Position) => {
-    const diagonalMode: 'aligned' | 'opposite' = 'opposite';
-
-    const pickDiagonal = (usePrimaryDiagonal: boolean) =>
-      diagonalMode === 'opposite' ? !usePrimaryDiagonal : usePrimaryDiagonal;
-
-    const diagonals = {
-      primary: [
+    const edges = {
+      left: [
         { x: source.x, y: source.y },
-        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
-      ],
-      secondary: [
-        { x: source.x + TILE_WIDTH, y: source.y },
         { x: source.x, y: source.y + TILE_HEIGHT },
       ],
+      right: [
+        { x: source.x + TILE_WIDTH, y: source.y },
+        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+      ],
+      top: [
+        { x: source.x, y: source.y },
+        { x: source.x + TILE_WIDTH, y: source.y },
+      ],
+      bottom: [
+        { x: source.x, y: source.y + TILE_HEIGHT },
+        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
+      ],
     } as const;
+
+    const sourceRect = {
+      left: source.x,
+      right: source.x + TILE_WIDTH,
+      top: source.y,
+      bottom: source.y + TILE_HEIGHT,
+    };
+    const targetRect = {
+      left: target.x,
+      right: target.x + TILE_WIDTH,
+      top: target.y,
+      bottom: target.y + TILE_HEIGHT,
+    };
+
+    if (layout === 'grid') {
+      const horizontalGap =
+        targetRect.left >= sourceRect.right
+          ? targetRect.left - sourceRect.right
+          : sourceRect.left >= targetRect.right
+            ? sourceRect.left - targetRect.right
+            : 0;
+      const verticalGap =
+        targetRect.top >= sourceRect.bottom
+          ? targetRect.top - sourceRect.bottom
+          : sourceRect.top >= targetRect.bottom
+            ? sourceRect.top - targetRect.bottom
+            : 0;
+
+      if (horizontalGap <= verticalGap) {
+        if (targetRect.left >= sourceRect.right) return edges.right;
+        if (targetRect.right <= sourceRect.left) return edges.left;
+      }
+
+      if (targetRect.top >= sourceRect.bottom) return edges.bottom;
+      if (targetRect.bottom <= sourceRect.top) return edges.top;
+    }
 
     const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
     const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
     const dx = targetCenter.x - sourceCenter.x;
     const dy = targetCenter.y - sourceCenter.y;
-    const usePrimaryDiagonal = pickDiagonal(dx * dy >= 0);
+    const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
 
-    return usePrimaryDiagonal ? diagonals.primary : diagonals.secondary;
+    if (horizontalDominant) {
+      if (dx >= 0) return edges.right;
+      return edges.left;
+    }
+
+    if (dy >= 0) return edges.bottom;
+
+    return edges.top;
   };
 
   const getEdgeTowardsPoint = (source: Position, targetPoint: Position) => {
-    const diagonalMode: 'aligned' | 'opposite' = 'opposite';
-
-    const pickDiagonal = (usePrimaryDiagonal: boolean) =>
-      diagonalMode === 'opposite' ? !usePrimaryDiagonal : usePrimaryDiagonal;
-
     const paddedSource = {
       x: source.x + STAGE_PADDING,
       y: source.y + STAGE_PADDING,
     };
 
-    const diagonals = {
-      primary: [
+    const edges = {
+      left: [
         { x: paddedSource.x, y: paddedSource.y },
+        { x: paddedSource.x, y: paddedSource.y + TILE_HEIGHT },
+      ],
+      right: [
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y },
         { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y + TILE_HEIGHT },
       ],
-      secondary: [
+      top: [
+        { x: paddedSource.x, y: paddedSource.y },
         { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y },
+      ],
+      bottom: [
         { x: paddedSource.x, y: paddedSource.y + TILE_HEIGHT },
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y + TILE_HEIGHT },
       ],
     } as const;
 
@@ -88,9 +137,16 @@ export function RelationsLayer({
     };
     const dx = targetPoint.x - center.x;
     const dy = targetPoint.y - center.y;
-    const usePrimaryDiagonal = pickDiagonal(dx * dy >= 0);
+    const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
 
-    return usePrimaryDiagonal ? diagonals.primary : diagonals.secondary;
+    if (horizontalDominant) {
+      if (dx >= 0) return edges.right;
+      return edges.left;
+    }
+
+    if (dy >= 0) return edges.bottom;
+
+    return edges.top;
   };
 
   const computeHubAnchor = (hub: RelationHub): Position | null => {
@@ -204,8 +260,8 @@ export function RelationsLayer({
 
         const hubLabel = estimateReveal(hub.label, 180);
         const hasHubInfo = Boolean(hub.info);
-        const hubRadius = 120;
-        const hubHitRadius = 140;
+        const hubRadius = 80;
+        const hubHitRadius = 100;
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
