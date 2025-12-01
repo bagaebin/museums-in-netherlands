@@ -316,9 +316,19 @@ export function RelationsLayer({
               const segment = getEdgeTowardsPoint(memberPosition, anchor);
               const [mA, mB] = segment;
               const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
-              const labelDistance = Math.hypot(mid.x - anchor.x, mid.y - anchor.y);
-              const ribbonPoints = `${anchor.x},${anchor.y} ${mA.x},${mA.y} ${mB.x},${mB.y}`;
-              const path = `M ${anchor.x} ${anchor.y} L ${mid.x} ${mid.y}`;
+              const dir = { x: mid.x - anchor.x, y: mid.y - anchor.y };
+              const len = Math.hypot(dir.x, dir.y) || 1;
+              const dirNorm = { x: dir.x / len, y: dir.y / len };
+              const perp = { x: -dirNorm.y * hubRadius, y: dirNorm.x * hubRadius };
+              const hubEdgeCenter = {
+                x: anchor.x + dirNorm.x * hubRadius,
+                y: anchor.y + dirNorm.y * hubRadius,
+              };
+              const hubA = { x: hubEdgeCenter.x + perp.x, y: hubEdgeCenter.y + perp.y };
+              const hubB = { x: hubEdgeCenter.x - perp.x, y: hubEdgeCenter.y - perp.y };
+              const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
+              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${mA.x},${mA.y} ${mB.x},${mB.y}`;
+              const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
               const pathId = `hub-path-${hub.id}-${memberId}`;
               const label = estimateReveal(
                 `${hub.label} · ${museumById[memberId]?.name ?? memberId}`,
