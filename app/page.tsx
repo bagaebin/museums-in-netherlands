@@ -224,6 +224,7 @@ export default function HomePage() {
             onPositionChange={handlePositionChange}
             clipStyle={layout === 'map' ? 'circle' : 'rect'}
             expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
+            stage={stageSize}
           />
         </div>
       </div>
