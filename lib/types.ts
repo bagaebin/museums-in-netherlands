@@ -10,12 +10,25 @@ export interface RelationHubOffset {
   offset: Position;
 }
 
+export type RelationHubProviderRole = 'fund' | 'studio' | 'curator' | 'producer' | 'other';
+
+export interface RelationHubProvider {
+  role: RelationHubProviderRole;
+  name: string;
+}
+
+export interface RelationHubInfo {
+  summary: string;
+  providers: RelationHubProvider[];
+}
+
 export interface RelationHub {
   id: string;
   label: string;
   members: string[];
   offset?: Position;
   layoutOffsets?: RelationHubOffset[];
+  info?: RelationHubInfo;
 }
 
 export interface MuseumDetail {

@@ -10,10 +10,17 @@ import { RelationsLayer } from '../components/RelationsLayer';
 import { FabButtons } from '../components/FabButtons';
 import { applyHashWarp } from '../lib/warp';
 import { TILE_HEIGHT, TILE_WIDTH, computeLayoutPositions } from '../lib/layout';
-import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
+import { LayoutMode, Museum, Position, RelationHub, RelationHubProviderRole } from '../lib/types';
 
 const museums = museumsData as Museum[];
 const relationHubs = relationHubsData as RelationHub[];
+const providerRoleLabels: Record<RelationHubProviderRole, string> = {
+  fund: 'Fund',
+  studio: 'Studio',
+  curator: 'Curator',
+  producer: 'Producer',
+  other: 'Partner',
+};
 
 type RelationDetail =
   | {
@@ -26,6 +33,11 @@ type RelationDetail =
       type: 'hub';
       hub: RelationHub;
       member: Museum;
+      label: string;
+    }
+  | {
+      type: 'hub-info';
+      hub: RelationHub;
       label: string;
     };
 
@@ -112,6 +124,17 @@ export default function HomePage() {
     []
   );
 
+  useEffect(() => {
+    if (!relationDetail) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setRelationDetail(null);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [relationDetail]);
+
   const expandedMuseum = expandedId ? museumById[expandedId] : null;
 
   const overviewContent = useMemo(
@@ -146,8 +169,15 @@ export default function HomePage() {
     sourceId: string,
     targetId: string,
     labelFromHub?: string,
-    meta?: { hub?: RelationHub }
+    meta?: { hub?: RelationHub; targetType?: 'hub-member' | 'hub-node' }
   ) => {
+    if (meta?.hub && meta.targetType === 'hub-node') {
+      const infoLabel = meta.hub.info?.summary ?? labelFromHub ?? `${meta.hub.label} 허브 정보`;
+      setRelationDetail({ type: 'hub-info', hub: meta.hub, label: infoLabel });
+      setExpandedId(null);
+      return;
+    }
+
     if (meta?.hub) {
       const member = museumById[targetId];
       if (!member) return;
@@ -352,12 +382,14 @@ export default function HomePage() {
                 <h3>
                   {relationDetail.type === 'pair'
                     ? `${relationDetail.source.name} ↔ ${relationDetail.target.name}`
-                    : `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`}
+                    : relationDetail.type === 'hub'
+                      ? `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`
+                      : `${relationDetail.hub.label} 허브`}
                 </h3>
                 <p>{relationDetail.label}</p>
               </div>
               <div className="relation-meta">
-                {relationDetail.type === 'pair' ? (
+                {relationDetail.type === 'pair' && (
                   <>
                     <div>
                       <small>출발</small>
@@ -370,7 +402,8 @@ export default function HomePage() {
                       <span>{relationDetail.target.city}</span>
                     </div>
                   </>
-                ) : (
+                )}
+                {relationDetail.type === 'hub' && (
                   <>
                     <div>
                       <small>허브</small>
@@ -381,6 +414,20 @@ export default function HomePage() {
                       <small>연결된 멤버</small>
                       <strong>{relationDetail.member.name}</strong>
                       <span>{relationDetail.member.city}</span>
+                    </div>
+                  </>
+                )}
+                {relationDetail.type === 'hub-info' && (
+                  <>
+                    <div>
+                      <small>허브</small>
+                      <strong>{relationDetail.hub.label}</strong>
+                      <span>멤버 {relationDetail.hub.members.length}곳</span>
+                    </div>
+                    <div>
+                      <small>지원 항목</small>
+                      <strong>교차점 운영</strong>
+                      <span>{relationDetail.hub.info?.providers?.length ?? 0} 파트너</span>
                     </div>
                   </>
                 )}
@@ -396,6 +443,26 @@ export default function HomePage() {
                           {museumById[id]?.name ?? id}
                         </span>
                       ))}
+                  </div>
+                </div>
+              )}
+              {relationDetail.type === 'hub-info' && (
+                <div className="relation-hub-providers">
+                  <small>지원/운영</small>
+                  <div className="relation-hub-provider-chips">
+                    {relationDetail.hub.info?.providers?.length ? (
+                      relationDetail.hub.info.providers.map((provider) => (
+                        <span
+                          key={`${provider.role}-${provider.name}`}
+                          className={`relation-hub-provider role-${provider.role}`}
+                        >
+                          <em>{providerRoleLabels[provider.role] ?? 'Partner'}</em>
+                          <strong>{provider.name}</strong>
+                        </span>
+                      ))
+                    ) : (
+                      <span className="relation-hub-provider empty">등록된 지원 주체가 없습니다</span>
+                    )}
                   </div>
                 </div>
               )}

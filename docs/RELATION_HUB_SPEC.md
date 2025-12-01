@@ -35,6 +35,41 @@
 - 허브 삼각형 전체를 클릭/포커스 가능 영역으로 두고, `aria-label`은 "허브라벨 – 멤버이름" 형태로 노출한다.
 - 클릭 시 기존 relation 패널을 재사용하며, 허브 라벨과 멤버 이름을 함께 전달한다.
 
+## 허브 교차점 팝업(추가 요구)
+- 목적: 3개 이상 락커가 연결된 허브의 **교차점(중앙 노드)**을 키워서 클릭/포커스로 허브 자체 정보를 보여주는 팝업을 띄운다.
+- 표시 정보: 허브가 제공하는 `fund`, `studio`, `curator` 등 지원 주체 목록과 간단 설명.
+
+### 데이터 계약 (허브 정보 확장)
+`data/relationHubs.json`에 선택 필드 `info`를 추가한다.
+
+```json
+{
+  "id": "rhine-culture-branch",
+  "label": "라인 컬처 허브",
+  "members": ["arnhem-museum", "depot-boijmans", "kunsthal-rotterdam", "rijksmuseum-amsterdam"],
+  "offset": { "x": 0, "y": -24 },
+  "info": {
+    "summary": "라인강 예술 생태계를 연결하는 프로젝트 허브",
+    "providers": [
+      { "role": "fund", "name": "Rijnfonds" },
+      { "role": "studio", "name": "Studio Delta" },
+      { "role": "curator", "name": "J. van Rijk" }
+    ]
+  }
+}
+```
+
+규칙:
+- `info.providers[].role`은 `fund` | `studio` | `curator` | `producer` | `other` 중 하나이며 UI에서 라벨/아이콘으로 매핑한다.
+- `info.summary`는 160자 내외의 짧은 문장으로 팝업 상단에 노출한다.
+- `info`는 선택 사항이나, 제공되면 교차점 팝업을 활성화한다.
+
+### 렌더링 & 상호작용
+- 허브 중심 노드의 반지름을 기존 10px → **14px**로 키우고, 접근성을 위해 24px 투명 히트 존을 추가한다.
+- 중심 노드 클릭/Enter/Space 시 허브 팝업을 열고, 다른 멤버 삼각형 클릭 동작과 충돌하지 않도록 **포인터 이벤트 우선순위**를 중앙 노드에 준다.
+- 팝업은 기존 relation 패널 스타일을 재사용하되, 헤드라인에는 허브 라벨과 멤버 수, 본문에 `info.summary`·`providers` 배지를 렌더링한다.
+- 팝업 닫기: ESC 키, 바깥 영역 클릭, 패널 내 닫기 버튼.
+
 ## 구현 메모
 - `lib/types.ts`에 `RelationHub` 타입을 추가한다.
 - `app/page.tsx`에서 허브 데이터를 로드해 `RelationsLayer`에 전달한다.

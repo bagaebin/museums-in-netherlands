@@ -14,7 +14,7 @@ interface RelationsLayerProps {
     sourceId: string,
     targetId: string,
     label?: string,
-    meta?: { hub?: RelationHub }
+    meta?: { hub?: RelationHub; targetType?: 'hub-member' | 'hub-node' }
   ) => void;
   relationHubs?: RelationHub[];
 }
@@ -256,20 +256,51 @@ export function RelationsLayer({
         if (!anchor) return null;
 
         const hubLabel = estimateReveal(hub.label, 180);
+        const hasHubInfo = Boolean(hub.info);
+        const hubRadius = 14;
+        const hubHitRadius = 24;
+        const activateHubInfo = () => {
+          if (!hasHubInfo) return;
+          onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
+        };
         return (
           <g key={hub.id} className="relation-hub-cluster">
-            <motion.circle
-              className="relation-hub-node"
-              cx={anchor.x}
-              cy={anchor.y}
-              r={10}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            />
+            <g
+              role={hasHubInfo ? 'button' : 'presentation'}
+              tabIndex={hasHubInfo ? 0 : -1}
+              className={`relation-hit relation-hub-node-hit${hasHubInfo ? ' interactive' : ''}`}
+              aria-label={hasHubInfo ? `${hub.label} 허브 정보 보기` : undefined}
+              onClick={activateHubInfo}
+              onKeyDown={(event) => {
+                if (!hasHubInfo) return;
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  activateHubInfo();
+                }
+              }}
+              style={{ pointerEvents: hasHubInfo ? 'auto' : 'none' }}
+            >
+              <motion.circle
+                className="relation-hub-hit-zone"
+                cx={anchor.x}
+                cy={anchor.y}
+                r={hubHitRadius}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: hasHubInfo ? 0.14 : 0 }}
+              />
+              <motion.circle
+                className="relation-hub-node"
+                cx={anchor.x}
+                cy={anchor.y}
+                r={hubRadius}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              />
+            </g>
             <motion.text
               className="relation-label relation-hub-label"
               x={anchor.x}
-              y={anchor.y - 14}
+              y={anchor.y - (hubRadius + 8)}
               textAnchor="middle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -290,7 +321,8 @@ export function RelationsLayer({
                 `${hub.label} · ${museumById[memberId]?.name ?? memberId}`,
                 labelDistance
               );
-              const activateRelation = () => onRelationClick?.(hub.id, memberId, label, { hub });
+              const activateRelation = () =>
+                onRelationClick?.(hub.id, memberId, label, { hub, targetType: 'hub-member' });
 
               return (
                 <g

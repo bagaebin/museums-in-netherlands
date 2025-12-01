@@ -364,11 +364,25 @@ a {
   stroke: rgba(255, 180, 0, 0.46);
 }
 
+.relation-hub-hit-zone {
+  fill: rgba(255, 180, 0, 0.12);
+  stroke: rgba(255, 180, 0, 0.24);
+  stroke-width: 1px;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
 .relation-hub-node {
   fill: rgba(255, 180, 0, 0.8);
   stroke: rgba(21, 24, 33, 0.35);
   stroke-width: 1px;
   filter: drop-shadow(0 4px 16px rgba(255, 180, 0, 0.35));
+}
+
+.relation-hub-node-hit:focus-visible .relation-hub-node,
+.relation-hub-node-hit:hover .relation-hub-node {
+  stroke: rgba(21, 24, 33, 0.5);
+  box-shadow: 0 0 0 4px rgba(255, 180, 0, 0.35);
 }
 
 .relation-hub-label {
@@ -513,6 +527,73 @@ a {
   border: 1px solid rgba(21, 24, 33, 0.08);
   font-size: 12px;
   color: var(--text);
+}
+
+.relation-hub-providers {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.relation-hub-provider-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.relation-hub-provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(21, 24, 33, 0.05);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  color: var(--text);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.relation-hub-provider em {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(21, 24, 33, 0.7);
+}
+
+.relation-hub-provider strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.relation-hub-provider.role-fund {
+  background: rgba(64, 140, 255, 0.08);
+  border-color: rgba(64, 140, 255, 0.35);
+}
+
+.relation-hub-provider.role-studio {
+  background: rgba(120, 80, 200, 0.08);
+  border-color: rgba(120, 80, 200, 0.32);
+}
+
+.relation-hub-provider.role-curator {
+  background: rgba(255, 180, 0, 0.12);
+  border-color: rgba(255, 180, 0, 0.42);
+}
+
+.relation-hub-provider.role-producer {
+  background: rgba(40, 180, 140, 0.1);
+  border-color: rgba(40, 180, 140, 0.32);
+}
+
+.relation-hub-provider.role-other {
+  background: rgba(21, 24, 33, 0.08);
+  border-color: rgba(21, 24, 33, 0.22);
+}
+
+.relation-hub-provider.empty {
+  background: rgba(21, 24, 33, 0.06);
+  border-style: dashed;
+  color: rgba(21, 24, 33, 0.65);
 }
 
 .mega-overlay {

@@ -14,6 +14,14 @@
         "layout": "map",
         "offset": { "x": 14, "y": -36 }
       }
-    ]
+    ],
+    "info": {
+      "summary": "라인강권 후원·스튜디오·큐레이터가 모여 새로운 복합 전시를 설계하는 실험 허브.",
+      "providers": [
+        { "role": "fund", "name": "Rijnfonds" },
+        { "role": "studio", "name": "Studio Delta" },
+        { "role": "curator", "name": "J. van Rijk" }
+      ]
+    }
   }
 ]
