@@ -286,10 +286,10 @@ export function RelationsLayer({
           const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
           const gapNext = ((next - angle + twoPi) % twoPi) / 2;
           const arcPadding = 0.04;
-          const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
           const memberWidth = Math.hypot(mA.x - mB.x, mA.y - mB.y);
           const halfFromWidth = Math.asin(Math.min(1, memberWidth / (2 * hubRadius)));
-          const halfAngle = Math.min(halfFromWidth || availableHalf, availableHalf);
+          const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
+          const halfAngle = Math.max(halfFromWidth || availableHalf, availableHalf);
           const baseA = angle - halfAngle;
           const baseB = angle + halfAngle;
           const hubA = {
@@ -383,6 +383,17 @@ export function RelationsLayer({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               />
+              <motion.text
+                className={`relation-label relation-hub-label${hasHubInfo ? ' interactive' : ''}`}
+                x={anchor.x}
+                y={anchor.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {hubLabel}
+              </motion.text>
             </g>
             {mergedPath ? (
               <motion.path
@@ -441,16 +452,6 @@ export function RelationsLayer({
                 </g>
               );
             })}
-            <motion.text
-              className="relation-label relation-hub-label"
-              x={anchor.x}
-              y={anchor.y - (hubRadius + 8)}
-              textAnchor="middle"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {hubLabel}
-            </motion.text>
           </g>
         );
       })}
