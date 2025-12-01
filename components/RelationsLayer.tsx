@@ -327,23 +327,36 @@ export function RelationsLayer({
 
         const mergedPath = (() => {
           if (!enrichedMembers.length) return null;
-          const first = enrichedMembers[0];
-          let d = `M ${first.hubA.x} ${first.hubA.y} L ${first.memberA.x} ${first.memberA.y} L ${first.memberB.x} ${first.memberB.y} L ${first.hubB.x} ${first.hubB.y}`;
 
-          for (let i = 1; i < enrichedMembers.length; i += 1) {
-            const prev = enrichedMembers[i - 1];
-            const curr = enrichedMembers[i];
+          const ordered = [...enrichedMembers].sort((a, b) => a.baseA - b.baseA);
+          const first = ordered[0];
+          const commands = [
+            `M ${first.hubA.x} ${first.hubA.y}`,
+            `L ${first.memberA.x} ${first.memberA.y}`,
+            `L ${first.memberB.x} ${first.memberB.y}`,
+            `L ${first.hubB.x} ${first.hubB.y}`,
+          ];
+
+          for (let i = 1; i < ordered.length; i += 1) {
+            const prev = ordered[i - 1];
+            const curr = ordered[i];
             const delta = ((curr.baseA - prev.baseB + Math.PI * 2) % (Math.PI * 2));
             const largeArc = delta > Math.PI ? 1 : 0;
-            d += ` A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`;
-            d += ` L ${curr.memberA.x} ${curr.memberA.y} L ${curr.memberB.x} ${curr.memberB.y} L ${curr.hubB.x} ${curr.hubB.y}`;
+
+            commands.push(`A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`);
+            commands.push(`L ${curr.memberA.x} ${curr.memberA.y}`);
+            commands.push(`L ${curr.memberB.x} ${curr.memberB.y}`);
+            commands.push(`L ${curr.hubB.x} ${curr.hubB.y}`);
           }
 
-          const last = enrichedMembers[enrichedMembers.length - 1];
+          const last = ordered[ordered.length - 1];
           const deltaBack = ((first.baseA - last.baseB + Math.PI * 2) % (Math.PI * 2));
           const largeArcBack = deltaBack > Math.PI ? 1 : 0;
-          d += ` A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y} Z`;
-          return d;
+
+          commands.push(`A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y}`);
+          commands.push('Z');
+
+          return commands.join(' ');
         })();
 
         const activateHubInfo = () => {
