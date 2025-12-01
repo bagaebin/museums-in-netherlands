@@ -15,6 +15,7 @@
 - `positionGrid {x, y}`: 그리드 레이아웃의 정수 좌표.
 - `positionMap {x, y}`: 지도 레이아웃에서 0~1 정규화된 좌표.
 - `relations[]`: 인접·협업 관계 배열.
+- `relationHubs[]` (별도 파일): 3개 이상의 박물관을 하나의 허브로 묶어 가지형 렌더링을 지원.
   - `targetId`: 연결 대상 박물관의 id.
   - `label`: 관계 라벨(곡선 textPath에 표시).
 - `detail`: 상세 정보 오브젝트.

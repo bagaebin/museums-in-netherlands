@@ -1,0 +1,19 @@
+[
+  {
+    "id": "rhine-culture-branch",
+    "label": "라인 컬처 허브",
+    "members": [
+      "arnhem-museum",
+      "depot-boijmans",
+      "kunsthal-rotterdam",
+      "rijksmuseum-amsterdam"
+    ],
+    "offset": { "x": 0, "y": -24 },
+    "layoutOffsets": [
+      {
+        "layout": "map",
+        "offset": { "x": 14, "y": -36 }
+      }
+    ]
+  }
+]

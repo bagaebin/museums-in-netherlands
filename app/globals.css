@@ -359,6 +359,24 @@ a {
   text-shadow: 0 0 10px rgba(255, 180, 0, 0.45);
 }
 
+.relation-hub-ribbon {
+  fill: rgba(255, 180, 0, 0.22);
+  stroke: rgba(255, 180, 0, 0.46);
+}
+
+.relation-hub-node {
+  fill: rgba(255, 180, 0, 0.8);
+  stroke: rgba(21, 24, 33, 0.35);
+  stroke-width: 1px;
+  filter: drop-shadow(0 4px 16px rgba(255, 180, 0, 0.35));
+}
+
+.relation-hub-label {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
 .relation-hit:focus-visible .relation-ribbon,
 .relation-hit:focus-visible .relation-label {
   fill: unset;
@@ -469,6 +487,32 @@ a {
 
 .relation-meta strong {
   font-size: 16px;
+}
+
+.relation-meta span {
+  color: rgba(21, 24, 33, 0.6);
+}
+
+.relation-hub-members {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relation-hub-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.relation-hub-pill {
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(21, 24, 33, 0.06);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  font-size: 12px;
+  color: var(--text);
 }
 
 .mega-overlay {

@@ -5,6 +5,19 @@ export interface Relation {
   label: string;
 }
 
+export interface RelationHubOffset {
+  layout: LayoutMode;
+  offset: Position;
+}
+
+export interface RelationHub {
+  id: string;
+  label: string;
+  members: string[];
+  offset?: Position;
+  layoutOffsets?: RelationHubOffset[];
+}
+
 export interface MuseumDetail {
   description: string;
   images: string[];

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import { LayoutMode, Museum, Position } from '../lib/types';
+import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
 interface RelationsLayerProps {
@@ -10,7 +10,13 @@ interface RelationsLayerProps {
   positions: Record<string, Position>;
   stage: { width: number; height: number };
   layout: LayoutMode;
-  onRelationClick?: (sourceId: string, targetId: string) => void;
+  onRelationClick?: (
+    sourceId: string,
+    targetId: string,
+    label?: string,
+    meta?: { hub?: RelationHub }
+  ) => void;
+  relationHubs?: RelationHub[];
 }
 
 export function RelationsLayer({
@@ -19,6 +25,7 @@ export function RelationsLayer({
   stage,
   layout,
   onRelationClick,
+  relationHubs = [],
 }: RelationsLayerProps) {
   const museumById = useMemo(
     () => Object.fromEntries(museums.map((museum) => [museum.id, museum])),
@@ -97,6 +104,69 @@ export function RelationsLayer({
     if (dy >= 0) return edges.bottom;
 
     return edges.top;
+  };
+
+  const getEdgeTowardsPoint = (source: Position, targetPoint: Position) => {
+    const paddedSource = {
+      x: source.x + STAGE_PADDING,
+      y: source.y + STAGE_PADDING,
+    };
+
+    const edges = {
+      left: [
+        { x: paddedSource.x, y: paddedSource.y },
+        { x: paddedSource.x, y: paddedSource.y + TILE_HEIGHT },
+      ],
+      right: [
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y },
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y + TILE_HEIGHT },
+      ],
+      top: [
+        { x: paddedSource.x, y: paddedSource.y },
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y },
+      ],
+      bottom: [
+        { x: paddedSource.x, y: paddedSource.y + TILE_HEIGHT },
+        { x: paddedSource.x + TILE_WIDTH, y: paddedSource.y + TILE_HEIGHT },
+      ],
+    } as const;
+
+    const center = {
+      x: paddedSource.x + TILE_WIDTH / 2,
+      y: paddedSource.y + TILE_HEIGHT / 2,
+    };
+    const dx = targetPoint.x - center.x;
+    const dy = targetPoint.y - center.y;
+    const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
+
+    if (horizontalDominant) {
+      return dx >= 0 ? edges.right : edges.left;
+    }
+
+    return dy >= 0 ? edges.bottom : edges.top;
+  };
+
+  const computeHubAnchor = (hub: RelationHub): Position | null => {
+    const memberCenters = hub.members
+      .map((id) => positions[id])
+      .filter(Boolean)
+      .map((pos) => ({
+        x: pos!.x + TILE_WIDTH / 2 + STAGE_PADDING,
+        y: pos!.y + TILE_HEIGHT / 2 + STAGE_PADDING,
+      }));
+
+    if (!memberCenters.length) return null;
+
+    const sum = memberCenters.reduce(
+      (acc, cur) => ({ x: acc.x + cur.x, y: acc.y + cur.y }),
+      { x: 0, y: 0 }
+    );
+
+    const base = { x: sum.x / memberCenters.length, y: sum.y / memberCenters.length };
+    const layoutOffset = hub.layoutOffsets?.find((item) => item.layout === layout)?.offset;
+    const offset = layoutOffset ?? hub.offset ?? { x: 0, y: 0 };
+
+    return { x: base.x + offset.x, y: base.y + offset.y };
   };
 
   const renderedPairs = new Set<string>();
@@ -181,6 +251,86 @@ export function RelationsLayer({
           );
         })
       )}
+      {relationHubs.map((hub) => {
+        const anchor = computeHubAnchor(hub);
+        if (!anchor) return null;
+
+        const hubLabel = estimateReveal(hub.label, 180);
+        return (
+          <g key={hub.id} className="relation-hub-cluster">
+            <motion.circle
+              className="relation-hub-node"
+              cx={anchor.x}
+              cy={anchor.y}
+              r={10}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            />
+            <motion.text
+              className="relation-label relation-hub-label"
+              x={anchor.x}
+              y={anchor.y - 14}
+              textAnchor="middle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {hubLabel}
+            </motion.text>
+            {hub.members.map((memberId) => {
+              const memberPosition = positions[memberId];
+              if (!memberPosition) return null;
+              const segment = getEdgeTowardsPoint(memberPosition, anchor);
+              const [mA, mB] = segment;
+              const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
+              const labelDistance = Math.hypot(mid.x - anchor.x, mid.y - anchor.y);
+              const ribbonPoints = `${anchor.x},${anchor.y} ${mA.x},${mA.y} ${mB.x},${mB.y}`;
+              const path = `M ${anchor.x} ${anchor.y} L ${mid.x} ${mid.y}`;
+              const pathId = `hub-path-${hub.id}-${memberId}`;
+              const label = estimateReveal(
+                `${hub.label} · ${museumById[memberId]?.name ?? memberId}`,
+                labelDistance
+              );
+              const activateRelation = () => onRelationClick?.(hub.id, memberId, label, { hub });
+
+              return (
+                <g
+                  key={pathId}
+                  role="button"
+                  tabIndex={0}
+                  className="relation-hit relation-hub-hit"
+                  aria-label={`${hub.label} – ${museumById[memberId]?.name ?? memberId} 허브 연결 보기`}
+                  onClick={activateRelation}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      activateRelation();
+                    }
+                  }}
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <motion.polygon
+                    points={ribbonPoints}
+                    className="relation-ribbon relation-hub-ribbon interactive"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <motion.path id={pathId} d={path} className="relation-label-path" />
+                  <motion.text
+                    className="relation-label relation-hub-label interactive"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <textPath xlinkHref={`#${pathId}`} startOffset="50%" textAnchor="middle">
+                      {label}
+                    </textPath>
+                  </motion.text>
+                </g>
+              );
+            })}
+          </g>
+        );
+      })}
     </svg>
   );
 }

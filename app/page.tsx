@@ -3,15 +3,31 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import museumsData from '../data/museums.json';
+import relationHubsData from '../data/relationHubs.json';
 import { LayoutToggle } from '../components/LayoutToggle';
 import { LockersGrid } from '../components/LockersGrid';
 import { RelationsLayer } from '../components/RelationsLayer';
 import { FabButtons } from '../components/FabButtons';
 import { applyHashWarp } from '../lib/warp';
 import { TILE_HEIGHT, TILE_WIDTH, computeLayoutPositions } from '../lib/layout';
-import { LayoutMode, Museum, Position } from '../lib/types';
+import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
 
 const museums = museumsData as Museum[];
+const relationHubs = relationHubsData as RelationHub[];
+
+type RelationDetail =
+  | {
+      type: 'pair';
+      source: Museum;
+      target: Museum;
+      label: string;
+    }
+  | {
+      type: 'hub';
+      hub: RelationHub;
+      member: Museum;
+      label: string;
+    };
 
 export default function HomePage() {
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -19,14 +35,7 @@ export default function HomePage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
-  const [relationDetail, setRelationDetail] = useState<
-    | {
-        source: Museum;
-        target: Museum;
-        label: string;
-      }
-    | null
-  >(null);
+  const [relationDetail, setRelationDetail] = useState<RelationDetail | null>(null);
   const [stageSize, setStageSize] = useState({ width: 1200, height: 760 });
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
     computeLayoutPositions(museums, 'grid', { width: 1200, height: 760 })
@@ -133,7 +142,25 @@ export default function HomePage() {
     setRelationDetail(null);
   };
 
-  const handleRelationClick = (sourceId: string, targetId: string) => {
+  const handleRelationClick = (
+    sourceId: string,
+    targetId: string,
+    labelFromHub?: string,
+    meta?: { hub?: RelationHub }
+  ) => {
+    if (meta?.hub) {
+      const member = museumById[targetId];
+      if (!member) return;
+      setRelationDetail({
+        type: 'hub',
+        hub: meta.hub,
+        member,
+        label: labelFromHub ?? `${meta.hub.label} – ${member.name}`,
+      });
+      setExpandedId(null);
+      return;
+    }
+
     const source = museumById[sourceId];
     const target = museumById[targetId];
     const forwardLabel = source?.relations.find((rel) => rel.targetId === targetId)?.label;
@@ -142,9 +169,10 @@ export default function HomePage() {
     if (!source || !target) return;
 
     setRelationDetail({
+      type: 'pair',
       source,
       target,
-      label: forwardLabel ?? reverseLabel ?? '연결 정보',
+      label: labelFromHub ?? forwardLabel ?? reverseLabel ?? '연결 정보',
     });
     setExpandedId(null);
   };
@@ -227,6 +255,7 @@ export default function HomePage() {
             stage={stageSize}
             layout={layout}
             onRelationClick={handleRelationClick}
+            relationHubs={relationHubs}
           />
           <LockersGrid
             museums={museums}
@@ -321,22 +350,55 @@ export default function HomePage() {
               <div className="relation-head">
                 <span className="relation-chip">연결 정보</span>
                 <h3>
-                  {relationDetail.source.name} ↔ {relationDetail.target.name}
+                  {relationDetail.type === 'pair'
+                    ? `${relationDetail.source.name} ↔ ${relationDetail.target.name}`
+                    : `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`}
                 </h3>
                 <p>{relationDetail.label}</p>
               </div>
               <div className="relation-meta">
-                <div>
-                  <small>출발</small>
-                  <strong>{relationDetail.source.name}</strong>
-                  <span>{relationDetail.source.city}</span>
-                </div>
-                <div>
-                  <small>도착</small>
-                  <strong>{relationDetail.target.name}</strong>
-                  <span>{relationDetail.target.city}</span>
-                </div>
+                {relationDetail.type === 'pair' ? (
+                  <>
+                    <div>
+                      <small>출발</small>
+                      <strong>{relationDetail.source.name}</strong>
+                      <span>{relationDetail.source.city}</span>
+                    </div>
+                    <div>
+                      <small>도착</small>
+                      <strong>{relationDetail.target.name}</strong>
+                      <span>{relationDetail.target.city}</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <small>허브</small>
+                      <strong>{relationDetail.hub.label}</strong>
+                      <span>멤버 {relationDetail.hub.members.length}곳</span>
+                    </div>
+                    <div>
+                      <small>연결된 멤버</small>
+                      <strong>{relationDetail.member.name}</strong>
+                      <span>{relationDetail.member.city}</span>
+                    </div>
+                  </>
+                )}
               </div>
+              {relationDetail.type === 'hub' && (
+                <div className="relation-hub-members">
+                  <small>다른 멤버</small>
+                  <div className="relation-hub-pills">
+                    {relationDetail.hub.members
+                      .filter((id) => id !== relationDetail.member.id)
+                      .map((id) => (
+                        <span key={id} className="relation-hub-pill">
+                          {museumById[id]?.name ?? id}
+                        </span>
+                      ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
