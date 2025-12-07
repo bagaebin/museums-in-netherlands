@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
@@ -27,6 +27,8 @@ export function RelationsLayer({
   onRelationClick,
   relationHubs = [],
 }: RelationsLayerProps) {
+  const [hoveredRibbonId, setHoveredRibbonId] = useState<string | null>(null);
+
   const museumById = useMemo(
     () => Object.fromEntries(museums.map((museum) => [museum.id, museum])),
     [museums]
@@ -260,96 +262,13 @@ export function RelationsLayer({
 
         const hubLabel = estimateReveal(hub.label, 180);
         const hasHubInfo = Boolean(hub.info);
-        const hubRadius = 80;
-        const hubHitRadius = 100;
-        const memberMeta = hub.members
-          .map((memberId) => {
-            const memberPosition = positions[memberId];
-            if (!memberPosition) return null;
-
-            const segment = getEdgeTowardsPoint(memberPosition, anchor);
-            const [mA, mB] = segment;
-            const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
-            const angle = Math.atan2(mid.y - anchor.y, mid.x - anchor.x);
-
-            return { memberId, segment, mid, angle };
-          })
-          .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
-          .sort((a, b) => a.angle - b.angle);
-
-        const enrichedMembers = memberMeta.map((meta, index) => {
-          const { memberId, segment, mid, angle } = meta;
-          const [mA, mB] = segment;
-          const prev = memberMeta[(index - 1 + memberMeta.length) % memberMeta.length]?.angle ?? angle;
-          const next = memberMeta[(index + 1) % memberMeta.length]?.angle ?? angle;
-          const twoPi = Math.PI * 2;
-          const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
-          const gapNext = ((next - angle + twoPi) % twoPi) / 2;
-          const arcPadding = 0.04;
-          const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
-          const memberWidth = Math.hypot(mA.x - mB.x, mA.y - mB.y);
-          const halfFromWidth = Math.asin(Math.min(1, memberWidth / (2 * hubRadius)));
-          const halfAngle = Math.min(halfFromWidth || availableHalf, availableHalf);
-          const baseA = angle - halfAngle;
-          const baseB = angle + halfAngle;
-          const hubA = {
-            x: anchor.x + Math.cos(baseA) * hubRadius,
-            y: anchor.y + Math.sin(baseA) * hubRadius,
-          };
-          const hubB = {
-            x: anchor.x + Math.cos(baseB) * hubRadius,
-            y: anchor.y + Math.sin(baseB) * hubRadius,
-          };
-          const alignedDistance =
-            Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
-          const crossedDistance =
-            Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
-          const [memberA, memberB] = crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
-          const hubEdgeCenter = {
-            x: anchor.x + Math.cos(angle) * hubRadius,
-            y: anchor.y + Math.sin(angle) * hubRadius,
-          };
-
-          return {
-            memberId,
-            segment,
-            mid,
-            angle,
-            baseA,
-            baseB,
-            hubA,
-            hubB,
-            memberA,
-            memberB,
-            hubEdgeCenter,
-          };
-        });
-
-        const mergedPath = (() => {
-          if (!enrichedMembers.length) return null;
-          const first = enrichedMembers[0];
-          let d = `M ${first.hubA.x} ${first.hubA.y} L ${first.memberA.x} ${first.memberA.y} L ${first.memberB.x} ${first.memberB.y} L ${first.hubB.x} ${first.hubB.y}`;
-
-          for (let i = 1; i < enrichedMembers.length; i += 1) {
-            const prev = enrichedMembers[i - 1];
-            const curr = enrichedMembers[i];
-            const delta = ((curr.baseA - prev.baseB + Math.PI * 2) % (Math.PI * 2));
-            const largeArc = delta > Math.PI ? 1 : 0;
-            d += ` A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`;
-            d += ` L ${curr.memberA.x} ${curr.memberA.y} L ${curr.memberB.x} ${curr.memberB.y} L ${curr.hubB.x} ${curr.hubB.y}`;
-          }
-
-          const last = enrichedMembers[enrichedMembers.length - 1];
-          const deltaBack = ((first.baseA - last.baseB + Math.PI * 2) % (Math.PI * 2));
-          const largeArcBack = deltaBack > Math.PI ? 1 : 0;
-          d += ` A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y} Z`;
-          return d;
-        })();
+        const hubHitRadius = 60;
 
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
         };
+
         return (
           <g key={hub.id} className="relation-hub-cluster">
             <g
@@ -375,33 +294,70 @@ export function RelationsLayer({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: hasHubInfo ? 0.14 : 0 }}
               />
-              <motion.circle
-                className="relation-hub-node"
-                cx={anchor.x}
-                cy={anchor.y}
-                r={hubRadius}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              />
             </g>
-            {mergedPath ? (
-              <motion.path
-                className="relation-hub-merged"
-                d={mergedPath}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              />
-            ) : null}
-            {enrichedMembers.map((meta) => {
-              const { memberId, mid, hubEdgeCenter, memberA, memberB, hubA, hubB } = meta;
-              const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
-              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
-              const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
+            {hub.members.map((memberId) => {
+              const memberPosition = positions[memberId];
+              if (!memberPosition) return null;
+
+              const segment = getEdgeTowardsPoint(memberPosition, anchor);
+              const [mA, mB] = segment;
+              const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
+              const labelDistance = Math.hypot(mid.x - anchor.x, mid.y - anchor.y);
+
+              // Bezier Curve Logic for Organic Ribbon
+              // Start points: mA, mB (Locker edge)
+              // End points: hA, hB (Hub center with thickness)
+              
+              const dx = anchor.x - mid.x;
+              const dy = anchor.y - mid.y;
+              
+              // Calculate perpendicular vector for thickness at anchor
+              // We use the edge vector (mB - mA) to determine orientation and thickness
+              const edgeVec = { x: mB.x - mA.x, y: mB.y - mA.y };
+              
+              // Scale factor for thickness at the hub (1.0 = same as locker edge)
+              const thicknessScale = 0.8
+              
+              const hA = { 
+                x: anchor.x - (edgeVec.x * thicknessScale) / 2, 
+                y: anchor.y - (edgeVec.y * thicknessScale) / 2 
+              };
+              const hB = { 
+                x: anchor.x + (edgeVec.x * thicknessScale) / 2, 
+                y: anchor.y + (edgeVec.y * thicknessScale) / 2 
+              };
+
+              // Control point offset factor
+              const cpFactor = 0.5;
+              
+              // Control points from Member side
+              const cp1A = { x: mA.x + dx * cpFactor, y: mA.y + dy * cpFactor };
+              const cp1B = { x: mB.x + dx * cpFactor, y: mB.y + dy * cpFactor };
+
+              // Control points from Anchor side
+              // Now relative to hA/hB to maintain parallel flow
+              // const cp2A = { x: hA.x - dx * cpFactor, y: hA.y - dy * cpFactor }; 
+              // const cp2B = { x: hB.x - dx * cpFactor, y: hB.y - dy * cpFactor };
+
+              // Straight Line Logic (Trapezoid)
+              const ribbonPath = `
+                M ${mA.x} ${mA.y}
+                L ${hA.x} ${hA.y}
+                L ${hB.x} ${hB.y}
+                L ${mB.x} ${mB.y}
+                Z
+              `;
+
+              const labelPath = `M ${anchor.x} ${anchor.y} L ${mid.x} ${mid.y}`;
               const pathId = `hub-path-${hub.id}-${memberId}`;
+              const gradientId = `grad-${hub.id}-${memberId}`;
+              const isHovered = hoveredRibbonId === pathId;
+
               const label = estimateReveal(
                 `${hub.label} · ${museumById[memberId]?.name ?? memberId}`,
                 labelDistance
               );
+
               const activateRelation = () =>
                 onRelationClick?.(hub.id, memberId, label, { hub, targetType: 'hub-member' });
 
@@ -413,6 +369,8 @@ export function RelationsLayer({
                   className="relation-hit relation-hub-hit"
                   aria-label={`${hub.label} – ${museumById[memberId]?.name ?? memberId} 허브 연결 보기`}
                   onClick={activateRelation}
+                  onMouseEnter={() => setHoveredRibbonId(pathId)}
+                  onMouseLeave={() => setHoveredRibbonId(null)}
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
@@ -421,14 +379,28 @@ export function RelationsLayer({
                   }}
                   style={{ pointerEvents: 'auto' }}
                 >
-                  <motion.polygon
-                    points={ribbonPoints}
-                    className="relation-ribbon relation-hub-ribbon interactive"
+                  <defs>
+                    <linearGradient
+                      id={gradientId}
+                      x1={mid.x}
+                      y1={mid.y}
+                      x2={anchor.x}
+                      y2={anchor.y}
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop offset="0%" stopColor="#ffb400" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#ffb400" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <motion.path
+                    d={ribbonPath}
+                    className="relation-ribbon interactive"
+                    style={{ fill: isHovered ? `url(#${gradientId})` : undefined }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6 }}
                   />
-                  <motion.path id={pathId} d={path} className="relation-label-path" />
+                  <motion.path id={pathId} d={labelPath} className="relation-label-path" />
                   <motion.text
                     className="relation-label relation-hub-label interactive"
                     initial={{ opacity: 0 }}
@@ -444,7 +416,7 @@ export function RelationsLayer({
             <motion.text
               className="relation-label relation-hub-label"
               x={anchor.x}
-              y={anchor.y - (hubRadius + 8)}
+              y={anchor.y - 20}
               textAnchor="middle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
