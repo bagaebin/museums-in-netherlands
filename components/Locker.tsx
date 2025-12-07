@@ -77,6 +77,7 @@ interface LockerProps {
   onDrag?: (pos: Position) => void;
   expansionRadius?: number;
   draggable?: boolean;
+  isExpanded?: boolean;
 }
 
 export function Locker({
@@ -90,6 +91,7 @@ export function Locker({
   onDrag,
   expansionRadius = 800,
   draggable = true,
+  isExpanded = false,
 }: LockerProps) {
   const variants = useMemo(() => {
     return clipStyle === 'circle' ? detailBgCircleVariants : detailBgRectVariants;
@@ -98,23 +100,15 @@ export function Locker({
   const baseColor = museum.interiorBaseColor || museum.interiorColor || '#ffe3a3';
   const hoverColor = museum.interiorHoverColor || baseColor;
 
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const dragOrigin = useRef<Position | null>(null);
   const suppressClick = useRef(false);
-
-  useEffect(() => {
-    if (!isActive) {
-      setIsExpanded(false);
-    }
-  }, [isActive]);
 
   const isOpen = isActive || isExpanded;
   const radius = isExpanded ? expansionRadius : 700;
 
   const handleExpand = () => {
     if (isDragging || suppressClick.current || !isActive) return;
-    setIsExpanded(true);
     onExpand?.();
   };
 
@@ -134,7 +128,7 @@ export function Locker({
       onDragStart={() => {
         if (!draggable) return;
         setIsDragging(true);
-        setIsExpanded(false);
+        onOpen();
         dragOrigin.current = position;
         suppressClick.current = true;
       }}
@@ -183,7 +177,6 @@ export function Locker({
           if (isDragging || suppressClick.current) {
             return;
           }
-          setIsExpanded(false);
           onOpen();
         }}
       >

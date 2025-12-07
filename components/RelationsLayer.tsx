@@ -33,77 +33,101 @@ export function RelationsLayer({
   );
 
   const relationThickness = Math.min(TILE_WIDTH, TILE_HEIGHT);
+  // 마름모의 크기 설정
+  const RHOMBUS_RADIUS = TILE_WIDTH / 1.6;
 
-  const getEdgeSegment = (source: Position, target: Position) => {
-    const edges = {
-      left: [
-        { x: source.x, y: source.y },
-        { x: source.x, y: source.y + TILE_HEIGHT },
-      ],
-      right: [
-        { x: source.x + TILE_WIDTH, y: source.y },
-        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
-      ],
-      top: [
-        { x: source.x, y: source.y },
-        { x: source.x + TILE_WIDTH, y: source.y },
-      ],
-      bottom: [
-        { x: source.x, y: source.y + TILE_HEIGHT },
-        { x: source.x + TILE_WIDTH, y: source.y + TILE_HEIGHT },
-      ],
-    } as const;
+  const intersectRhombus = (center: Position, target: Position) => {
+    const dx = target.x - center.x;
+    const dy = target.y - center.y;
+    const dist = Math.abs(dx) + Math.abs(dy);
+    if (dist === 0) return center;
+    const k = RHOMBUS_RADIUS / dist;
+    return { x: center.x + k * dx, y: center.y + k * dy };
+  };
 
-    const sourceRect = {
-      left: source.x,
-      right: source.x + TILE_WIDTH,
-      top: source.y,
-      bottom: source.y + TILE_HEIGHT,
+  const getSmartEdgeConnection = (source: Position, target: Position) => {
+    const getEdges = (pos: Position) => {
+      const padded = { x: pos.x + STAGE_PADDING, y: pos.y + STAGE_PADDING };
+      return {
+        left: [
+          { x: padded.x, y: padded.y },
+          { x: padded.x, y: padded.y + TILE_HEIGHT },
+        ],
+        right: [
+          { x: padded.x + TILE_WIDTH, y: padded.y },
+          { x: padded.x + TILE_WIDTH, y: padded.y + TILE_HEIGHT },
+        ],
+        top: [
+          { x: padded.x, y: padded.y },
+          { x: padded.x + TILE_WIDTH, y: padded.y },
+        ],
+        bottom: [
+          { x: padded.x, y: padded.y + TILE_HEIGHT },
+          { x: padded.x + TILE_WIDTH, y: padded.y + TILE_HEIGHT },
+        ],
+      };
     };
-    const targetRect = {
-      left: target.x,
-      right: target.x + TILE_WIDTH,
-      top: target.y,
-      bottom: target.y + TILE_HEIGHT,
-    };
 
-    if (layout === 'grid') {
-      const horizontalGap =
-        targetRect.left >= sourceRect.right
-          ? targetRect.left - sourceRect.right
-          : sourceRect.left >= targetRect.right
-            ? sourceRect.left - targetRect.right
-            : 0;
-      const verticalGap =
-        targetRect.top >= sourceRect.bottom
-          ? targetRect.top - sourceRect.bottom
-          : sourceRect.top >= targetRect.bottom
-            ? sourceRect.top - targetRect.bottom
-            : 0;
+    const sEdges = getEdges(source);
+    const tEdges = getEdges(target);
 
-      if (horizontalGap <= verticalGap) {
-        if (targetRect.left >= sourceRect.right) return edges.right;
-        if (targetRect.right <= sourceRect.left) return edges.left;
+    const sCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
+    const tCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
+    const dx = tCenter.x - sCenter.x;
+    const dy = tCenter.y - sCenter.y;
+
+    // Candidates
+    const candidates = [];
+
+    // 1. Horizontal Pair
+    const sHorz = dx >= 0 ? sEdges.right : sEdges.left;
+    const tHorz = dx >= 0 ? tEdges.left : tEdges.right;
+    candidates.push({ s: sHorz, t: tHorz, type: 'horizontal' });
+
+    // 2. Vertical Pair
+    const sVert = dy >= 0 ? sEdges.bottom : sEdges.top;
+    const tVert = dy >= 0 ? tEdges.top : tEdges.bottom;
+    candidates.push({ s: sVert, t: tVert, type: 'vertical' });
+
+    // Evaluate
+    let best = candidates[0];
+    let maxMinDist = -1;
+
+    for (const cand of candidates) {
+      // Calculate min width of the ribbon
+      // Ribbon is s[0]-s[1]-t[1]-t[0] (approx order)
+      // Actually s[0], s[1] are one edge. t[0], t[1] are other edge.
+      // We connect s[0]-t[0] and s[1]-t[1] (or crossed).
+      // Let's assume uncrossed.
+      const d1 = Math.hypot(cand.s[0].x - cand.t[0].x, cand.s[0].y - cand.t[0].y);
+      const d2 = Math.hypot(cand.s[1].x - cand.t[1].x, cand.s[1].y - cand.t[1].y);
+      const d3 = Math.hypot(cand.s[0].x - cand.t[1].x, cand.s[0].y - cand.t[1].y);
+      const d4 = Math.hypot(cand.s[1].x - cand.t[0].x, cand.s[1].y - cand.t[0].y);
+
+      // Uncrossed: s0-t0, s1-t1 vs s0-t1, s1-t0
+      // We want the one with shorter connections (uncrossed)
+      const uncrossedDist = d1 + d2;
+      const crossedDist = d3 + d4;
+      
+      let p1, p2, p3, p4;
+      if (uncrossedDist < crossedDist) {
+        p1 = cand.s[0]; p2 = cand.s[1]; p3 = cand.t[1]; p4 = cand.t[0];
+      } else {
+        p1 = cand.s[0]; p2 = cand.s[1]; p3 = cand.t[0]; p4 = cand.t[1];
       }
 
-      if (targetRect.top >= sourceRect.bottom) return edges.bottom;
-      if (targetRect.bottom <= sourceRect.top) return edges.top;
+      // Calculate width at midpoint
+      const m1 = { x: (p1.x + p4.x) / 2, y: (p1.y + p4.y) / 2 };
+      const m2 = { x: (p2.x + p3.x) / 2, y: (p2.y + p3.y) / 2 };
+      const width = Math.hypot(m1.x - m2.x, m1.y - m2.y);
+
+      if (width > maxMinDist) {
+        maxMinDist = width;
+        best = cand;
+      }
     }
 
-    const sourceCenter = { x: source.x + TILE_WIDTH / 2, y: source.y + TILE_HEIGHT / 2 };
-    const targetCenter = { x: target.x + TILE_WIDTH / 2, y: target.y + TILE_HEIGHT / 2 };
-    const dx = targetCenter.x - sourceCenter.x;
-    const dy = targetCenter.y - sourceCenter.y;
-    const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
-
-    if (horizontalDominant) {
-      if (dx >= 0) return edges.right;
-      return edges.left;
-    }
-
-    if (dy >= 0) return edges.bottom;
-
-    return edges.top;
+    return { source: best.s, target: best.t };
   };
 
   const getEdgeTowardsPoint = (source: Position, targetPoint: Position) => {
@@ -192,11 +216,13 @@ export function RelationsLayer({
           const targetPos = positions[rel.targetId];
           const sourcePos = positions[museum.id];
           if (!targetPos || !sourcePos) return null;
-          const sourceSegment = getEdgeSegment(sourcePos, targetPos).map((p) => ({
+          
+          const smartConn = getSmartEdgeConnection(sourcePos, targetPos);
+          const sourceSegment = smartConn.source.map((p) => ({
             x: p.x + STAGE_PADDING,
             y: p.y + STAGE_PADDING,
           }));
-          const targetSegment = getEdgeSegment(targetPos, sourcePos).map((p) => ({
+          const targetSegment = smartConn.target.map((p) => ({
             x: p.x + STAGE_PADDING,
             y: p.y + STAGE_PADDING,
           }));
@@ -260,8 +286,8 @@ export function RelationsLayer({
 
         const hubLabel = estimateReveal(hub.label, 180);
         const hasHubInfo = Boolean(hub.info);
-        const hubRadius = 80;
-        const hubHitRadius = 100;
+        const hubHitRadius = RHOMBUS_RADIUS;
+
         const memberMeta = hub.members
           .map((memberId) => {
             const memberPosition = positions[memberId];
@@ -277,74 +303,107 @@ export function RelationsLayer({
           .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
           .sort((a, b) => a.angle - b.angle);
 
-        const enrichedMembers = memberMeta.map((meta, index) => {
-          const { memberId, segment, mid, angle } = meta;
+        // 1. Assign initial sides based on angle
+        const getPreferredSide = (angle: number) => {
+          if (angle >= -Math.PI && angle < -Math.PI / 2) return 3; // Top-Left
+          if (angle >= -Math.PI / 2 && angle < 0) return 0; // Top-Right
+          if (angle >= 0 && angle < Math.PI / 2) return 1; // Bottom-Right
+          return 2; // Bottom-Left
+        };
+
+        const membersWithSide = memberMeta.map((m) => ({
+          ...m,
+          assignedSide: getPreferredSide(m.angle),
+        }));
+
+        // 2. Resolve conflicts (distribute to empty adjacent sides)
+        const sideGroups: number[][] = [[], [], [], []];
+        membersWithSide.forEach((m, i) => {
+          sideGroups[m.assignedSide].push(i);
+        });
+
+        // Helper to check if a side is "good enough" (facing the member)
+        const isSideValid = (sideIndex: number, memberAngle: number) => {
+          const sideAngles = [-Math.PI / 4, Math.PI / 4, (3 * Math.PI) / 4, (-3 * Math.PI) / 4];
+          const sideAngle = sideAngles[sideIndex];
+          const diff = Math.abs(memberAngle - sideAngle);
+          const normalizedDiff = Math.min(diff, Math.PI * 2 - diff);
+          // Allow up to ~80 degrees deviation (almost perpendicular is okay, but not back-facing)
+          return normalizedDiff < (Math.PI / 2) * 0.9;
+        };
+
+        for (let s = 0; s < 4; s++) {
+          if (sideGroups[s].length > 1) {
+            const group = sideGroups[s];
+            const prevSide = (s + 3) % 4;
+            const nextSide = (s + 1) % 4;
+
+            // Try move first member to prev side if empty AND valid
+            if (sideGroups[prevSide].length === 0) {
+              const idxToMove = group[0]; // Check first member
+              if (isSideValid(prevSide, membersWithSide[idxToMove].angle)) {
+                group.shift();
+                membersWithSide[idxToMove].assignedSide = prevSide;
+                sideGroups[prevSide].push(idxToMove);
+              }
+            }
+
+            // If still > 1, try move last member to next side if empty AND valid
+            if (group.length > 1) {
+              if (sideGroups[nextSide].length === 0) {
+                const idxToMove = group[group.length - 1]; // Check last member
+                if (isSideValid(nextSide, membersWithSide[idxToMove].angle)) {
+                  group.pop();
+                  membersWithSide[idxToMove].assignedSide = nextSide;
+                  sideGroups[nextSide].push(idxToMove);
+                }
+              }
+            }
+          }
+        }
+
+        const enrichedMembers = membersWithSide.map((meta) => {
+          const { memberId, segment, mid, assignedSide } = meta;
           const [mA, mB] = segment;
-          const prev = memberMeta[(index - 1 + memberMeta.length) % memberMeta.length]?.angle ?? angle;
-          const next = memberMeta[(index + 1) % memberMeta.length]?.angle ?? angle;
-          const twoPi = Math.PI * 2;
-          const gapPrev = ((angle - prev + twoPi) % twoPi) / 2;
-          const gapNext = ((next - angle + twoPi) % twoPi) / 2;
-          const arcPadding = 0.04;
-          const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
-          const memberWidth = Math.hypot(mA.x - mB.x, mA.y - mB.y);
-          const halfFromWidth = Math.asin(Math.min(1, memberWidth / (2 * hubRadius)));
-          const halfAngle = Math.min(halfFromWidth || availableHalf, availableHalf);
-          const baseA = angle - halfAngle;
-          const baseB = angle + halfAngle;
-          const hubA = {
-            x: anchor.x + Math.cos(baseA) * hubRadius,
-            y: anchor.y + Math.sin(baseA) * hubRadius,
-          };
-          const hubB = {
-            x: anchor.x + Math.cos(baseB) * hubRadius,
-            y: anchor.y + Math.sin(baseB) * hubRadius,
-          };
-          const alignedDistance =
-            Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
-          const crossedDistance =
-            Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
-          const [memberA, memberB] = crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
-          const hubEdgeCenter = {
-            x: anchor.x + Math.cos(angle) * hubRadius,
-            y: anchor.y + Math.sin(angle) * hubRadius,
-          };
+
+          const top = { x: anchor.x, y: anchor.y - RHOMBUS_RADIUS };
+          const right = { x: anchor.x + RHOMBUS_RADIUS, y: anchor.y };
+          const bottom = { x: anchor.x, y: anchor.y + RHOMBUS_RADIUS };
+          const left = { x: anchor.x - RHOMBUS_RADIUS, y: anchor.y };
+
+          const sideVertices = [
+            [top, right],    // Side 0: Top-Right
+            [right, bottom], // Side 1: Bottom-Right
+            [bottom, left],  // Side 2: Bottom-Left
+            [left, top],     // Side 3: Top-Left
+          ];
+
+          const [v1, v2] = sideVertices[assignedSide];
+
+          // Match vertices to member edge points to avoid twisting
+          // Calculate total distance for both possible pairings
+          const d1 = Math.hypot(v1.x - mA.x, v1.y - mA.y) + Math.hypot(v2.x - mB.x, v2.y - mB.y);
+          const d2 = Math.hypot(v1.x - mB.x, v1.y - mB.y) + Math.hypot(v2.x - mA.x, v2.y - mA.y);
+
+          // Assign hubA and hubB such that hubA connects to mA and hubB connects to mB
+          const hubA = d1 < d2 ? v1 : v2;
+          const hubB = d1 < d2 ? v2 : v1;
+
+          // Center of the chosen side for label positioning
+          const hubEdgeCenter = { x: (v1.x + v2.x) / 2, y: (v1.y + v2.y) / 2 };
 
           return {
             memberId,
-            segment,
             mid,
-            angle,
-            baseA,
-            baseB,
-            hubA,
-            hubB,
-            memberA,
-            memberB,
             hubEdgeCenter,
+            start: hubA,
+            end: hubB,
+            startM: mA,
+            endM: mB,
           };
         });
 
-        const mergedPath = (() => {
-          if (!enrichedMembers.length) return null;
-          const first = enrichedMembers[0];
-          let d = `M ${first.hubA.x} ${first.hubA.y} L ${first.memberA.x} ${first.memberA.y} L ${first.memberB.x} ${first.memberB.y} L ${first.hubB.x} ${first.hubB.y}`;
-
-          for (let i = 1; i < enrichedMembers.length; i += 1) {
-            const prev = enrichedMembers[i - 1];
-            const curr = enrichedMembers[i];
-            const delta = ((curr.baseA - prev.baseB + Math.PI * 2) % (Math.PI * 2));
-            const largeArc = delta > Math.PI ? 1 : 0;
-            d += ` A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`;
-            d += ` L ${curr.memberA.x} ${curr.memberA.y} L ${curr.memberB.x} ${curr.memberB.y} L ${curr.hubB.x} ${curr.hubB.y}`;
-          }
-
-          const last = enrichedMembers[enrichedMembers.length - 1];
-          const deltaBack = ((first.baseA - last.baseB + Math.PI * 2) % (Math.PI * 2));
-          const largeArcBack = deltaBack > Math.PI ? 1 : 0;
-          d += ` A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y} Z`;
-          return d;
-        })();
+        const rhombusPath = `M ${anchor.x + RHOMBUS_RADIUS} ${anchor.y} L ${anchor.x} ${anchor.y + RHOMBUS_RADIUS} L ${anchor.x - RHOMBUS_RADIUS} ${anchor.y} L ${anchor.x} ${anchor.y - RHOMBUS_RADIUS} Z`;
 
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
@@ -367,36 +426,39 @@ export function RelationsLayer({
               }}
               style={{ pointerEvents: hasHubInfo ? 'auto' : 'none' }}
             >
-              <motion.circle
+              <motion.path
                 className="relation-hub-hit-zone"
-                cx={anchor.x}
-                cy={anchor.y}
-                r={hubHitRadius}
+                d={rhombusPath}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: hasHubInfo ? 0.14 : 0 }}
               />
-              <motion.circle
+              <motion.path
                 className="relation-hub-node"
-                cx={anchor.x}
-                cy={anchor.y}
-                r={hubRadius}
+                d={rhombusPath}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               />
             </g>
-            {mergedPath ? (
-              <motion.path
-                className="relation-hub-merged"
-                d={mergedPath}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              />
-            ) : null}
             {enrichedMembers.map((meta) => {
-              const { memberId, mid, hubEdgeCenter, memberA, memberB, hubA, hubB } = meta;
+              const { memberId, mid, hubEdgeCenter, start, end, startM, endM } = meta;
               const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
-              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
-              const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
+              const ribbonPoints = `${start.x},${start.y} ${end.x},${end.y} ${endM.x},${endM.y} ${startM.x},${startM.y}`;
+              
+              // Calculate angle to determine text direction
+              const dx = mid.x - hubEdgeCenter.x;
+              const dy = mid.y - hubEdgeCenter.y;
+              const angle = Math.atan2(dy, dx);
+              
+              // If angle is such that text would be upside down (left-to-right reading), swap start/end
+              // Angles where text is upside down: roughly (90, 270) degrees, i.e., PI/2 to 3PI/2
+              // Math.atan2 returns -PI to PI.
+              // Upside down range: abs(angle) > PI/2
+              const isInverted = Math.abs(angle) > Math.PI / 2;
+
+              const path = isInverted
+                ? `M ${mid.x} ${mid.y} L ${hubEdgeCenter.x} ${hubEdgeCenter.y}`
+                : `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
+                
               const pathId = `hub-path-${hub.id}-${memberId}`;
               const label = estimateReveal(
                 `${hub.label} · ${museumById[memberId]?.name ?? memberId}`,
@@ -444,12 +506,14 @@ export function RelationsLayer({
             <motion.text
               className="relation-label relation-hub-label"
               x={anchor.x}
-              y={anchor.y - (hubRadius + 8)}
+              y={anchor.y}
+              dy=".3em"
               textAnchor="middle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              style={{ pointerEvents: 'none', fill: 'var(--foreground)' }}
             >
-              {hubLabel}
+              라인 컬처
             </motion.text>
           </g>
         );

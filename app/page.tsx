@@ -291,6 +291,7 @@ export default function HomePage() {
             museums={museums}
             positions={positions}
             activeId={activeId}
+            expandedId={expandedId}
             layout={layout}
             highlightId={highlightId}
             onOpen={handleLockerOpen}

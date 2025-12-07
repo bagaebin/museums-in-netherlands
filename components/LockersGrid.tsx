@@ -9,6 +9,7 @@ interface LockersGridProps {
   museums: Museum[];
   positions: Record<string, Position>;
   activeId?: string | null;
+  expandedId?: string | null;
   layout: LayoutMode;
   onOpen: (id: string) => void;
   onExpand?: (id: string) => void;
@@ -24,6 +25,7 @@ export function LockersGrid({
   museums,
   positions,
   activeId,
+  expandedId,
   layout,
   onOpen,
   onExpand,
@@ -45,6 +47,7 @@ export function LockersGrid({
           museum={museum}
           position={positions[museum.id] ?? { x: 0, y: 0 }}
           isActive={activeId === museum.id}
+          isExpanded={expandedId === museum.id}
           onOpen={() => onOpen(museum.id)}
           onExpand={() => onExpand?.(museum.id)}
           onDrag={(pos) => onPositionChange(museum.id, pos)}
