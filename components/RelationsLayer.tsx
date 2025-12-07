@@ -5,6 +5,37 @@ import { useMemo } from 'react';
 import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
+const buildSmoothClosedPath = (points: Position[], tension = 0.2): string | null => {
+  if (points.length < 2) return null;
+  if (points.length === 2) {
+    const [a, b] = points;
+    return `M ${a.x} ${a.y} L ${b.x} ${b.y} Z`;
+  }
+
+  const wrapped = [...points, points[0], points[1], points[2 % points.length]];
+  let d = `M ${points[0].x} ${points[0].y}`;
+
+  for (let i = 0; i < points.length; i += 1) {
+    const p0 = wrapped[i];
+    const p1 = wrapped[i + 1];
+    const p2 = wrapped[i + 2];
+    const p3 = wrapped[i + 3];
+
+    const cp1 = {
+      x: p1.x + ((p2.x - p0.x) / 6) * tension,
+      y: p1.y + ((p2.y - p0.y) / 6) * tension,
+    };
+    const cp2 = {
+      x: p2.x - ((p3.x - p1.x) / 6) * tension,
+      y: p2.y - ((p3.y - p1.y) / 6) * tension,
+    };
+
+    d += ` C ${cp1.x} ${cp1.y} ${cp2.x} ${cp2.y} ${p2.x} ${p2.y}`;
+  }
+
+  return `${d} Z`;
+};
+
 interface RelationsLayerProps {
   museums: Museum[];
   positions: Record<string, Position>;
@@ -260,8 +291,8 @@ export function RelationsLayer({
 
         const hubLabel = estimateReveal(hub.label, 180);
         const hasHubInfo = Boolean(hub.info);
-        const hubRadius = 80;
-        const hubHitRadius = 100;
+        const branchThickness = Math.max(12, Math.min(22, relationThickness * 0.18));
+        const labelOffset = branchThickness * 1.4 + 12;
         const memberMeta = hub.members
           .map((memberId) => {
             const memberPosition = positions[memberId];
@@ -288,26 +319,13 @@ export function RelationsLayer({
           const arcPadding = 0.04;
           const availableHalf = Math.max(0.02, Math.min(gapPrev, gapNext) - arcPadding);
           const memberWidth = Math.hypot(mA.x - mB.x, mA.y - mB.y);
-          const halfFromWidth = Math.asin(Math.min(1, memberWidth / (2 * hubRadius)));
+          const halfFromWidth = Math.asin(Math.min(1, memberWidth / Math.max(1, branchThickness * 4)));
           const halfAngle = Math.min(halfFromWidth || availableHalf, availableHalf);
           const baseA = angle - halfAngle;
           const baseB = angle + halfAngle;
-          const hubA = {
-            x: anchor.x + Math.cos(baseA) * hubRadius,
-            y: anchor.y + Math.sin(baseA) * hubRadius,
-          };
-          const hubB = {
-            x: anchor.x + Math.cos(baseB) * hubRadius,
-            y: anchor.y + Math.sin(baseB) * hubRadius,
-          };
-          const alignedDistance =
-            Math.hypot(mA.x - hubA.x, mA.y - hubA.y) + Math.hypot(mB.x - hubB.x, mB.y - hubB.y);
-          const crossedDistance =
-            Math.hypot(mA.x - hubB.x, mA.y - hubB.y) + Math.hypot(mB.x - hubA.x, mB.y - hubA.y);
-          const [memberA, memberB] = crossedDistance < alignedDistance ? ([mB, mA] as const) : ([mA, mB] as const);
           const hubEdgeCenter = {
-            x: anchor.x + Math.cos(angle) * hubRadius,
-            y: anchor.y + Math.sin(angle) * hubRadius,
+            x: anchor.x + Math.cos(angle) * branchThickness,
+            y: anchor.y + Math.sin(angle) * branchThickness,
           };
 
           return {
@@ -317,41 +335,24 @@ export function RelationsLayer({
             angle,
             baseA,
             baseB,
-            hubA,
-            hubB,
-            memberA,
-            memberB,
+            memberA: mA,
+            memberB: mB,
             hubEdgeCenter,
           };
         });
 
-        const mergedPath = (() => {
-          if (!enrichedMembers.length) return null;
-          const first = enrichedMembers[0];
-          let d = `M ${first.hubA.x} ${first.hubA.y} L ${first.memberA.x} ${first.memberA.y} L ${first.memberB.x} ${first.memberB.y} L ${first.hubB.x} ${first.hubB.y}`;
-
-          for (let i = 1; i < enrichedMembers.length; i += 1) {
-            const prev = enrichedMembers[i - 1];
-            const curr = enrichedMembers[i];
-            const delta = ((curr.baseA - prev.baseB + Math.PI * 2) % (Math.PI * 2));
-            const largeArc = delta > Math.PI ? 1 : 0;
-            d += ` A ${hubRadius} ${hubRadius} 0 ${largeArc} 1 ${curr.hubA.x} ${curr.hubA.y}`;
-            d += ` L ${curr.memberA.x} ${curr.memberA.y} L ${curr.memberB.x} ${curr.memberB.y} L ${curr.hubB.x} ${curr.hubB.y}`;
-          }
-
-          const last = enrichedMembers[enrichedMembers.length - 1];
-          const deltaBack = ((first.baseA - last.baseB + Math.PI * 2) % (Math.PI * 2));
-          const largeArcBack = deltaBack > Math.PI ? 1 : 0;
-          d += ` A ${hubRadius} ${hubRadius} 0 ${largeArcBack} 1 ${first.hubA.x} ${first.hubA.y} Z`;
-          return d;
-        })();
+        const mergedPath = buildSmoothClosedPath(enrichedMembers.map(({ mid }) => mid), 0.35);
 
         const activateHubInfo = () => {
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
         };
         return (
-          <g key={hub.id} className="relation-hub-cluster">
+          <g
+            key={hub.id}
+            className="relation-hub-cluster"
+            style={{ ['--hub-branch-thickness' as string]: `${branchThickness}px` }}
+          >
             <g
               role={hasHubInfo ? 'button' : 'presentation'}
               tabIndex={hasHubInfo ? 0 : -1}
@@ -371,17 +372,9 @@ export function RelationsLayer({
                 className="relation-hub-hit-zone"
                 cx={anchor.x}
                 cy={anchor.y}
-                r={hubHitRadius}
+                r={Math.max(branchThickness * 2.5, 40)}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: hasHubInfo ? 0.14 : 0 }}
-              />
-              <motion.circle
-                className="relation-hub-node"
-                cx={anchor.x}
-                cy={anchor.y}
-                r={hubRadius}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: hasHubInfo ? 0.04 : 0 }}
               />
             </g>
             {mergedPath ? (
@@ -393,9 +386,8 @@ export function RelationsLayer({
               />
             ) : null}
             {enrichedMembers.map((meta) => {
-              const { memberId, mid, hubEdgeCenter, memberA, memberB, hubA, hubB } = meta;
+              const { memberId, mid, hubEdgeCenter } = meta;
               const labelDistance = Math.hypot(mid.x - hubEdgeCenter.x, mid.y - hubEdgeCenter.y);
-              const ribbonPoints = `${hubA.x},${hubA.y} ${hubB.x},${hubB.y} ${memberB.x},${memberB.y} ${memberA.x},${memberA.y}`;
               const path = `M ${hubEdgeCenter.x} ${hubEdgeCenter.y} L ${mid.x} ${mid.y}`;
               const pathId = `hub-path-${hub.id}-${memberId}`;
               const label = estimateReveal(
@@ -421,12 +413,14 @@ export function RelationsLayer({
                   }}
                   style={{ pointerEvents: 'auto' }}
                 >
-                  <motion.polygon
-                    points={ribbonPoints}
-                    className="relation-ribbon relation-hub-ribbon interactive"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                  <motion.path
+                    d={path}
+                    className="relation-ribbon relation-hub-ribbon relation-hub-branch interactive"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{ pathLength: 1, opacity: 1 }}
                     transition={{ duration: 0.6 }}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                   <motion.path id={pathId} d={path} className="relation-label-path" />
                   <motion.text
@@ -444,7 +438,7 @@ export function RelationsLayer({
             <motion.text
               className="relation-label relation-hub-label"
               x={anchor.x}
-              y={anchor.y - (hubRadius + 8)}
+              y={anchor.y - labelOffset}
               textAnchor="middle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

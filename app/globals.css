@@ -367,14 +367,19 @@ a {
 }
 
 .relation-hub-ribbon {
-  fill: transparent;
-  stroke: transparent;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.82);
+  stroke-width: var(--hub-branch-thickness, 16px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 0.2s ease, opacity 0.2s ease;
 }
 
 .relation-hub-hit-zone {
-  fill: rgba(255, 180, 0, 0.12);
-  stroke: rgba(255, 180, 0, 0.24);
-  stroke-width: 1px;
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 0px;
   transition: opacity 0.2s ease;
   pointer-events: none;
 }
@@ -397,12 +402,19 @@ a {
 }
 
 .relation-hub-merged {
-  fill: rgba(255, 180, 0, 0.28);
-  stroke: rgba(255, 180, 0, 0.52);
+  fill: rgba(255, 180, 0, 0.22);
+  stroke: rgba(255, 180, 0, 0.32);
   stroke-linejoin: round;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.18));
   backdrop-filter: blur(8px);
   border-radius: 32px;
+}
+
+.relation-hub-branch:hover,
+.relation-hub-branch:focus-visible,
+.relation-hit:hover .relation-hub-branch,
+.relation-hit:focus-visible .relation-hub-branch {
+  stroke: rgba(255, 180, 0, 0.96);
 }
 
 .relation-hit:focus-visible .relation-ribbon,
