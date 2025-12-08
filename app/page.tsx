@@ -441,50 +441,6 @@ export default function HomePage() {
                   </div>
                 ) : null}
               </div>
-              <div className="relation-meta">
-                {relationDetail.type === 'pair' && (
-                  <>
-                    <div>
-                      <small>출발</small>
-                      <strong>{relationDetail.source.name}</strong>
-                      <span>{relationDetail.source.city}</span>
-                    </div>
-                    <div>
-                      <small>도착</small>
-                      <strong>{relationDetail.target.name}</strong>
-                      <span>{relationDetail.target.city}</span>
-                    </div>
-                  </>
-                )}
-                {relationDetail.type === 'hub' && (
-                  <>
-                    <div>
-                      <small>허브</small>
-                      <strong>{relationDetail.hub.label}</strong>
-                      <span>멤버 {relationDetail.hub.members.length}곳</span>
-                    </div>
-                    <div>
-                      <small>연결된 멤버</small>
-                      <strong>{relationDetail.member.name}</strong>
-                      <span>{relationDetail.member.city}</span>
-                    </div>
-                  </>
-                )}
-                {relationDetail.type === 'hub-info' && (
-                  <>
-                    <div>
-                      <small>허브</small>
-                      <strong>{relationDetail.hub.label}</strong>
-                      <span>멤버 {relationDetail.hub.members.length}곳</span>
-                    </div>
-                    <div>
-                      <small>지원 항목</small>
-                      <strong>교차점 운영</strong>
-                      <span>{relationDetail.hub.info?.providers?.length ?? 0} 파트너</span>
-                    </div>
-                  </>
-                )}
-              </div>
               {relationDetail.type === 'hub' && (
                 <div className="relation-hub-members">
                   <small>다른 멤버</small>
@@ -546,15 +502,34 @@ export default function HomePage() {
               </button>
 
               <div className="mega-header">
-                <span className="mega-kicker">{expandedMuseum.location ?? expandedMuseum.city}</span>
+                <div className="mega-kicker-group">
+                  {expandedMuseum.topic?.split(',').map((tag) => (
+                    <span key={tag.trim()} className="mega-kicker">
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
                 <h2>{expandedMuseum.name}</h2>
                 <p>{expandedMuseum.whatTheyDo?.title ?? expandedMuseum.detail.description}</p>
               </div>
 
-              <div className="mega-meta-grid">
+              {/* Location & Opening Hours - 2열 카드 */}
+              <div className="mega-info-grid">
+                {expandedMuseum.location && (
+                  <div className="mega-info-card">
+                    <small>Location</small>
+                    {expandedMuseum.locationUrl ? (
+                      <a href={expandedMuseum.locationUrl} target="_blank" rel="noopener noreferrer" className="mega-info-link">
+                        {expandedMuseum.location}
+                      </a>
+                    ) : (
+                      <span>{expandedMuseum.location}</span>
+                    )}
+                  </div>
+                )}
                 {expandedMuseum.openingTime?.length ? (
-                  <div className="mega-meta-card">
-                    <small>운영 시간</small>
+                  <div className="mega-info-card">
+                    <small>Opening Hours</small>
                     <ul>
                       {expandedMuseum.openingTime.map((line) => (
                         <li key={line}>{line}</li>
@@ -562,30 +537,10 @@ export default function HomePage() {
                     </ul>
                   </div>
                 ) : null}
-                {expandedMuseum.topic && (
-                  <div className="mega-meta-card">
-                    <small>주제</small>
-                    <div className="mega-pill">{expandedMuseum.topic}</div>
-                  </div>
-                )}
-                {expandedMuseum.whatTheyDo?.bullets?.length ? (
-                  <div className="mega-meta-card">
-                    <small>키 포인트</small>
-                    <ul>
-                      {expandedMuseum.whatTheyDo.bullets.slice(0, 2).map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
               </div>
 
-              <div className="mega-actions">
-                {expandedMuseum.locationUrl &&
-                  renderLinkButton(
-                    { type: 'map', label: 'Open map', url: expandedMuseum.locationUrl },
-                    `${expandedMuseum.id}-map`
-                  )}
+              {/* Organization, Website, Instagram - 3열 1행 버튼 */}
+              <div className="mega-link-buttons">
                 {expandedMuseum.organizationUrl &&
                   renderLinkButton(
                     {
@@ -595,69 +550,55 @@ export default function HomePage() {
                     },
                     `${expandedMuseum.id}-org`
                   )}
-                {expandedMuseum.detail.url &&
-                  renderLinkButton(
-                    { type: 'website', label: 'Detail', url: expandedMuseum.detail.url },
-                    `${expandedMuseum.id}-detail`
-                  )}
                 {expandedMuseum.externalLinks?.map((link) => renderLinkButton(link, `${expandedMuseum.id}-${link.url}`))}
               </div>
 
-              <div className="mega-grid">
-                <div className="mega-copy">
-                  <div className="mega-section">
-                    <h4>What they do</h4>
-                    <p>{expandedMuseum.detail.description}</p>
-                    {expandedMuseum.whatTheyDo?.bullets?.length ? (
-                      <ul className="mega-bullets">
-                        {expandedMuseum.whatTheyDo.bullets.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </div>
-
+              {/* What They Do & Connections - 1열 카드형 (세로 2행) */}
+              <div className="mega-content-cards">
+                <div className="mega-content-card">
+                  <h4>What they do</h4>
+                  <p>{expandedMuseum.detail.description}</p>
+                  {expandedMuseum.whatTheyDo?.bullets?.length ? (
+                    <ul className="mega-bullets">
+                      {expandedMuseum.whatTheyDo.bullets.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
                   {expandedMuseum.detail.highlights?.length ? (
-                    <div className="mega-section">
-                      <h4>Highlights</h4>
+                    <>
+                      <h5>Highlights</h5>
                       <ul className="mega-bullets">
                         {expandedMuseum.detail.highlights.map((item) => (
                           <li key={item}>{item}</li>
                         ))}
                       </ul>
-                    </div>
+                    </>
                   ) : null}
-
-                  <div className="mega-section">
-                    <h4>Connections</h4>
-                    {expandedMuseum.relations.length ? (
-                      <ul className="mega-relations">
-                        {expandedMuseum.relations.map((rel) => (
-                          <li key={rel.targetId}>
-                            <div>
-                              <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
-                              <span> · {rel.label}</span>
-                              {rel.description && <p className="mega-relation-note">{rel.description}</p>}
-                            </div>
-                            {rel.externalLinks?.length ? (
-                              <div className="mega-relation-links">
-                                {rel.externalLinks.map((link) => renderLinkButton(link, `${rel.targetId}-${link.url}`))}
-                              </div>
-                            ) : null}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="mega-empty">등록된 파트너가 없습니다.</p>
-                    )}
-                  </div>
                 </div>
-                <div className="mega-gallery">
-                  {expandedMuseum.detail.images?.map((src, index) => (
-                    <div key={src} className="mega-image">
-                      <img src={`${src}&auto=format&fit=crop&w=900&q=80`} alt={`${expandedMuseum.name} Image ${index + 1}`} />
-                    </div>
-                  ))}
+
+                <div className="mega-content-card">
+                  <h4>Connections</h4>
+                  {expandedMuseum.relations.length ? (
+                    <ul className="mega-relations">
+                      {expandedMuseum.relations.map((rel) => (
+                        <li key={rel.targetId}>
+                          <div>
+                            <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
+                            <span> · {rel.label}</span>
+                            {rel.description && <p className="mega-relation-note">{rel.description}</p>}
+                          </div>
+                          {rel.externalLinks?.length ? (
+                            <div className="mega-relation-links">
+                              {rel.externalLinks.map((link) => renderLinkButton(link, `${rel.targetId}-${link.url}`))}
+                            </div>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mega-empty">No connection</p>
+                  )}
                 </div>
               </div>
             </motion.div>
