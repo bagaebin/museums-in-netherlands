@@ -481,7 +481,7 @@ a {
   font-size: 22px;
 }
 
-.relation-head p {
+.relation-subtitle {
   margin: 0;
   color: var(--muted);
   line-height: 1.5;

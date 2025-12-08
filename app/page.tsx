@@ -422,14 +422,16 @@ export default function HomePage() {
               </button>
               <div className="relation-head">
                 <span className="relation-chip">Connection Info</span>
-                <h3>
-                  {relationDetail.type === 'pair'
-                    ? `${relationDetail.source.name} ↔ ${relationDetail.target.name}`
-                    : relationDetail.type === 'hub'
-                      ? `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`
-                      : `${relationDetail.hub.label} Hub`}
-                </h3>
-                <p>{relationDetail.label}</p>
+                <h3>{relationDetail.label}</h3>
+                {relationDetail.type === 'pair' && (
+                  <p className="relation-subtitle">{`${relationDetail.source.name} ↔ ${relationDetail.target.name}`}</p>
+                )}
+                {relationDetail.type === 'hub' && (
+                  <p className="relation-subtitle">{`${relationDetail.hub.label} ↔ ${relationDetail.member.name}`}</p>
+                )}
+                {relationDetail.type === 'hub-info' && (
+                  <p className="relation-subtitle">{`${relationDetail.hub.label} Hub`}</p>
+                )}
                 {relationDetail.type === 'pair' && relationDetail.description && (
                   <p className="relation-note">{relationDetail.description}</p>
                 )}
