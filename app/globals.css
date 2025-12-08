@@ -141,6 +141,36 @@ a {
   backdrop-filter: blur(12px);
 }
 
+.topic-row-tags {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.topic-row-tag {
+  position: absolute;
+  left: 8px;
+  transform: translateY(-50%);
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: 0 10px 26px rgba(15, 17, 21, 0.14);
+  backdrop-filter: blur(12px);
+  color: #0f1115;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 14px;
+  opacity: 0.94;
+}
+
+.topic-row-tag span {
+  position: relative;
+  z-index: 1;
+}
+
 .relation-ribbon.interactive,
 .relation-label.interactive {
   pointer-events: auto;

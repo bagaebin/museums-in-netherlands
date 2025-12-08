@@ -37,6 +37,8 @@ const linkIcons = {
   other: '↗',
 } as const;
 
+const TOPIC_ROW_LABELS = ['Local', 'Education', 'Conservation', 'Festival'];
+
 type RelationDetail =
   | {
     type: 'pair';
@@ -69,6 +71,7 @@ export default function HomePage() {
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
     computeLayoutPositions(museums, 'grid', { width: 1200, height: 760 })
   );
+  const [topicRowLabelsDismissed, setTopicRowLabelsDismissed] = useState(layout !== 'topic');
   const [mapScale, setMapScale] = useState(1);
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -102,6 +105,10 @@ export default function HomePage() {
     setPositions(computeLayoutPositions(museums, layout, stageSize));
     setExpandedId(null);
   }, [layout, stageSize]);
+
+  useEffect(() => {
+    setTopicRowLabelsDismissed(layout !== 'topic');
+  }, [layout]);
 
   useEffect(() => {
     if (layout !== 'map') {
@@ -260,6 +267,9 @@ export default function HomePage() {
 
   const handlePositionChange = (id: string, pos: Position) => {
     setPositions((prev) => ({ ...prev, [id]: pos }));
+    if (!topicRowLabelsDismissed && layout === 'topic') {
+      setTopicRowLabelsDismissed(true);
+    }
   };
 
   const handleWheelZoom = (event: React.WheelEvent) => {
@@ -354,6 +364,8 @@ export default function HomePage() {
             clipStyle={layout === 'map' ? 'circle' : 'rect'}
             expansionRadius={Math.hypot(stageSize.width, stageSize.height)}
             stage={stageSize}
+            topicRowLabels={TOPIC_ROW_LABELS}
+            showTopicRowLabels={layout === 'topic' && !topicRowLabelsDismissed}
           />
         </div>
       </div>
