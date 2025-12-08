@@ -5,33 +5,45 @@
     "type": "museum",
     "region": "NL-Gelderland",
     "city": "Arnhem",
+    "location": "Utrechtseweg 87 6812 AA Arnhem",
+    "locationUrl": "https://share.google/ck6H3AdsWZF65Ggk3",
+    "openingTime": ["Tue - Sun | 11:00 - 17:00", "Mon Closed"],
+    "whatTheyDo": {
+      "title": "Highlighting perspectives that are often absent in traditional museum spaces",
+      "bullets": [
+        "Work closely with artists, partners, and audiences who are not commonly represented in museums.",
+        "Contemporary art, magic and neorealism, fashion, & jewelry."
+      ]
+    },
     "doorSvg": "/locker-doors/arnhem.svg",
-    "positionGrid": {
-      "x": 0,
-      "y": 0
-    },
-    "positionMap": {
-      "x": 0.67,
-      "y": 0.58
-    },
-    "topic": "Contemporary Art",
+    "positionGrid": { "x": 0, "y": 0 },
+    "positionMap": { "x": 0.67, "y": 0.58 },
+    "topic": "Contemporary Art, Neorealism, Fashion, Jewelry",
     "relations": [
       {
-        "targetId": "nijntje-museum",
-        "label": "Family Participation Program"
-      },
-      {
-        "targetId": "rijksmuseum-amsterdam",
-        "label": "Joint Collection Research"
+        "targetId": "design-den-bosch",
+        "label": "Anne-Karlijn van Kesteren",
+        "description": "Develops exhibitions that connect historical research, design, visual culture, and contemporary issues.",
+        "externalLinks": [
+          { "type": "other", "label": "LinkedIn", "url": "https://www.linkedin.com/in/annekarlijnvankesteren/?originalSubdomain=nl" },
+          { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/annekarlijnvankesteren/" }
+        ]
       }
     ],
     "detail": {
-      "description": "An art hub on the banks of the Rhine, presenting contemporary art exhibitions that encompass both regionality and experimentation.",
-      "images": [
-        "https://images.unsplash.com/photo-1517817748497-61c8956dbe22"
+      "title": "Renovation & Expansion 2017–2022",
+      "description": "Reopened on 13 May 2022 with a panoramic wing overlooking Arnhem and the river landscape.",
+      "highlights": [
+        "Thorough renovation and restoration of the original 1873 gentlemen’s club building.",
+        "Wing designed by Benthem Crouwel Architects.",
+        "Sculpture garden redesigned by Karres en Brands.",
+        "More: Design Building, Design Garden, renovation film series."
       ],
-      "url": "https://arnhem-museum.example.com"
+      "images": ["https://images.unsplash.com/photo-1517817748497-61c8956dbe22"],
+      "url": "https://www.museumarnhem.nl/en/about-us/new-building/design-building"
     },
+    "organizationUrl": "https://www.museumarnhem.nl/en/about-us/organisation",
+    "externalLinks": [{ "type": "website", "label": "Website", "url": "https://www.museumarnhem.nl/nl" }],
     "interiorBaseColor": "#D6D4D9",
     "interiorHoverColor": "#797D80"
   },
@@ -40,70 +52,60 @@
     "name": "Bauhaus Museum Dessau",
     "type": "museum",
     "region": "DE-Saxony-Anhalt",
-    "city": "Dessau",
+    "city": "Dessau-Roßlau",
+    "location": "Mies-van-der-Rohe-Platz 1, 06844 Dessau-Roßlau, Garmany",
+    "locationUrl": "https://maps.app.goo.gl/MRQNnEeGBoKMhqyU6",
+    "openingTime": ["[Nov – Feb] Tue – Sun | 10 am – 5 pm", "[Mar – Oct] Tue – Sun | 10 am – 6 pm"],
+    "whatTheyDo": {
+      "title": "Analysing the significance and potential of the Bauhaus heritage for the 21st century",
+      "bullets": ["Presented in a historiographically reflexive manner."]
+    },
     "doorSvg": "/locker-doors/bauhaus-dessau.svg",
-    "positionGrid": {
-      "x": 1,
-      "y": 0
-    },
-    "positionMap": {
-      "x": 0.9,
-      "y": 0.48
-    },
-    "topic": "Design",
-    "relations": [
-      {
-        "targetId": "design-den-bosch",
-        "label": "Modernism Joint Research"
-      },
-      {
-        "targetId": "nieuwe-instituut",
-        "label": "Archive Exchange"
-      }
-    ],
+    "positionGrid": { "x": 1, "y": 0 },
+    "positionMap": { "x": 0.9, "y": 0.48 },
+    "topic": "Design, Educational",
+    "relations": [],
     "detail": {
-      "description": "It holds original Bauhaus materials and serves as a platform connecting design education and exhibitions.",
-      "images": [
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"
-      ],
+      "description": "Holds original Bauhaus materials and connects design education and exhibitions.",
+      "images": ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"],
       "url": "https://www.bauhaus-dessau.de"
     },
+    "organizationUrl": "https://bauhaus-dessau.de/en/institution/departments/",
+    "externalLinks": [{ "type": "website", "label": "Website", "url": "https://bauhaus-dessau.de" }],
     "interiorBaseColor": "#FFA6C8",
     "interiorHoverColor": "#ED1C25"
   },
   {
     "id": "depot-boijmans",
     "name": "Depot Boijmans Van Beuningen",
-    "type": "depot",
+    "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Museumpark 24, Rotterdam",
+    "locationUrl": "https://maps.app.goo.gl/KBohuQhARx7pWZgu8",
+    "openingTime": ["Tue - Sun | 11:00 - 17:00"],
+    "whatTheyDo": {
+      "title": "Behind-the-scenes view of how a museum operates",
+      "bullets": [
+        "Preserves and makes accessible the museum’s entire art collection of over 155,000 works.",
+        "Visitors can look directly into the art intake room through glass walls."
+      ]
+    },
     "doorSvg": "/locker-doors/depot.svg",
-    "positionGrid": {
-      "x": 2,
-      "y": 0
-    },
-    "positionMap": {
-      "x": 0.46,
-      "y": 0.64
-    },
-    "topic": "Art Depot",
-    "relations": [
-      {
-        "targetId": "kunsthal-rotterdam",
-        "label": "Collection Loan"
-      },
-      {
-        "targetId": "kunstinstituut-melly",
-        "label": "Conference Partner"
-      }
-    ],
+    "positionGrid": { "x": 2, "y": 0 },
+    "positionMap": { "x": 0.46, "y": 0.64 },
+    "topic": "Conservation",
+    "relations": [],
     "detail": {
-      "description": "A publicly accessible art depot with a glass facade, where visitors can directly experience the conservation and management processes.",
-      "images": [
-        "https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"
-      ],
-      "url": "https://www.boijmans.nl/en/depot"
+      "description": "Offers transparency into conservation and storage as part of the visitor journey.",
+      "images": ["https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"],
+      "url": "https://www.boijmans.nl/en"
     },
+    "organizationUrl": "https://www.boijmans.nl/en/organisation-mission",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://www.boijmans.nl/en" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/boijmans/" }
+    ],
     "interiorBaseColor": "#FFB2D0",
     "interiorHoverColor": "#EF307E"
   },
@@ -113,33 +115,42 @@
     "type": "museum",
     "region": "NL-North-Brabant",
     "city": "'s-Hertogenbosch",
+    "location": "De Mortel 4 5211 HV ‘s-Hertogenbosch",
+    "locationUrl": "https://maps.app.goo.gl/k28Sf9iTTNbT9mRn6",
+    "openingTime": ["Tue - Sun | 11:00 - 17:00", "Every first Thu of the month | 19:00 - 22:00"],
+    "whatTheyDo": {
+      "title": "Highlight the influence of design on our daily lives and tell the story that lies behind it",
+      "bullets": [
+        "Adopted a new name in 2018 to align closely with this mission.",
+        "Assembled unique ceramic and jewellery collections with deep focus on applied arts."
+      ]
+    },
     "doorSvg": "/locker-doors/design-den-bosch.svg",
-    "positionGrid": {
-      "x": 3,
-      "y": 0
-    },
-    "positionMap": {
-      "x": 0.55,
-      "y": 0.68
-    },
+    "positionGrid": { "x": 3, "y": 0 },
+    "positionMap": { "x": 0.55, "y": 0.68 },
     "topic": "Design",
     "relations": [
       {
         "targetId": "next-nature",
-        "label": "Technology Collaboration"
-      },
-      {
-        "targetId": "bauhaus-dessau",
-        "label": "Modernism Joint Research"
+        "label": "Timo de Rijk",
+        "description": "Director of Design Museum Den Bosch and partner for Design Debate 2025.",
+        "externalLinks": [
+          { "type": "other", "label": "LinkedIn", "url": "https://www.linkedin.com/in/timo-de-rijk-499a3723/" },
+          { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/timotheusderijk/" },
+          { "type": "website", "label": "Design Debate 2025", "url": "https://nextnature.org/en/events/design-debate-2025" }
+        ]
       }
     ],
     "detail": {
-      "description": "Covering everything from industrial design to digital art, it is noted for its future-oriented curation.",
-      "images": [
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-      ],
-      "url": "https://designmuseum.nl"
+      "description": "Explores how design shapes society with rotating exhibitions and debate platforms.",
+      "images": ["https://images.unsplash.com/photo-1505842679547-5133c17caa2c"],
+      "url": "https://designmuseum.nl/en/homepage/"
     },
+    "organizationUrl": "https://designmuseum.nl/organisatie/",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://designmuseum.nl/en/homepage/" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/designmuseumdenbosch/" }
+    ],
     "interiorBaseColor": "#D6D4D9",
     "interiorHoverColor": "#797D80"
   },
@@ -149,33 +160,32 @@
     "type": "house-museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Jongkindstraat 12, Rotterdam",
+    "locationUrl": "https://share.google/fJuaBBwbw2Qe81ljf",
+    "openingTime": ["Tue - Sun | 10:00 - 17:00"],
+    "whatTheyDo": {
+      "title": "A museum house and one of the best-preserved homes in the functionalist Nieuwe Bouwen style",
+      "bullets": []
+    },
     "doorSvg": "/locker-doors/huis-sonneveld.svg",
-    "positionGrid": {
-      "x": 0,
-      "y": 1
-    },
-    "positionMap": {
-      "x": 0.47,
-      "y": 0.62
-    },
+    "positionGrid": { "x": 0, "y": 1 },
+    "positionMap": { "x": 0.47, "y": 0.62 },
     "topic": "Architecture",
     "relations": [
       {
         "targetId": "nieuwe-instituut",
-        "label": "Modern Architecture Line"
-      },
-      {
-        "targetId": "kunsthal-rotterdam",
-        "label": "Urban Walking Course"
+        "label": "Shared organization",
+        "description": "Operated by Nieuwe Instituut and located nearby.",
+        "externalLinks": []
       }
     ],
     "detail": {
-      "description": "A representative house of the Nieuwe Bouwen style, allowing visitors to experience modern design within a living space.",
-      "images": [
-        "https://images.unsplash.com/photo-1460317442991-0ec209397118"
-      ],
-      "url": "https://huis-sonneveld.nl"
+      "description": "Showcases daily life in the Nieuwe Bouwen style with preserved interiors.",
+      "images": ["https://images.unsplash.com/photo-1460317442991-0ec209397118"],
+      "url": "https://nieuweinstituut.nl/projects/huis-sonneveld"
     },
+    "organizationUrl": "https://nieuweinstituut.nl/en/projects/over-ons/organisatie",
+    "externalLinks": [{ "type": "website", "label": "Website", "url": "https://nieuweinstituut.nl/projects/huis-sonneveld" }],
     "interiorBaseColor": "#FFA6C8",
     "interiorHoverColor": "#ED1C25"
   },
@@ -185,105 +195,87 @@
     "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Museumpark, Westzeedijk 341, 3015 AA Rotterdam",
+    "locationUrl": "https://maps.app.goo.gl/4bQpzQVAt3JJKumf7",
+    "openingTime": ["Tue - Fri | 10:00 - 17:00", "Sat - Sun | 10:00 - 18:00"],
+    "whatTheyDo": {
+      "title": "Transforming through crossovers between various art disciplines",
+      "bullets": ["From modern masters and contemporary art to forgotten cultures, photography, fashion and design."]
+    },
     "doorSvg": "/locker-doors/kunsthal-rotterdam.svg",
-    "positionGrid": {
-      "x": 1,
-      "y": 1
-    },
-    "positionMap": {
-      "x": 0.45,
-      "y": 0.62
-    },
-    "topic": "Contemporary Art",
-    "relations": [
-      {
-        "targetId": "kunstinstituut-melly",
-        "label": "Community Lineup"
-      },
-      {
-        "targetId": "depot-boijmans",
-        "label": "Collection Circulation"
-      }
-    ],
+    "positionGrid": { "x": 1, "y": 1 },
+    "positionMap": { "x": 0.45, "y": 0.62 },
+    "topic": "Photography, Fashion, Design",
+    "relations": [],
     "detail": {
-      "description": "An exhibition hall that emphasizes public accessibility by rapidly rotating short-term exhibitions of various genres.",
-      "images": [
-        "https://images.unsplash.com/photo-1505842679547-5133c17caa2c"
-      ],
-      "url": "https://www.kunsthal.nl"
+      "description": "Rapidly changing exhibitions keep the space in motion and invite diverse audiences.",
+      "images": ["https://images.unsplash.com/photo-1500534314209-a25ddb2bd429"],
+      "url": "https://www.kunsthal.nl/en/"
     },
+    "organizationUrl": "https://www.kunsthal.nl/en/about-kunsthal/organisation/who-we-are/",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://www.kunsthal.nl/en/" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/kunsthal/" }
+    ],
     "interiorBaseColor": "#F2F285",
     "interiorHoverColor": "#8C7F3F"
   },
   {
     "id": "kunstinstituut-melly",
     "name": "Kunstinstituut Melly",
-    "type": "art-center",
+    "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Witte de Withstraat 50, 3012 BR Rotterdam",
+    "locationUrl": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x47c4335ffe41c503:0x7615a24dfae30408?sa=X&ved=1t:8290&ictx=111",
+    "openingTime": ["Wed - Sun | 11:00 - 18:00", "Fri during the Kunstavond | 11:00 - 21:00"],
+    "whatTheyDo": {
+      "title": "Presenting and discussing ideas by visual artists and cultural makers today",
+      "bullets": []
+    },
     "doorSvg": "/locker-doors/kunstinstituut-melly.svg",
-    "positionGrid": {
-      "x": 2,
-      "y": 1
-    },
-    "positionMap": {
-      "x": 0.47,
-      "y": 0.63
-    },
-    "topic": "Community",
-    "relations": [
-      {
-        "targetId": "kunsthal-rotterdam",
-        "label": "Joint Education"
-      },
-      {
-        "targetId": "depot-boijmans",
-        "label": "Artist Research"
-      }
-    ],
+    "positionGrid": { "x": 2, "y": 1 },
+    "positionMap": { "x": 0.47, "y": 0.63 },
+    "topic": "Contemporary art, Design",
+    "relations": [],
     "detail": {
-      "description": "Closely connected to the local community through programs that emphasize inclusivity and participation.",
-      "images": [
-        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429"
-      ],
+      "description": "Closely connected to the local community with programs that invite dialogue.",
+      "images": ["https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"],
       "url": "https://www.kunstinstituutmelly.nl"
     },
+    "organizationUrl": "https://www.kunstinstituutmelly.nl/en/about#team-supervisory-board",
+    "externalLinks": [{ "type": "website", "label": "Website", "url": "https://www.kunstinstituutmelly.nl" }],
     "interiorBaseColor": "#FFA6C8",
     "interiorHoverColor": "#ED1C25"
   },
   {
     "id": "natural-history-rotterdam",
-    "name": "Natural History Museum Rotterdam",
+    "name": "Het Natuurhistorisch | A dead serious museum",
     "type": "museum",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Westzeedijk 345, 3015 AA Rotterdam",
+    "locationUrl": "https://www.google.com/maps/place//data=!4m2!3m1!1s0x47c4349e86f20bd7:0x1200e69c3526a2ee?sa=X&ved=1t:8290&ictx=111",
+    "openingTime": ["Tue - Sun | 11:00 - 17:00", "Mon Closed"],
+    "whatTheyDo": {
+      "title": "Informing and inspiring people about the diversity and resilience of urban nature",
+      "bullets": []
+    },
     "doorSvg": "/locker-doors/natural-history-rotterdam.svg",
-    "positionGrid": {
-      "x": 3,
-      "y": 1
-    },
-    "positionMap": {
-      "x": 0.44,
-      "y": 0.64
-    },
-    "topic": "Natural History",
-    "relations": [
-      {
-        "targetId": "next-nature",
-        "label": "Nature-Technology Intersection"
-      },
-      {
-        "targetId": "nijntje-museum",
-        "label": "Children's Education"
-      }
-    ],
+    "positionGrid": { "x": 3, "y": 1 },
+    "positionMap": { "x": 0.44, "y": 0.64 },
+    "topic": "Nature, Science, Educational",
+    "relations": [],
     "detail": {
-      "description": "Exhibitions encompassing urban ecology and natural history, presented with delightful storytelling.",
-      "images": [
-        "https://images.unsplash.com/photo-1469474968028-56623f02e42e"
-      ],
+      "description": "Exhibitions spanning urban ecology and natural history with witty storytelling.",
+      "images": ["https://images.unsplash.com/photo-1469474968028-56623f02e42e"],
       "url": "https://www.hetnatuurhistorisch.nl"
     },
+    "organizationUrl": "https://www.hetnatuurhistorisch.nl/organisatie/medewerkers/",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://www.hetnatuurhistorisch.nl" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/het_natuurhistorisch/?hl=nl" }
+    ],
     "interiorBaseColor": "#F2F285",
     "interiorHoverColor": "#8C7F3F"
   },
@@ -293,33 +285,40 @@
     "type": "museum",
     "region": "NL-North-Brabant",
     "city": "Eindhoven",
+    "location": "Noord Brabantlaan 1A 5652LA Eindhoven",
+    "locationUrl": "https://share.google/3QTt8oaTusbRgg0uL",
+    "openingTime": ["Wed - Sun | 11:00 - 17:00"],
+    "whatTheyDo": {
+      "title": "The story of humankind changing its world with the fruits of knowledge and technology",
+      "bullets": [
+        "Surrounded by technology until it becomes our 'next nature'.",
+        "Stimulates debate, education, and traveling expositions on future living."
+      ]
+    },
     "doorSvg": "/locker-doors/next-nature.svg",
-    "positionGrid": {
-      "x": 0,
-      "y": 2
-    },
-    "positionMap": {
-      "x": 0.58,
-      "y": 0.72
-    },
-    "topic": "Media Art",
+    "positionGrid": { "x": 0, "y": 2 },
+    "positionMap": { "x": 0.58, "y": 0.72 },
+    "topic": "Nature, Science",
     "relations": [
       {
         "targetId": "design-den-bosch",
-        "label": "Future Design"
-      },
-      {
-        "targetId": "natural-history-rotterdam",
-        "label": "Nature-Technology Intersection"
+        "label": "Design Debate 2025",
+        "description": "Collaboration on Dutch Design Week 2025 programming.",
+        "externalLinks": [
+          { "type": "website", "label": "Event details", "url": "https://nextnature.org/en/events/design-debate-2025" }
+        ]
       }
     ],
     "detail": {
-      "description": "Explores the new nature created by technology and proposes immersive media exhibitions.",
-      "images": [
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
-      ],
-      "url": "https://nextnature.net/museum"
+      "description": "Immersive experiences that question how technology and nature intertwine.",
+      "images": ["https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"],
+      "url": "https://nextnature.org/en/museum/on-show"
     },
+    "organizationUrl": "https://nextnature.org/en/mission/people/team",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://nextnature.org/en/museum/on-show" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/nextnaturemuseum/" }
+    ],
     "interiorBaseColor": "#00A7FF",
     "interiorHoverColor": "#0056B2"
   },
@@ -329,69 +328,69 @@
     "type": "institute",
     "region": "NL-South-Holland",
     "city": "Rotterdam",
+    "location": "Museumpark 25 3015 CB Rotterdam",
+    "locationUrl": "https://share.google/Zr9BWOJ1Ky8bvA2u9",
+    "openingTime": ["Tue - Wed | 10:00 - 17:00", "Thu | 10:00 - 21:00", "Fri - Sun | 10:00 - 17:00"],
+    "whatTheyDo": {
+      "title": "Focusing on societal developments like housing, climate crisis, and AI",
+      "bullets": ["Shows designers' work, convenes forums, and shares knowledge from architecture, design, and digital culture."]
+    },
     "doorSvg": "/locker-doors/nieuwe-instituut.svg",
-    "positionGrid": {
-      "x": 1,
-      "y": 2
-    },
-    "positionMap": {
-      "x": 0.47,
-      "y": 0.65
-    },
+    "positionGrid": { "x": 1, "y": 2 },
+    "positionMap": { "x": 0.47, "y": 0.65 },
     "topic": "Architecture",
     "relations": [
       {
         "targetId": "huis-sonneveld",
-        "label": "Modern Architecture Line"
-      },
-      {
-        "targetId": "bauhaus-dessau",
-        "label": "Archive Exchange"
+        "label": "Sonneveld stewardship",
+        "description": "Operates the Sonneveld House museum nearby.",
+        "externalLinks": [{ "type": "website", "label": "Sonneveld House", "url": "https://nieuweinstituut.nl/projects/huis-sonneveld" }]
       }
     ],
     "detail": {
-      "description": "Connects research exhibitions and forums based on archives of architecture, design, and digital culture.",
-      "images": [
-        "https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"
-      ],
+      "description": "Connects research exhibitions and forums using archives of architecture, design, and digital culture.",
+      "images": ["https://images.unsplash.com/photo-1529429617124-aee5f4ae7890"],
       "url": "https://nieuweinstituut.nl"
     },
+    "organizationUrl": "https://nieuweinstituut.nl/en/projects/over-ons/organisatie",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://nieuweinstituut.nl/" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/nieuweinstituut/" }
+    ],
     "interiorBaseColor": "#F2F285",
     "interiorHoverColor": "#222222"
   },
   {
     "id": "nijntje-museum",
     "name": "Miffy Museum",
-    "type": "children",
+    "type": "museum",
     "region": "NL-Utrecht",
     "city": "Utrecht",
+    "location": "Agnietenstraat 2 3512 XB Utrecht",
+    "locationUrl": "https://share.google/caUTVUceuBgX0p0Af",
+    "openingTime": ["Tue - Sun | 10:00 - 17:00", "Mon Closed"],
+    "whatTheyDo": {
+      "title": "An unforgettable journey of active discovery for toddlers and preschoolers",
+      "bullets": [
+        "Interactive installations prioritise tangible experiences over digital simulations.",
+        "Inspired by Cultuur in de Spiegel on early memory-building."
+      ]
+    },
     "doorSvg": "/locker-doors/nijntje.svg",
-    "positionGrid": {
-      "x": 2,
-      "y": 2
-    },
-    "positionMap": {
-      "x": 0.53,
-      "y": 0.6
-    },
-    "topic": "Children",
-    "relations": [
-      {
-        "targetId": "arnhem-museum",
-        "label": "Family Participation Program"
-      },
-      {
-        "targetId": "natural-history-rotterdam",
-        "label": "Children's Education"
-      }
-    ],
+    "positionGrid": { "x": 2, "y": 2 },
+    "positionMap": { "x": 0.53, "y": 0.6 },
+    "topic": "Children, Educational",
+    "relations": [],
     "detail": {
-      "description": "Unfolds the world of Dick Bruna, famous for the Miffy character, through interactive exhibitions and workshops.",
-      "images": [
-        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
-      ],
-      "url": "https://nijntjemuseum.nl"
+      "description": "Themed rooms built for playful learning with Dick Bruna’s character at the center.",
+      "images": ["https://images.unsplash.com/photo-1498050108023-c5249f4df085"],
+      "url": "https://www.miffy.com"
     },
+    "organizationUrl": "https://www.centraalmuseum.nl/en/about",
+    "externalLinks": [
+      { "type": "website", "label": "Miffy", "url": "https://www.miffy.com" },
+      { "type": "website", "label": "Dick Bruna Studio", "url": "https://www.centraalmuseum.nl/en/now/permanent-collection/atelier-dick-bruna" }
+    ],
     "interiorBaseColor": "#D6D4D9",
     "interiorHoverColor": "#797D80"
   },
@@ -401,33 +400,28 @@
     "type": "museum",
     "region": "NL-North-Holland",
     "city": "Amsterdam",
+    "location": "Museumstraat 1, Amsterdam",
+    "locationUrl": "https://share.google/7qxvVrRe3pq1gGBiq",
+    "openingTime": ["9:00 - 17:00"],
+    "whatTheyDo": {
+      "title": "Focusing on Vincent van Gogh and his time makes us unique as a museum",
+      "bullets": []
+    },
     "doorSvg": "/locker-doors/rijks-amsterdam.svg",
-    "positionGrid": {
-      "x": 0,
-      "y": 3
-    },
-    "positionMap": {
-      "x": 0.42,
-      "y": 0.39
-    },
+    "positionGrid": { "x": 0, "y": 3 },
+    "positionMap": { "x": 0.42, "y": 0.39 },
     "topic": "National",
-    "relations": [
-      {
-        "targetId": "stedelijk-amsterdam",
-        "label": "Museumplein Collaboration"
-      },
-      {
-        "targetId": "arnhem-museum",
-        "label": "Joint Collection Research"
-      }
-    ],
+    "relations": [],
     "detail": {
-      "description": "The national museum of the Netherlands, possessing a vast collection centered on masterpieces by Rembrandt, Vermeer, and others.",
-      "images": [
-        "https://images.unsplash.com/photo-1505761671935-60b3a7427bad"
-      ],
-      "url": "https://www.rijksmuseum.nl"
+      "description": "Dutch national collection centerpiece with masterpieces spanning centuries.",
+      "images": ["https://images.unsplash.com/photo-1500534314209-a25ddb2bd429"],
+      "url": "https://www.rijksmuseum.nl/en"
     },
+    "organizationUrl": "https://www.rijksmuseum.nl/en/about-us/who-we-are",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://www.rijksmuseum.nl/en" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/rijksmuseum/" }
+    ],
     "interiorBaseColor": "#D6D4D9",
     "interiorHoverColor": "#797D80"
   },
@@ -437,33 +431,28 @@
     "type": "museum",
     "region": "NL-North-Holland",
     "city": "Amsterdam",
+    "location": "Museumplein 10 1071 DJ Amsterdam",
+    "locationUrl": "https://share.google/yXu6priucQM7nIlCw",
+    "openingTime": ["Mon - Sun | 10:00 - 18:00"],
+    "whatTheyDo": {
+      "title": "Where everyone can discover and experience modern and contemporary visual art and design",
+      "bullets": ["Interactions between audiences and art are driven by dialogues with artists."]
+    },
     "doorSvg": "/locker-doors/stedelijk-amsterdam.svg",
-    "positionGrid": {
-      "x": 1,
-      "y": 3
-    },
-    "positionMap": {
-      "x": 0.43,
-      "y": 0.41
-    },
+    "positionGrid": { "x": 1, "y": 3 },
+    "positionMap": { "x": 0.43, "y": 0.41 },
     "topic": "Contemporary Art",
-    "relations": [
-      {
-        "targetId": "rijksmuseum-amsterdam",
-        "label": "Museumplein Collaboration"
-      },
-      {
-        "targetId": "depot-boijmans",
-        "label": "Collection Loan"
-      }
-    ],
+    "relations": [],
     "detail": {
-      "description": "Renowned internationally for its collection encompassing contemporary art and design, as well as large-scale special exhibitions.",
-      "images": [
-        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef"
-      ],
-      "url": "https://www.stedelijk.nl"
+      "description": "Collection and exhibitions that foreground international contemporary voices.",
+      "images": ["https://images.unsplash.com/photo-1469474968028-56623f02e42e"],
+      "url": "https://www.stedelijk.nl/en/"
     },
+    "organizationUrl": "https://www.stedelijk.nl/en/our-team",
+    "externalLinks": [
+      { "type": "website", "label": "Website", "url": "https://www.stedelijk.nl/en/" },
+      { "type": "instagram", "label": "Instagram", "url": "https://www.instagram.com/stedelijkmuseum/" }
+    ],
     "interiorBaseColor": "#D6D4D9",
     "interiorHoverColor": "#797D80"
   }

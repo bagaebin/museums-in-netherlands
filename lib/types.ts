@@ -1,8 +1,19 @@
 export type LayoutMode = 'grid' | 'topic' | 'map';
 
+export type ExternalLinkType = 'website' | 'instagram' | 'map' | 'video' | 'other';
+
+export interface ExternalLink {
+  type: ExternalLinkType;
+  label: string;
+  url: string;
+}
+
 export interface Relation {
   targetId: string;
   label: string;
+  description?: string;
+  images?: string[];
+  externalLinks?: ExternalLink[];
 }
 
 export interface RelationHubOffset {
@@ -31,8 +42,15 @@ export interface RelationHub {
   info?: RelationHubInfo;
 }
 
+export interface MuseumWhatTheyDo {
+  title?: string;
+  bullets?: string[];
+}
+
 export interface MuseumDetail {
+  title?: string;
   description: string;
+  highlights?: string[];
   images: string[];
   url: string;
 }
@@ -48,6 +66,9 @@ export interface Museum {
   type: string;
   region: string;
   city: string;
+  location?: string;
+  locationUrl?: string;
+  openingTime?: string[];
   doorSvg?: string;
   interiorColor?: string;
   interiorBaseColor?: string;
@@ -55,6 +76,9 @@ export interface Museum {
   positionGrid: Position;
   positionMap: Position;
   topic?: string;
+  whatTheyDo?: MuseumWhatTheyDo;
+  organizationUrl?: string;
+  externalLinks?: ExternalLink[];
   relations: Relation[];
   detail: MuseumDetail;
 }
