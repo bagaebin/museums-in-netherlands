@@ -607,16 +607,33 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(21, 24, 33, 0.05);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(21, 24, 33, 0.08);
   color: var(--text);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.relation-hub-provider.clickable {
+  cursor: pointer;
+}
+
+.relation-hub-provider.clickable:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.relation-hub-provider.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
 }
 
 .relation-hub-provider em {
   font-size: 11px;
+  font-style: normal;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: rgba(21, 24, 33, 0.7);
@@ -624,32 +641,52 @@ a {
 
 .relation-hub-provider strong {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .relation-hub-provider.role-fund {
-  background: rgba(64, 140, 255, 0.08);
-  border-color: rgba(64, 140, 255, 0.35);
+  border-color: rgba(64, 140, 255, 0.25);
+}
+
+.relation-hub-provider.role-fund.clickable:hover {
+  background: rgba(64, 140, 255, 0.12);
+  border-color: rgba(64, 140, 255, 0.45);
 }
 
 .relation-hub-provider.role-studio {
-  background: rgba(120, 80, 200, 0.08);
-  border-color: rgba(120, 80, 200, 0.32);
+  border-color: rgba(120, 80, 200, 0.25);
+}
+
+.relation-hub-provider.role-studio.clickable:hover {
+  background: rgba(120, 80, 200, 0.12);
+  border-color: rgba(120, 80, 200, 0.42);
 }
 
 .relation-hub-provider.role-curator {
-  background: rgba(255, 180, 0, 0.12);
-  border-color: rgba(255, 180, 0, 0.42);
+  border-color: rgba(255, 180, 0, 0.28);
+}
+
+.relation-hub-provider.role-curator.clickable:hover {
+  background: rgba(255, 180, 0, 0.15);
+  border-color: rgba(255, 180, 0, 0.5);
 }
 
 .relation-hub-provider.role-producer {
-  background: rgba(40, 180, 140, 0.1);
-  border-color: rgba(40, 180, 140, 0.32);
+  border-color: rgba(40, 180, 140, 0.25);
+}
+
+.relation-hub-provider.role-producer.clickable:hover {
+  background: rgba(40, 180, 140, 0.15);
+  border-color: rgba(40, 180, 140, 0.42);
 }
 
 .relation-hub-provider.role-other {
-  background: rgba(21, 24, 33, 0.08);
-  border-color: rgba(21, 24, 33, 0.22);
+  border-color: rgba(21, 24, 33, 0.18);
+}
+
+.relation-hub-provider.role-other.clickable:hover {
+  background: rgba(21, 24, 33, 0.1);
+  border-color: rgba(21, 24, 33, 0.28);
 }
 
 .relation-hub-provider.empty {
@@ -1003,25 +1040,48 @@ a {
 
 .mega-relations li {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(21, 24, 33, 0.08);
 }
 
+.mega-relation-clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mega-relation-clickable:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 180, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 180, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.mega-relation-clickable:active {
+  transform: translateY(0);
+}
+
 .mega-relations strong {
   display: block;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .mega-relations span {
   color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .mega-relation-note {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .mega-relation-links {

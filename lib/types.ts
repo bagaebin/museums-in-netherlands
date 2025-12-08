@@ -26,6 +26,7 @@ export type RelationHubProviderRole = 'fund' | 'studio' | 'curator' | 'producer'
 export interface RelationHubProvider {
   role: RelationHubProviderRole;
   name: string;
+  museumId?: string;
 }
 
 export interface RelationHubInfo {

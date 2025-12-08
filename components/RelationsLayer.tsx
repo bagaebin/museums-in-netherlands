@@ -513,7 +513,7 @@ export function RelationsLayer({
               animate={{ opacity: 1 }}
               style={{ pointerEvents: 'none', fill: 'var(--foreground)' }}
             >
-              라인 컬처
+              {hub.label}
             </motion.text>
           </g>
         );

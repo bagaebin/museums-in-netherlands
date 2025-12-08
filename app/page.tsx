@@ -422,15 +422,27 @@ export default function HomePage() {
               </button>
               <div className="relation-head">
                 <span className="relation-chip">Connection Info</span>
-                <h3>{relationDetail.label}</h3>
-                {relationDetail.type === 'pair' && (
-                  <p className="relation-subtitle">{`${relationDetail.source.name} ↔ ${relationDetail.target.name}`}</p>
-                )}
-                {relationDetail.type === 'hub' && (
-                  <p className="relation-subtitle">{`${relationDetail.hub.label} ↔ ${relationDetail.member.name}`}</p>
-                )}
-                {relationDetail.type === 'hub-info' && (
-                  <p className="relation-subtitle">{`${relationDetail.hub.label} Hub`}</p>
+                {relationDetail.type === 'hub-info' ? (
+                  <>
+                    <h3>{relationDetail.hub.label}</h3>
+                    {relationDetail.hub.info?.summary && (
+                      <p className="relation-subtitle">{relationDetail.hub.info.summary}</p>
+                    )}
+                  </>
+                ) : relationDetail.type === 'hub' ? (
+                  <>
+                    <h3>{relationDetail.hub.label}</h3>
+                    {relationDetail.hub.info?.summary && (
+                      <p className="relation-subtitle">{relationDetail.hub.info.summary}</p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <h3>{relationDetail.label}</h3>
+                    {relationDetail.type === 'pair' && (
+                      <p className="relation-subtitle">{`${relationDetail.source.name} ↔ ${relationDetail.target.name}`}</p>
+                    )}
+                  </>
                 )}
                 {relationDetail.type === 'pair' && relationDetail.description && (
                   <p className="relation-note">{relationDetail.description}</p>
@@ -443,7 +455,7 @@ export default function HomePage() {
               </div>
               {relationDetail.type === 'hub' && (
                 <div className="relation-hub-members">
-                  <small>다른 멤버</small>
+                  <small>Connecting with</small>
                   <div className="relation-hub-pills">
                     {relationDetail.hub.members
                       .filter((id) => id !== relationDetail.member.id)
@@ -457,18 +469,27 @@ export default function HomePage() {
               )}
               {relationDetail.type === 'hub-info' && (
                 <div className="relation-hub-providers">
-                  <small>지원/운영</small>
                   <div className="relation-hub-provider-chips">
                     {relationDetail.hub.info?.providers?.length ? (
-                      relationDetail.hub.info.providers.map((provider) => (
-                        <span
-                          key={`${provider.role}-${provider.name}`}
-                          className={`relation-hub-provider role-${provider.role}`}
-                        >
-                          <em>{providerRoleLabels[provider.role] ?? 'Partner'}</em>
-                          <strong>{provider.name}</strong>
-                        </span>
-                      ))
+                      relationDetail.hub.info.providers.map((provider) => {
+                        const museum = provider.museumId ? museumById[provider.museumId] : null;
+                        const isClickable = !!museum;
+                        const TagName = isClickable ? 'button' : 'span';
+                        return (
+                          <TagName
+                            key={`${provider.role}-${provider.name}`}
+                            className={`relation-hub-provider role-${provider.role}${isClickable ? ' clickable' : ''}`}
+                            onClick={isClickable ? () => {
+                              setRelationDetail(null);
+                              setExpandedId(provider.museumId!);
+                            } : undefined}
+                            type={isClickable ? 'button' : undefined}
+                          >
+                            <em>{providerRoleLabels[provider.role] ?? 'Partner'}</em>
+                            <strong>{provider.name}</strong>
+                          </TagName>
+                        );
+                      })
                     ) : (
                       <span className="relation-hub-provider empty">No registered providers</span>
                     )}
@@ -579,10 +600,20 @@ export default function HomePage() {
 
                 <div className="mega-content-card">
                   <h4>Connections</h4>
-                  {expandedMuseum.relations.length ? (
+                  {expandedMuseum.relations.length || relationHubs.some((hub) => hub.members.includes(expandedMuseum.id)) ? (
                     <ul className="mega-relations">
+                      {/* Direct relations */}
                       {expandedMuseum.relations.map((rel) => (
-                        <li key={rel.targetId}>
+                        <li 
+                          key={rel.targetId}
+                          className="mega-relation-clickable"
+                          onClick={() => {
+                            const targetMuseum = museumById[rel.targetId];
+                            if (targetMuseum) {
+                              setExpandedId(rel.targetId);
+                            }
+                          }}
+                        >
                           <div>
                             <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
                             <span> · {rel.label}</span>
@@ -595,6 +626,31 @@ export default function HomePage() {
                           ) : null}
                         </li>
                       ))}
+                      {/* Relation hubs */}
+                      {relationHubs
+                        .filter((hub) => hub.members.includes(expandedMuseum.id))
+                        .map((hub) => (
+                          <li 
+                            key={hub.id}
+                            className="mega-relation-clickable"
+                            onClick={() => {
+                              const member = museumById[expandedMuseum.id];
+                              if (member) {
+                                setRelationDetail({
+                                  type: 'hub-info',
+                                  hub,
+                                  label: hub.label,
+                                });
+                              }
+                            }}
+                          >
+                            <div>
+                              <strong>{hub.label}</strong>
+                              <span> · Hub with {hub.members.length} members</span>
+                              {hub.info?.summary && <p className="mega-relation-note">{hub.info.summary}</p>}
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   ) : (
                     <p className="mega-empty">No connection</p>
