@@ -51,7 +51,7 @@ function buildTopicPositions(museums: Museum[], stage: { width: number; height: 
 function buildUniformGridPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
   const positions: Record<string, Position> = {};
   const sorted = museums.slice().sort((a, b) => a.name.localeCompare(b.name));
-  const columns = Math.max(1, Math.floor(stage.width / (TILE_WIDTH + GRID_GAP)));
+  const columns = 5;
 
   sorted.forEach((museum, index) => {
     const col = index % columns;

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { LayoutMode, Museum, Position, RelationHub } from '../lib/types';
 import { TILE_WIDTH, TILE_HEIGHT, STAGE_PADDING, estimateReveal } from '../lib/layout';
 
@@ -17,6 +17,8 @@ interface RelationsLayerProps {
     meta?: { hub?: RelationHub; targetType?: 'hub-member' | 'hub-node' }
   ) => void;
   relationHubs?: RelationHub[];
+  relationHubOffsets?: Record<string, Partial<Record<LayoutMode, Position>>>;
+  onHubOffsetChange?: (hubId: string, layout: LayoutMode, offset: Position) => void;
 }
 
 export function RelationsLayer({
@@ -26,6 +28,8 @@ export function RelationsLayer({
   layout,
   onRelationClick,
   relationHubs = [],
+  relationHubOffsets = {},
+  onHubOffsetChange,
 }: RelationsLayerProps) {
   const museumById = useMemo(
     () => Object.fromEntries(museums.map((museum) => [museum.id, museum])),
@@ -191,7 +195,8 @@ export function RelationsLayer({
 
     const base = { x: sum.x / memberCenters.length, y: sum.y / memberCenters.length };
     const layoutOffset = hub.layoutOffsets?.find((item) => item.layout === layout)?.offset;
-    const offset = layoutOffset ?? hub.offset ?? { x: 0, y: 0 };
+    const runtimeOffset = relationHubOffsets[hub.id]?.[layout];
+    const offset = runtimeOffset ?? layoutOffset ?? hub.offset ?? { x: 0, y: 0 };
 
     return { x: base.x + offset.x, y: base.y + offset.y };
   };
@@ -283,6 +288,8 @@ export function RelationsLayer({
       {relationHubs.map((hub) => {
         const anchor = computeHubAnchor(hub);
         if (!anchor) return null;
+
+        const currentOffset = relationHubOffsets[hub.id]?.[layout] ?? { x: 0, y: 0 };
 
         const hubLabel = estimateReveal(hub.label, 180);
         const hasHubInfo = Boolean(hub.info);
@@ -409,8 +416,37 @@ export function RelationsLayer({
           if (!hasHubInfo) return;
           onRelationClick?.(hub.id, hub.id, hub.label, { hub, targetType: 'hub-node' });
         };
+
+        const startDrag = (event: React.PointerEvent<SVGGElement>) => {
+          if (!onHubOffsetChange) return;
+          if (event.button !== 0) return;
+          event.preventDefault();
+          const startPoint = { x: event.clientX, y: event.clientY };
+          const baseOffset = currentOffset;
+
+          const handleMove = (e: PointerEvent) => {
+            const dx = e.clientX - startPoint.x;
+            const dy = e.clientY - startPoint.y;
+            onHubOffsetChange?.(hub.id, layout, { x: baseOffset.x + dx, y: baseOffset.y + dy });
+          };
+
+          const stop = () => {
+            window.removeEventListener('pointermove', handleMove);
+            window.removeEventListener('pointerup', stop);
+            window.removeEventListener('pointercancel', stop);
+          };
+
+          window.addEventListener('pointermove', handleMove);
+          window.addEventListener('pointerup', stop);
+          window.addEventListener('pointercancel', stop);
+        };
         return (
-          <g key={hub.id} className="relation-hub-cluster">
+          <g
+            key={hub.id}
+            className="relation-hub-cluster"
+            onPointerDown={startDrag}
+            style={{ cursor: onHubOffsetChange ? 'grab' : undefined }}
+          >
             <g
               role={hasHubInfo ? 'button' : 'presentation'}
               tabIndex={hasHubInfo ? 0 : -1}

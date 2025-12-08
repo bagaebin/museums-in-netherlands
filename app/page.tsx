@@ -71,6 +71,9 @@ export default function HomePage() {
   const [positions, setPositions] = useState<Record<string, Position>>(() =>
     computeLayoutPositions(museums, 'grid', { width: 1200, height: 760 })
   );
+  const [relationHubOffsets, setRelationHubOffsets] = useState<
+    Record<string, Partial<Record<LayoutMode, Position>>>
+  >({});
   const [topicRowLabelsDismissed, setTopicRowLabelsDismissed] = useState(layout !== 'topic');
   const [mapScale, setMapScale] = useState(1);
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
@@ -272,6 +275,13 @@ export default function HomePage() {
     }
   };
 
+  const handleHubOffsetChange = (hubId: string, layoutMode: LayoutMode, offset: Position) => {
+    setRelationHubOffsets((prev) => ({
+      ...prev,
+      [hubId]: { ...prev[hubId], [layoutMode]: offset },
+    }));
+  };
+
   const handleWheelZoom = (event: React.WheelEvent) => {
     if (layout !== 'map') return;
     event.preventDefault();
@@ -347,6 +357,8 @@ export default function HomePage() {
             layout={layout}
             onRelationClick={handleRelationClick}
             relationHubs={relationHubs}
+            relationHubOffsets={relationHubOffsets}
+            onHubOffsetChange={handleHubOffsetChange}
           />
           <LockersGrid
             museums={museums}
