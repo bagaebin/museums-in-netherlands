@@ -6,6 +6,8 @@ const nextConfig = {
    * from the generated `out/index.html` bundle.
    */
   output: 'export',
+  basePath: '/museums-in-netherlands',
+  assetPrefix: '/museums-in-netherlands',
 };
 
 export default nextConfig;
