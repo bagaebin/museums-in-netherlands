@@ -23,7 +23,7 @@ export function computeLayoutPositions(
   };
   switch (layout) {
     case 'grid':
-      return buildGridPositions(museums, usableStage);
+      return buildUniformGridPositions(museums, usableStage);
     case 'topic':
       return buildTopicPositions(museums, usableStage);
     case 'map':
@@ -45,36 +45,24 @@ function buildGridPositions(museums: Museum[], stage: { width: number; height: n
 }
 
 function buildTopicPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
-  const clusters: Record<string, Museum[]> = {};
-  museums.forEach((museum) => {
-    const key = museum.topic ?? '기타';
-    clusters[key] = clusters[key] || [];
-    clusters[key].push(museum);
-  });
+  return buildGridPositions(museums, stage);
+}
 
+function buildUniformGridPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
   const positions: Record<string, Position> = {};
-  const topics = Object.keys(clusters);
-  const cols = Math.ceil(Math.sqrt(topics.length));
-  const rows = Math.ceil(topics.length / cols);
-  const padX = stage.width / Math.max(cols, 1);
-  const padY = stage.height / Math.max(rows, 1);
+  const sorted = museums.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const columns = 5;
 
-  topics.forEach((topic, topicIndex) => {
-    const col = topicIndex % cols;
-    const row = Math.floor(topicIndex / cols);
-    const baseX = col * padX + GRID_GAP;
-    const baseY = row * padY + GRID_GAP;
-    clusters[topic].forEach((museum, idx) => {
-      const localX = (idx % 2) * (TILE_WIDTH + GRID_GAP / 2);
-      const localY = Math.floor(idx / 2) * (TILE_HEIGHT + GRID_GAP / 2);
-      positions[museum.id] = {
-        x: baseX + localX,
-        y: baseY + localY,
-      };
-    });
+  sorted.forEach((museum, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+    positions[museum.id] = {
+      x: col * (TILE_WIDTH + GRID_GAP) + GRID_GAP,
+      y: row * (TILE_HEIGHT + GRID_GAP) + GRID_GAP,
+    };
   });
 
-  return positions;
+  return centerPositions(positions, stage);
 }
 
 function buildMapPositions(museums: Museum[], stage: { width: number; height: number }): Record<string, Position> {
