@@ -21,6 +21,19 @@ body {
   overflow: hidden;
 }
 
+/* 스크롤바 숨기기 */
+.relation-panel::-webkit-scrollbar,
+.mega-panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox 스크롤바 숨기기 */
+.relation-panel,
+.mega-panel {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 h3, h4 {
   margin-block-start: 0;
   margin-block-end: 0.8rem;
@@ -438,12 +451,17 @@ a {
 .relation-panel {
   position: relative;
   width: min(480px, 92vw);
+  max-height: calc(100vh - 36px);
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(237, 240, 246, 0.96));
   border: 1px solid rgba(21, 24, 33, 0.08);
   border-radius: 18px;
-  padding: 24px 24px 18px;
+  padding: 12px 12px 18px 24px;
   box-shadow: 0 20px 90px rgba(0, 0, 0, 0.18);
   color: var(--text);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .relation-panel::after {
@@ -458,22 +476,29 @@ a {
 }
 
 .relation-close {
-  position: absolute;
+  position: sticky;
   top: 12px;
-  right: 12px;
   width: 34px;
   height: 34px;
+  margin-left: auto;
+  margin-right: 12px;
+  margin-bottom: 12px;
   border-radius: 12px;
   border: 1px solid rgba(21, 24, 33, 0.08);
   background: rgba(255, 255, 255, 0.8);
   color: var(--text);
   cursor: pointer;
-  z-index: 1;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .relation-head {
   position: relative;
   z-index: 1;
+  padding-right: 12px;
 }
 
 .relation-head h3 {
@@ -481,10 +506,22 @@ a {
   font-size: 22px;
 }
 
-.relation-head p {
+.relation-subtitle {
   margin: 0;
   color: var(--muted);
   line-height: 1.5;
+}
+
+.relation-note {
+  margin: 6px 0 0;
+  color: var(--text);
+}
+
+.relation-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .relation-chip {
@@ -570,16 +607,33 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(21, 24, 33, 0.05);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(21, 24, 33, 0.08);
   color: var(--text);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.relation-hub-provider.clickable {
+  cursor: pointer;
+}
+
+.relation-hub-provider.clickable:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.relation-hub-provider.clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
 }
 
 .relation-hub-provider em {
   font-size: 11px;
+  font-style: normal;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: rgba(21, 24, 33, 0.7);
@@ -587,32 +641,52 @@ a {
 
 .relation-hub-provider strong {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .relation-hub-provider.role-fund {
-  background: rgba(64, 140, 255, 0.08);
-  border-color: rgba(64, 140, 255, 0.35);
+  border-color: rgba(64, 140, 255, 0.25);
+}
+
+.relation-hub-provider.role-fund.clickable:hover {
+  background: rgba(64, 140, 255, 0.12);
+  border-color: rgba(64, 140, 255, 0.45);
 }
 
 .relation-hub-provider.role-studio {
-  background: rgba(120, 80, 200, 0.08);
-  border-color: rgba(120, 80, 200, 0.32);
+  border-color: rgba(120, 80, 200, 0.25);
+}
+
+.relation-hub-provider.role-studio.clickable:hover {
+  background: rgba(120, 80, 200, 0.12);
+  border-color: rgba(120, 80, 200, 0.42);
 }
 
 .relation-hub-provider.role-curator {
-  background: rgba(255, 180, 0, 0.12);
-  border-color: rgba(255, 180, 0, 0.42);
+  border-color: rgba(255, 180, 0, 0.28);
+}
+
+.relation-hub-provider.role-curator.clickable:hover {
+  background: rgba(255, 180, 0, 0.15);
+  border-color: rgba(255, 180, 0, 0.5);
 }
 
 .relation-hub-provider.role-producer {
-  background: rgba(40, 180, 140, 0.1);
-  border-color: rgba(40, 180, 140, 0.32);
+  border-color: rgba(40, 180, 140, 0.25);
+}
+
+.relation-hub-provider.role-producer.clickable:hover {
+  background: rgba(40, 180, 140, 0.15);
+  border-color: rgba(40, 180, 140, 0.42);
 }
 
 .relation-hub-provider.role-other {
-  background: rgba(21, 24, 33, 0.08);
-  border-color: rgba(21, 24, 33, 0.22);
+  border-color: rgba(21, 24, 33, 0.18);
+}
+
+.relation-hub-provider.role-other.clickable:hover {
+  background: rgba(21, 24, 33, 0.1);
+  border-color: rgba(21, 24, 33, 0.28);
 }
 
 .relation-hub-provider.empty {
@@ -637,10 +711,12 @@ a {
 .mega-panel {
   position: relative;
   width: min(1040px, 94vw);
+  max-height: calc(100vh - 48px);
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(237, 240, 246, 0.96));
   border: 1px solid rgba(21, 24, 33, 0.08);
   border-radius: 24px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 30px 120px rgba(0, 0, 0, 0.16);
 }
 
@@ -657,14 +733,15 @@ a {
 }
 
 .mega-close {
-  position: absolute;
+  position: sticky;
   top: 16px;
   right: 16px;
+  float: right;
   width: 36px;
   height: 36px;
   border-radius: 12px;
   border: 1px solid rgba(21, 24, 33, 0.08);
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--text);
   cursor: pointer;
   z-index: 2;
@@ -679,6 +756,7 @@ a {
 .mega-header h2 {
   margin: 8px 0 8px;
   font-size: 28px;
+  font-weight: 500;
 }
 
 .mega-header p {
@@ -695,10 +773,17 @@ a {
   padding-bottom: 32px;
 }
 
+.mega-kicker-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
 .mega-kicker {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
@@ -708,6 +793,204 @@ a {
   border: 1px solid rgba(21, 24, 33, 0.06);
 }
 
+.mega-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 0 24px 8px;
+}
+
+.mega-meta-card {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.mega-meta-card small {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.mega-meta-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  color: var(--text);
+}
+
+.mega-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(21, 24, 33, 0.04);
+  border-radius: 999px;
+  color: var(--text);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  font-weight: 600;
+}
+
+.mega-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 24px 16px;
+}
+
+/* Location & Opening Hours - 2열 카드 */
+.mega-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 24px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.mega-info-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.mega-info-card small {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mega-info-card span {
+  display: block;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.mega-info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  color: var(--text);
+}
+
+.mega-info-card ul li {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mega-info-link {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+.mega-info-link:hover {
+  color: #0056B2;
+  text-decoration: underline;
+}
+
+/* Link Buttons - 3열 1행 */
+.mega-link-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 24px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.mega-link-buttons .mega-action {
+  justify-content: center;
+  font-weight: 500;
+}
+
+/* What They Do & Connections - 1열 카드형 */
+.mega-content-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 24px 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.mega-content-card {
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.mega-content-card h4 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.mega-content-card h5 {
+  margin: 16px 0 8px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.mega-content-card p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.mega-content-card .mega-bullets {
+  margin-top: 12px;
+}
+
+.mega-content-card .mega-relations {
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .mega-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mega-link-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mega-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(21, 24, 33, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 400;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.mega-action-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
 .mega-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -715,6 +998,102 @@ a {
   padding: 8px 24px 28px;
   position: relative;
   z-index: 1;
+}
+
+.mega-section {
+  margin-bottom: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.mega-section h4 {
+  margin: 0;
+}
+
+.mega-section p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.mega-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.mega-bullets li {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(21, 24, 33, 0.06);
+}
+
+.mega-relations {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.mega-relations li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(21, 24, 33, 0.08);
+}
+
+.mega-relation-clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mega-relation-clickable:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 180, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 180, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.mega-relation-clickable:active {
+  transform: translateY(0);
+}
+
+.mega-relations strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.mega-relations span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mega-relation-note {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mega-relation-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.mega-empty {
+  margin: 0;
+  color: var(--muted);
 }
 
 .mega-copy h4 {

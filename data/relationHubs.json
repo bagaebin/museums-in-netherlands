@@ -1,12 +1,10 @@
 [
   {
-    "id": "rhine-culture-branch",
-    "label": "라인 컬처 허브",
+    "id": "dutch-design-week",
+    "label": "Dutch Design Week 2025",
     "members": [
-      "arnhem-museum",
-      "depot-boijmans",
-      "kunsthal-rotterdam",
-      "rijksmuseum-amsterdam"
+      "next-nature",
+      "design-den-bosch"
     ],
     "offset": { "x": 0, "y": -24 },
     "layoutOffsets": [
@@ -16,7 +14,7 @@
       }
     ],
     "info": {
-      "summary": "라인강권 후원·스튜디오·큐레이터가 모여 새로운 복합 전시를 설계하는 실험 허브.",
+      "summary": "The platform for the design of the future and the future of design",
       "providers": [
         { "role": "fund", "name": "Rijnfonds" },
         { "role": "studio", "name": "Studio Delta" },

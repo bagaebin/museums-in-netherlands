@@ -10,7 +10,14 @@ import { RelationsLayer } from '../components/RelationsLayer';
 import { FabButtons } from '../components/FabButtons';
 import { applyHashWarp } from '../lib/warp';
 import { TILE_HEIGHT, TILE_WIDTH, computeLayoutPositions } from '../lib/layout';
-import { LayoutMode, Museum, Position, RelationHub, RelationHubProviderRole } from '../lib/types';
+import {
+  ExternalLink,
+  LayoutMode,
+  Museum,
+  Position,
+  RelationHub,
+  RelationHubProviderRole,
+} from '../lib/types';
 
 const museums = museumsData as Museum[];
 const relationHubs = relationHubsData as RelationHub[];
@@ -22,12 +29,22 @@ const providerRoleLabels: Record<RelationHubProviderRole, string> = {
   other: 'Partner',
 };
 
+const linkIcons = {
+  website: '🌐',
+  instagram: '📸',
+  map: '🗺️',
+  video: '▶️',
+  other: '↗',
+} as const;
+
 type RelationDetail =
   | {
     type: 'pair';
     source: Museum;
     target: Museum;
     label: string;
+    description?: string;
+    links?: ExternalLink[];
   }
   | {
     type: 'hub';
@@ -56,6 +73,19 @@ export default function HomePage() {
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const panOrigin = useRef<{ x: number; y: number } | null>(null);
+
+  const renderLinkButton = (link: ExternalLink, key?: string) => (
+    <a
+      key={key ?? link.url}
+      className="mega-action"
+      href={link.url}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <span className="mega-action-icon">{linkIcons[link.type] ?? linkIcons.other}</span>
+      <span>{link.label}</span>
+    </a>
+  );
 
   useEffect(() => {
     const resize = () => {
@@ -210,8 +240,10 @@ export default function HomePage() {
 
     const source = museumById[sourceId];
     const target = museumById[targetId];
-    const forwardLabel = source?.relations.find((rel) => rel.targetId === targetId)?.label;
-    const reverseLabel = target?.relations.find((rel) => rel.targetId === sourceId)?.label;
+    const forwardRelation = source?.relations.find((rel) => rel.targetId === targetId);
+    const reverseRelation = target?.relations.find((rel) => rel.targetId === sourceId);
+    const forwardLabel = forwardRelation?.label;
+    const reverseLabel = reverseRelation?.label;
 
     if (!source || !target) return;
 
@@ -220,6 +252,8 @@ export default function HomePage() {
       source,
       target,
       label: labelFromHub ?? forwardLabel ?? reverseLabel ?? 'Connection Info',
+      description: forwardRelation?.description ?? reverseRelation?.description,
+      links: forwardRelation?.externalLinks ?? reverseRelation?.externalLinks,
     });
     setExpandedId(null);
   };
@@ -388,62 +422,40 @@ export default function HomePage() {
               </button>
               <div className="relation-head">
                 <span className="relation-chip">Connection Info</span>
-                <h3>
-                  {relationDetail.type === 'pair'
-                    ? `${relationDetail.source.name} ↔ ${relationDetail.target.name}`
-                    : relationDetail.type === 'hub'
-                      ? `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`
-                      : `${relationDetail.hub.label} Hub`}
-                </h3>
-                <p>{relationDetail.label}</p>
-              </div>
-              <div className="relation-meta">
-                {relationDetail.type === 'pair' && (
+                {relationDetail.type === 'hub-info' ? (
                   <>
-                    <div>
-                      <small>출발</small>
-                      <strong>{relationDetail.source.name}</strong>
-                      <span>{relationDetail.source.city}</span>
-                    </div>
-                    <div>
-                      <small>도착</small>
-                      <strong>{relationDetail.target.name}</strong>
-                      <span>{relationDetail.target.city}</span>
-                    </div>
+                    <h3>{relationDetail.hub.label}</h3>
+                    {relationDetail.hub.info?.summary && (
+                      <p className="relation-subtitle">{relationDetail.hub.info.summary}</p>
+                    )}
+                  </>
+                ) : relationDetail.type === 'hub' ? (
+                  <>
+                    <h3>{relationDetail.hub.label}</h3>
+                    {relationDetail.hub.info?.summary && (
+                      <p className="relation-subtitle">{relationDetail.hub.info.summary}</p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <h3>{relationDetail.label}</h3>
+                    {relationDetail.type === 'pair' && (
+                      <p className="relation-subtitle">{`${relationDetail.source.name} ↔ ${relationDetail.target.name}`}</p>
+                    )}
                   </>
                 )}
-                {relationDetail.type === 'hub' && (
-                  <>
-                    <div>
-                      <small>허브</small>
-                      <strong>{relationDetail.hub.label}</strong>
-                      <span>멤버 {relationDetail.hub.members.length}곳</span>
-                    </div>
-                    <div>
-                      <small>연결된 멤버</small>
-                      <strong>{relationDetail.member.name}</strong>
-                      <span>{relationDetail.member.city}</span>
-                    </div>
-                  </>
+                {relationDetail.type === 'pair' && relationDetail.description && (
+                  <p className="relation-note">{relationDetail.description}</p>
                 )}
-                {relationDetail.type === 'hub-info' && (
-                  <>
-                    <div>
-                      <small>허브</small>
-                      <strong>{relationDetail.hub.label}</strong>
-                      <span>멤버 {relationDetail.hub.members.length}곳</span>
-                    </div>
-                    <div>
-                      <small>지원 항목</small>
-                      <strong>교차점 운영</strong>
-                      <span>{relationDetail.hub.info?.providers?.length ?? 0} 파트너</span>
-                    </div>
-                  </>
-                )}
+                {relationDetail.type === 'pair' && relationDetail.links?.length ? (
+                  <div className="relation-links">
+                    {relationDetail.links.map((link) => renderLinkButton(link))}
+                  </div>
+                ) : null}
               </div>
               {relationDetail.type === 'hub' && (
                 <div className="relation-hub-members">
-                  <small>다른 멤버</small>
+                  <small>Connecting with</small>
                   <div className="relation-hub-pills">
                     {relationDetail.hub.members
                       .filter((id) => id !== relationDetail.member.id)
@@ -457,18 +469,27 @@ export default function HomePage() {
               )}
               {relationDetail.type === 'hub-info' && (
                 <div className="relation-hub-providers">
-                  <small>지원/운영</small>
                   <div className="relation-hub-provider-chips">
                     {relationDetail.hub.info?.providers?.length ? (
-                      relationDetail.hub.info.providers.map((provider) => (
-                        <span
-                          key={`${provider.role}-${provider.name}`}
-                          className={`relation-hub-provider role-${provider.role}`}
-                        >
-                          <em>{providerRoleLabels[provider.role] ?? 'Partner'}</em>
-                          <strong>{provider.name}</strong>
-                        </span>
-                      ))
+                      relationDetail.hub.info.providers.map((provider) => {
+                        const museum = provider.museumId ? museumById[provider.museumId] : null;
+                        const isClickable = !!museum;
+                        const TagName = isClickable ? 'button' : 'span';
+                        return (
+                          <TagName
+                            key={`${provider.role}-${provider.name}`}
+                            className={`relation-hub-provider role-${provider.role}${isClickable ? ' clickable' : ''}`}
+                            onClick={isClickable ? () => {
+                              setRelationDetail(null);
+                              setExpandedId(provider.museumId!);
+                            } : undefined}
+                            type={isClickable ? 'button' : undefined}
+                          >
+                            <em>{providerRoleLabels[provider.role] ?? 'Partner'}</em>
+                            <strong>{provider.name}</strong>
+                          </TagName>
+                        );
+                      })
                     ) : (
                       <span className="relation-hub-provider empty">No registered providers</span>
                     )}
@@ -502,32 +523,138 @@ export default function HomePage() {
               </button>
 
               <div className="mega-header">
-                <span className="mega-kicker">{expandedMuseum.city}</span>
+                <div className="mega-kicker-group">
+                  {expandedMuseum.topic?.split(',').map((tag) => (
+                    <span key={tag.trim()} className="mega-kicker">
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
                 <h2>{expandedMuseum.name}</h2>
-                <p>{expandedMuseum.detail.description}</p>
+                <p>{expandedMuseum.whatTheyDo?.title ?? expandedMuseum.detail.description}</p>
               </div>
 
-              <div className="mega-grid">
-                <div className="mega-copy">
-                  <h4>Connected Partners</h4>
-                  <ul>
-                    {expandedMuseum.relations.map((rel) => (
-                      <li key={rel.targetId}>
-                        <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
-                        <span> · {rel.label}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <a href={expandedMuseum.detail.url} target="_blank" rel="noreferrer" className="mega-link">
-                    Visit Official Website ↗
-                  </a>
+              {/* Location & Opening Hours - 2열 카드 */}
+              <div className="mega-info-grid">
+                {expandedMuseum.location && (
+                  <div className="mega-info-card">
+                    <small>Location</small>
+                    {expandedMuseum.locationUrl ? (
+                      <a href={expandedMuseum.locationUrl} target="_blank" rel="noopener noreferrer" className="mega-info-link">
+                        {expandedMuseum.location}
+                      </a>
+                    ) : (
+                      <span>{expandedMuseum.location}</span>
+                    )}
+                  </div>
+                )}
+                {expandedMuseum.openingTime?.length ? (
+                  <div className="mega-info-card">
+                    <small>Opening Hours</small>
+                    <ul>
+                      {expandedMuseum.openingTime.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Organization, Website, Instagram - 3열 1행 버튼 */}
+              <div className="mega-link-buttons">
+                {expandedMuseum.organizationUrl &&
+                  renderLinkButton(
+                    {
+                      type: 'website',
+                      label: 'Organization',
+                      url: expandedMuseum.organizationUrl,
+                    },
+                    `${expandedMuseum.id}-org`
+                  )}
+                {expandedMuseum.externalLinks?.map((link) => renderLinkButton(link, `${expandedMuseum.id}-${link.url}`))}
+              </div>
+
+              {/* What They Do & Connections - 1열 카드형 (세로 2행) */}
+              <div className="mega-content-cards">
+                <div className="mega-content-card">
+                  <h4>What they do</h4>
+                  <p>{expandedMuseum.detail.description}</p>
+                  {expandedMuseum.whatTheyDo?.bullets?.length ? (
+                    <ul className="mega-bullets">
+                      {expandedMuseum.whatTheyDo.bullets.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {expandedMuseum.detail.highlights?.length ? (
+                    <>
+                      <h5>Highlights</h5>
+                      <ul className="mega-bullets">
+                        {expandedMuseum.detail.highlights.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
                 </div>
-                <div className="mega-gallery">
-                  {expandedMuseum.detail.images?.map((src, index) => (
-                    <div key={src} className="mega-image">
-                      <img src={`${src}&auto=format&fit=crop&w=900&q=80`} alt={`${expandedMuseum.name} Image ${index + 1}`} />
-                    </div>
-                  ))}
+
+                <div className="mega-content-card">
+                  <h4>Connections</h4>
+                  {expandedMuseum.relations.length || relationHubs.some((hub) => hub.members.includes(expandedMuseum.id)) ? (
+                    <ul className="mega-relations">
+                      {/* Direct relations */}
+                      {expandedMuseum.relations.map((rel) => (
+                        <li 
+                          key={rel.targetId}
+                          className="mega-relation-clickable"
+                          onClick={() => {
+                            const targetMuseum = museumById[rel.targetId];
+                            if (targetMuseum) {
+                              setExpandedId(rel.targetId);
+                            }
+                          }}
+                        >
+                          <div>
+                            <strong>{museumById[rel.targetId]?.name ?? rel.targetId}</strong>
+                            <span> · {rel.label}</span>
+                            {rel.description && <p className="mega-relation-note">{rel.description}</p>}
+                          </div>
+                          {rel.externalLinks?.length ? (
+                            <div className="mega-relation-links">
+                              {rel.externalLinks.map((link) => renderLinkButton(link, `${rel.targetId}-${link.url}`))}
+                            </div>
+                          ) : null}
+                        </li>
+                      ))}
+                      {/* Relation hubs */}
+                      {relationHubs
+                        .filter((hub) => hub.members.includes(expandedMuseum.id))
+                        .map((hub) => (
+                          <li 
+                            key={hub.id}
+                            className="mega-relation-clickable"
+                            onClick={() => {
+                              const member = museumById[expandedMuseum.id];
+                              if (member) {
+                                setRelationDetail({
+                                  type: 'hub-info',
+                                  hub,
+                                  label: hub.label,
+                                });
+                              }
+                            }}
+                          >
+                            <div>
+                              <strong>{hub.label}</strong>
+                              <span> · Hub with {hub.members.length} members</span>
+                              {hub.info?.summary && <p className="mega-relation-note">{hub.info.summary}</p>}
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="mega-empty">No connection</p>
+                  )}
                 </div>
               </div>
             </motion.div>

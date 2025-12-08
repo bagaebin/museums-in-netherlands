@@ -16,12 +16,12 @@ export function FabButtons({ onShowOverview, onShowGallery }: FabButtonsProps) {
       >
           ABOUT
       </motion.button>
-      <motion.button
+      {/* <motion.button
         className="fab-button"
         onClick={onShowGallery}
       >
           GALLERY
-      </motion.button>
+      </motion.button> */}
     </div>
   );
 }
