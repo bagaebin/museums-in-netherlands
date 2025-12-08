@@ -24,22 +24,22 @@ const providerRoleLabels: Record<RelationHubProviderRole, string> = {
 
 type RelationDetail =
   | {
-      type: 'pair';
-      source: Museum;
-      target: Museum;
-      label: string;
-    }
+    type: 'pair';
+    source: Museum;
+    target: Museum;
+    label: string;
+  }
   | {
-      type: 'hub';
-      hub: RelationHub;
-      member: Museum;
-      label: string;
-    }
+    type: 'hub';
+    hub: RelationHub;
+    member: Museum;
+    label: string;
+  }
   | {
-      type: 'hub-info';
-      hub: RelationHub;
-      label: string;
-    };
+    type: 'hub-info';
+    hub: RelationHub;
+    label: string;
+  };
 
 export default function HomePage() {
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -140,8 +140,9 @@ export default function HomePage() {
   const overviewContent = useMemo(
     () => (
       <div>
-        <h3>프로젝트 개요</h3>
-        <p>네덜란드 박물관을 사물함 메타포로 탐험하며, 문이 열리고 내부 배경이 확장되는 모션을 체험합니다.</p>
+        <h3>About</h3>
+        <p>One of the routines I developed during my four months in the Netherlands was visiting museums. The concepts of “박물관” and “미술관” in Korea differ from what “museum” means here. Museums in the Netherlands are multifaceted spaces that build communities through their unique structures, collections, and curatorial approaches. Their goals and values go far beyond preservation and exhibition; these qualities are embedded into their architecture, interior spaces, and exhibition methods, forming a distinct identity of their own.</p>
+        <p>I do not want to be a designer who thinks only about convenience or money. I want to create spaces that speak about society in richer and more meaningful ways. For this reason, museums are the kind of environment I hope to work in. I want to reframe artworks to complete their artistic voice, and at the same time, listen closely to the voices of the visitors who experience them.</p>
       </div>
     ),
     []
@@ -150,14 +151,30 @@ export default function HomePage() {
   const galleryContent = useMemo(
     () => (
       <div>
-        <h3>레퍼런스 갤러리</h3>
-        <p>실제 수장고, 전시 사진 등을 모아 컨셉을 빠르게 공유합니다.</p>
+        <span className="mega-kicker">Visuals</span>
+        <h2>Gallery</h2>
+        <p>Share concepts quickly with real storage and exhibition photos.</p>
+        <div className="gallery-grid">
+          {[
+            'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee',
+            'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85',
+            'https://images.unsplash.com/photo-1517817748497-61c8956dbe22',
+            'https://images.unsplash.com/photo-1529429617124-aee5f4ae7890',
+            'https://images.unsplash.com/photo-1460317442991-0ec209397118',
+            'https://images.unsplash.com/photo-1505842679547-5133c17caa2c',
+            'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429',
+            'https://images.unsplash.com/photo-1469474968028-56623f02e42e',
+            'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+          ].map((src, i) => (
+            <div key={i} className="gallery-item">
+              <img src={`${src}?auto=format&fit=crop&w=600&q=80`} alt={`Gallery image ${i + 1}`} />
+            </div>
+          ))}
+        </div>
       </div>
     ),
     []
-  );
-
-  const [modal, setModal] = useState<'overview' | 'gallery' | null>(null);
+  );  const [modal, setModal] = useState<'overview' | 'gallery' | null>(null);
 
   const handleLockerOpen = (id: string) => {
     setActiveId(id);
@@ -202,7 +219,7 @@ export default function HomePage() {
       type: 'pair',
       source,
       target,
-      label: labelFromHub ?? forwardLabel ?? reverseLabel ?? '연결 정보',
+      label: labelFromHub ?? forwardLabel ?? reverseLabel ?? 'Connection Info',
     });
     setExpandedId(null);
   };
@@ -307,47 +324,38 @@ export default function HomePage() {
         </div>
       </div>
 
-      {modal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.55)',
-            display: 'grid',
-            placeItems: 'center',
-            zIndex: 20,
-          }}
-          onClick={() => setModal(null)}
-        >
-          <div
-            style={{
-              background: 'var(--panel)',
-              padding: 24,
-              borderRadius: 16,
-              width: 'min(480px, 90vw)',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {modal && (
+          <motion.div
+            className="mega-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setModal(null)}
+            style={{ zIndex: 40 }}
           >
-            <button
-              style={{
-                position: 'absolute',
-                right: 18,
-                top: 12,
-                background: 'transparent',
-                color: 'var(--text)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 18,
-              }}
-              onClick={() => setModal(null)}
+            <motion.div
+              className="mega-panel"
+              style={{ width: 'min(600px, 90vw)' }}
+              initial={{ scale: 0.95, opacity: 0, y: 14 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 14 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 16 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              ✕
-            </button>
-            {modal === 'overview' ? overviewContent : galleryContent}
-          </div>
-        </div>
-      )}
+              <button
+                className="mega-close"
+                onClick={() => setModal(null)}
+              >
+                ✕
+              </button>
+              <div className="mega-header">
+                {modal === 'overview' ? overviewContent : galleryContent}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <FabButtons onShowOverview={() => setModal('overview')} onShowGallery={() => setModal('gallery')} />
 
@@ -374,18 +382,18 @@ export default function HomePage() {
                   e.stopPropagation();
                   setRelationDetail(null);
                 }}
-                aria-label="연결 정보 닫기"
+                aria-label="Close connection info"
               >
                 ✕
               </button>
               <div className="relation-head">
-                <span className="relation-chip">연결 정보</span>
+                <span className="relation-chip">Connection Info</span>
                 <h3>
                   {relationDetail.type === 'pair'
                     ? `${relationDetail.source.name} ↔ ${relationDetail.target.name}`
                     : relationDetail.type === 'hub'
                       ? `${relationDetail.hub.label} ↔ ${relationDetail.member.name}`
-                      : `${relationDetail.hub.label} 허브`}
+                      : `${relationDetail.hub.label} Hub`}
                 </h3>
                 <p>{relationDetail.label}</p>
               </div>
@@ -462,7 +470,7 @@ export default function HomePage() {
                         </span>
                       ))
                     ) : (
-                      <span className="relation-hub-provider empty">등록된 지원 주체가 없습니다</span>
+                      <span className="relation-hub-provider empty">No registered providers</span>
                     )}
                   </div>
                 </div>
@@ -489,7 +497,7 @@ export default function HomePage() {
               transition={{ type: 'spring', stiffness: 120, damping: 16 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="mega-close" onClick={() => setExpandedId(null)} aria-label="닫기">
+              <button className="mega-close" onClick={() => setExpandedId(null)} aria-label="Close">
                 ✕
               </button>
 
@@ -501,7 +509,7 @@ export default function HomePage() {
 
               <div className="mega-grid">
                 <div className="mega-copy">
-                  <h4>연결된 파트너</h4>
+                  <h4>Connected Partners</h4>
                   <ul>
                     {expandedMuseum.relations.map((rel) => (
                       <li key={rel.targetId}>
@@ -511,13 +519,13 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <a href={expandedMuseum.detail.url} target="_blank" rel="noreferrer" className="mega-link">
-                    공식 사이트 바로가기 ↗
+                    Visit Official Website ↗
                   </a>
                 </div>
                 <div className="mega-gallery">
                   {expandedMuseum.detail.images?.map((src, index) => (
                     <div key={src} className="mega-image">
-                      <img src={`${src}&auto=format&fit=crop&w=900&q=80`} alt={`${expandedMuseum.name} 이미지 ${index + 1}`} />
+                      <img src={`${src}&auto=format&fit=crop&w=900&q=80`} alt={`${expandedMuseum.name} Image ${index + 1}`} />
                     </div>
                   ))}
                 </div>

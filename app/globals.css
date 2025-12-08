@@ -21,9 +21,17 @@ body {
   overflow: hidden;
 }
 
-h4 {
+h3, h4 {
+  margin-block-start: 0;
+  margin-block-end: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.02em;
+}
+
+p {
+  margin: 0 0 0.4rem 0;
+  line-height: 1.6;
+  font-size: 14px;
 }
 
 a {
@@ -176,10 +184,10 @@ a {
 .fab-cluster {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  top: 24px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 8px;
   z-index: 10;
 }
 
@@ -187,13 +195,19 @@ a {
   background: var(--panel);
   color: var(--text);
   border: 1px solid rgba(21, 24, 33, 0.08);
-  border-radius: 999px;
-  padding: 12px 18px;
+  border-radius: 12px;
+  padding: 10px 14px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.fab-button:hover {
+  transform: translateY(-1px);
 }
 
 .locker-tile {
@@ -222,6 +236,7 @@ a {
   letter-spacing: 0.01em;
   text-align: center;
   padding: 0;
+  outline: none;
 }
 
 .door-graphic {
@@ -672,6 +687,14 @@ a {
   line-height: 1.6;
 }
 
+.mega-header p + p {
+  margin-top: 1em;
+}
+
+.mega-header:last-child {
+  padding-bottom: 32px;
+}
+
 .mega-kicker {
   display: inline-flex;
   align-items: center;
@@ -790,4 +813,30 @@ a {
   .mega-image {
     height: 200px;
   }
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 24px;
+}
+
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: rgba(21, 24, 33, 0.04);
+  border: 1px solid rgba(21, 24, 33, 0.06);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
 }

@@ -12,19 +12,15 @@ export function FabButtons({ onShowOverview, onShowGallery }: FabButtonsProps) {
     <div className="fab-cluster">
       <motion.button
         className="fab-button"
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.98 }}
         onClick={onShowOverview}
       >
-        ℹ️ 프로젝트 설명
+          ABOUT
       </motion.button>
       <motion.button
         className="fab-button"
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.98 }}
         onClick={onShowGallery}
       >
-        🖼️ 갤러리 보기
+          GALLERY
       </motion.button>
     </div>
   );
