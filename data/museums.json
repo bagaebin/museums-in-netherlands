@@ -61,7 +61,7 @@
       "bullets": ["Presented in a historiographically reflexive manner."]
     },
     "doorSvg": "/locker-doors/bauhaus-dessau.svg",
-    "positionGrid": { "x": 1, "y": 0 },
+    "positionGrid": { "x": 0, "y": 3 },
     "positionMap": { "x": 0.9, "y": 0.48 },
     "topic": "Design, Educational",
     "relations": [],
@@ -92,7 +92,7 @@
       ]
     },
     "doorSvg": "/locker-doors/depot.svg",
-    "positionGrid": { "x": 2, "y": 0 },
+    "positionGrid": { "x": 2, "y": 2 },
     "positionMap": { "x": 0.46, "y": 0.64 },
     "topic": "Conservation",
     "relations": [],
@@ -126,7 +126,7 @@
       ]
     },
     "doorSvg": "/locker-doors/design-den-bosch.svg",
-    "positionGrid": { "x": 3, "y": 0 },
+    "positionGrid": { "x": 1, "y": 2 },
     "positionMap": { "x": 0.55, "y": 0.68 },
     "topic": "Design",
     "relations": [
@@ -168,7 +168,7 @@
       "bullets": []
     },
     "doorSvg": "/locker-doors/huis-sonneveld.svg",
-    "positionGrid": { "x": 0, "y": 1 },
+    "positionGrid": { "x": 2, "y": 3 },
     "positionMap": { "x": 0.47, "y": 0.62 },
     "topic": "Architecture",
     "relations": [
@@ -203,7 +203,7 @@
       "bullets": ["From modern masters and contemporary art to forgotten cultures, photography, fashion and design."]
     },
     "doorSvg": "/locker-doors/kunsthal-rotterdam.svg",
-    "positionGrid": { "x": 1, "y": 1 },
+    "positionGrid": { "x": 5, "y": 2 },
     "positionMap": { "x": 0.45, "y": 0.62 },
     "topic": "Photography, Fashion, Design",
     "relations": [],
@@ -234,7 +234,7 @@
       "bullets": []
     },
     "doorSvg": "/locker-doors/kunstinstituut-melly.svg",
-    "positionGrid": { "x": 2, "y": 1 },
+    "positionGrid": { "x": 6, "y": 2 },
     "positionMap": { "x": 0.47, "y": 0.63 },
     "topic": "Contemporary art, Design",
     "relations": [],
@@ -262,7 +262,7 @@
       "bullets": []
     },
     "doorSvg": "/locker-doors/natural-history-rotterdam.svg",
-    "positionGrid": { "x": 3, "y": 1 },
+    "positionGrid": { "x": 1, "y": 1 },
     "positionMap": { "x": 0.44, "y": 0.64 },
     "topic": "Nature, Science, Educational",
     "relations": [],
@@ -296,7 +296,7 @@
       ]
     },
     "doorSvg": "/locker-doors/next-nature.svg",
-    "positionGrid": { "x": 0, "y": 2 },
+    "positionGrid": { "x": 3, "y": 2 },
     "positionMap": { "x": 0.58, "y": 0.72 },
     "topic": "Nature, Science",
     "relations": [
@@ -336,7 +336,7 @@
       "bullets": ["Shows designers' work, convenes forums, and shares knowledge from architecture, design, and digital culture."]
     },
     "doorSvg": "/locker-doors/nieuwe-instituut.svg",
-    "positionGrid": { "x": 1, "y": 2 },
+    "positionGrid": { "x": 0, "y": 2 },
     "positionMap": { "x": 0.47, "y": 0.65 },
     "topic": "Architecture",
     "relations": [
@@ -377,7 +377,7 @@
       ]
     },
     "doorSvg": "/locker-doors/nijntje.svg",
-    "positionGrid": { "x": 2, "y": 2 },
+    "positionGrid": { "x": 0, "y": 1 },
     "positionMap": { "x": 0.53, "y": 0.6 },
     "topic": "Children, Educational",
     "relations": [],
@@ -408,7 +408,7 @@
       "bullets": []
     },
     "doorSvg": "/locker-doors/rijks-amsterdam.svg",
-    "positionGrid": { "x": 0, "y": 3 },
+    "positionGrid": { "x": 1, "y": 3 },
     "positionMap": { "x": 0.42, "y": 0.39 },
     "topic": "National",
     "relations": [],
@@ -439,7 +439,7 @@
       "bullets": ["Interactions between audiences and art are driven by dialogues with artists."]
     },
     "doorSvg": "/locker-doors/stedelijk-amsterdam.svg",
-    "positionGrid": { "x": 1, "y": 3 },
+    "positionGrid": { "x": 4, "y": 2 },
     "positionMap": { "x": 0.43, "y": 0.41 },
     "topic": "Contemporary Art",
     "relations": [],
